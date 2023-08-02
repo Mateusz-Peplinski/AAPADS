@@ -9,7 +9,6 @@ namespace AAPADS
 {
     public class DataIngestEngine  
     {
-        // add thread
 
         public event EventHandler SSIDDataCollected;
         public List<string> SSID_LIST = new List<string>();
@@ -96,7 +95,6 @@ namespace AAPADS
                 }
                 catch (Exception ex)
                 {
-                    // Log or print the exception details
                     MessageBox.Show(ex.Message);
                 }
 
