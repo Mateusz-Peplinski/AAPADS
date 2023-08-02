@@ -200,42 +200,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="aircrack-ng\airbase-ng.exe" />
-    <Content Include="aircrack-ng\Aircrack-ng GUI.exe" />
-    <Content Include="aircrack-ng\aircrack-ng.exe" />
-    <Content Include="aircrack-ng\airdecap-ng.exe" />
-    <Content Include="aircrack-ng\airdecloak-ng.exe" />
-    <Content Include="aircrack-ng\aireplay-ng.exe" />
-    <Content Include="aircrack-ng\airodump-ng.exe" />
-    <Content Include="aircrack-ng\airolib-ng.exe" />
-    <Content Include="aircrack-ng\airpcap.dll" />
-    <Content Include="aircrack-ng\airserv-ng.exe" />
-    <Content Include="aircrack-ng\airtun-ng.exe" />
-    <Content Include="aircrack-ng\airventriloquist-ng.exe" />
-    <Content Include="aircrack-ng\besside-ng.exe" />
-    <Content Include="aircrack-ng\buddy-ng.exe" />
-    <Content Include="aircrack-ng\cygaircrack-ce-wpa-1-7-0.dll" />
-    <Content Include="aircrack-ng\cygaircrack-ce-wpa-x86-avx-1-7-0.dll" />
-    <Content Include="aircrack-ng\cygaircrack-ce-wpa-x86-avx2-1-7-0.dll" />
-    <Content Include="aircrack-ng\cygaircrack-ce-wpa-x86-sse2-1-7-0.dll" />
-    <Content Include="aircrack-ng\cygaircrack-osdep-1-7-0.dll" />
-    <Content Include="aircrack-ng\cygcrypto-1.1.dll" />
-    <Content Include="aircrack-ng\cyggcc_s-seh-1.dll" />
-    <Content Include="aircrack-ng\cygpcre-1.dll" />
-    <Content Include="aircrack-ng\cygsqlite3-0.dll" />
-    <Content Include="aircrack-ng\cygstdc++-6.dll" />
-    <Content Include="aircrack-ng\cygwin1.dll" />
-    <Content Include="aircrack-ng\cygz.dll" />
-    <Content Include="aircrack-ng\easside-ng.exe" />
-    <Content Include="aircrack-ng\ivstools.exe" />
-    <Content Include="aircrack-ng\kstats.exe" />
-    <Content Include="aircrack-ng\makeivs-ng.exe" />
-    <Content Include="aircrack-ng\packetforge-ng.exe" />
-    <Content Include="aircrack-ng\tkiptun-ng.exe" />
-    <Content Include="aircrack-ng\wesside-ng.exe" />
-    <Content Include="aircrack-ng\wpaclean.exe" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
