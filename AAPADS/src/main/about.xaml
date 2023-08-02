@@ -1,0 +1,43 @@
+﻿<Window
+    x:Class="AAPADS.about"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AAPADS"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="about"
+    Width="800"
+    Height="450"
+    Background="#303030"
+    Icon="/res/icons/RIPIDS_icon.png"
+    mc:Ignorable="d">
+
+    <Grid>
+
+        <TextBlock
+            Margin="0,10,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            FontSize="36"
+            FontWeight="Bold"
+            Foreground="#ffc107"
+            Text="ABOUT"
+            TextWrapping="Wrap" />
+        <Image
+            Width="704"
+            Height="200"
+            Margin="77,0,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Source="/res/graphics/RAPIDS_banner.png" />
+
+        <TextBlock
+            Margin="0,254,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            FontSize="12"
+            Foreground="#ffc107"           
+            Text="RAPIDS is a Rogue Access Point intrusion detection system, that is tasked with detecting " Height="21" />
+            
+    </Grid>
+</Window>
