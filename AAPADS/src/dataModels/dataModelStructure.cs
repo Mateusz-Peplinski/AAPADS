@@ -13,8 +13,9 @@ namespace AAPADS
         private string _WLAN_STANDARD;
         private int _WIFI_CHANNEL;
         private string _FREQ_BAND;
-        private string _ENCRYPTION_USED;
+        private string _ENCRYPTION_USED; 
         private string _FREQUENCY;  
+        private string _AUTHENTICATION_USED;  
         private int _TOTAL_DETECTED_AP;    
 
         public bool IsSelected
@@ -69,6 +70,11 @@ namespace AAPADS
         {
             get => _FREQUENCY;
             set => SetProperty(ref _FREQUENCY, value);
+        }
+        public string AUTHENTICATION
+        {
+            get => _AUTHENTICATION_USED;
+            set => SetProperty(ref _AUTHENTICATION_USED, value);
         }
 
         public int TOTAL_DETECTED_AP
