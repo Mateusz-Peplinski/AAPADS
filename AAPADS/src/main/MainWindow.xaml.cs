@@ -62,13 +62,10 @@ namespace AAPADS
 
         private void UpdateUI(object sender, EventArgs e)
         {
-            // Here's where you update your UI. 
-            // Make sure to do it on the UI thread
             this.Dispatcher.Invoke(() =>
             {
                 viewModel.UpdateAccessPoints(engine);
             });
         }
-
     }
 }
