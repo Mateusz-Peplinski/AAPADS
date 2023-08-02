@@ -7,8 +7,10 @@ using System.Windows;
 
 namespace AAPADS
 {
-    public class DataIngestEngine
+    public class DataIngestEngine  
     {
+        // add thread
+
         public event EventHandler SSIDDataCollected;
         public List<string> SSID_LIST = new List<string>();
         public List<string> ENCRYPTION_TYPE_LIST = new List<string>();
