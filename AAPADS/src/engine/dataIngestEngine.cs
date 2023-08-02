@@ -64,7 +64,7 @@ namespace AAPADS
             { 161, "5.805 GHz" },
             { 165, "5.825 GHz" }
         };
-
+        public List<string> AUTH_LIST = new List<string>();
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
         private bool isRunning = true;
@@ -79,6 +79,7 @@ namespace AAPADS
             BAND_LIST = new List<string>();
             CHANNEL_LIST = new List<int>();
             FREQUENCY_LIST = new List<string>();  
+            AUTH_LIST = new List<string>();  
 
             Task.Run(RunNetworkScanning);
         }
@@ -104,7 +105,7 @@ namespace AAPADS
 
                 if (SSID_LIST != null && ENCRYPTION_TYPE_LIST != null && BSSID_LIST != null &&
                     SIGNAL_STRENGTH_LIST != null && WIFI_STANDARD_LIST != null && BAND_LIST != null &&
-                    CHANNEL_LIST != null && FREQUENCY_LIST != null)
+                    CHANNEL_LIST != null && FREQUENCY_LIST != null && AUTH_LIST != null)
                 {
                     SSID_LIST.Clear();
                     ENCRYPTION_TYPE_LIST.Clear();
@@ -114,6 +115,7 @@ namespace AAPADS
                     BAND_LIST.Clear();
                     CHANNEL_LIST.Clear();
                     FREQUENCY_LIST.Clear();
+                    AUTH_LIST.Clear();
                 }
 
                 semaphore.Release();
@@ -167,6 +169,10 @@ namespace AAPADS
             if (output.StartsWith("SSID"))
             {
                 SSID_LIST.Add(value);
+            }
+            else if (output.StartsWith("Authentication"))
+            {
+                AUTH_LIST.Add(value);
             }
             else if (output.StartsWith("Encryption"))
             {
