@@ -157,56 +157,57 @@ namespace AAPADS
         private void ParseNetworkInformation(string output)
         {
             output = output.Trim();
-
             int index = output.IndexOf(":");
             if (index < 0 || index >= output.Length - 1)
                 return;
 
             string value = output.Substring(index + 1).Trim();
+            string title = output.Substring(0, index).Split(' ')[0];
+            switch(title)
+            {
+                case "SSID":
+                    SSID_LIST.Add(value);
+                    break;
 
-            if (output.StartsWith("SSID"))
-            {
-                SSID_LIST.Add(value);
-            }
-            else if (output.StartsWith("Encryption"))
-            {
-                ENCRYPTION_TYPE_LIST.Add(value);
-            }
-            else if (output.StartsWith("BSSID"))
-            {
-                BSSID_LIST.Add(value);
-            }
-            else if (output.StartsWith("Signal"))
-            {
-                int endIndex = output.IndexOf("%");
-                if (endIndex > index && endIndex < output.Length)
-                {
-                    string signalValue = output.Substring(index + 1, endIndex - index - 1).Trim();
-                    if (int.TryParse(signalValue, out int signal))
+                case "Encryption":
+                    ENCRYPTION_TYPE_LIST.Add(value);
+                    break;
+
+                case "BSSID":
+                    BSSID_LIST.Add(value);
+                    break;
+
+                case "Signal":
+                    int endIndex = output.IndexOf("%");
+                    if (endIndex > index && endIndex < output.Length)
                     {
-                        SIGNAL_STRENGTH_LIST.Add(signal);
+                        string signalValue = output.Substring(index + 1, endIndex - index - 1).Trim();
+                        if (int.TryParse(signalValue, out int signal))
+                        {
+                            SIGNAL_STRENGTH_LIST.Add(signal);
+                        }
                     }
-                }
-            }
-            else if (output.StartsWith("Radio type"))
-            {
-                WIFI_STANDARD_LIST.Add(value);
-            }
-            else if (output.StartsWith("Band"))
-            {
-                BAND_LIST.Add(value);
-            }
-            else if (output.StartsWith("Channel"))
-            {
-                if (int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel))
-                {
-                    CHANNEL_LIST.Add(channel);
-                    FREQUENCY_LIST.Add(channelToFrequencies[channel]);
-                }
-                else
-                {
-                    //MessageBox.Show("ERROR - int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel)");
-                }
+                    break;
+
+                case "Radio":
+                    WIFI_STANDARD_LIST.Add(value);
+                    break;
+
+                case "Band":
+                    BAND_LIST.Add(value);
+                    break;
+
+                case "Channel":
+                    if (int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel))
+                    {
+                        CHANNEL_LIST.Add(channel);
+                        FREQUENCY_LIST.Add(channelToFrequencies[channel]);
+                    }
+                    else
+                    {
+                        //MessageBox.Show("ERROR - int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel)");
+                    }
+                    break;
             }
         }
         
