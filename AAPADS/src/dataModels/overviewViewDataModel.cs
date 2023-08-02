@@ -61,6 +61,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 FREQ_BAND = dataIngestEngine.BAND_LIST[i],
                 ENCRYPTION_USED = dataIngestEngine.ENCRYPTION_TYPE_LIST[i],
                 FREQUENCY = dataIngestEngine.FREQUENCY_LIST[i],
+                AUTHENTICATION = dataIngestEngine.AUTH_LIST[i],
             });
 
             TOTAL_DETECTED_AP = dataIngestEngine.SSID_LIST.Count;
