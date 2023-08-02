@@ -1,4 +1,5 @@
 using AAPADS;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -34,6 +35,20 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     public void UpdateAccessPoints(DataIngestEngine dataIngestEngine)
     {
         AccessPoints.Clear();
+        //List<int> signalIndex = new List<int>();
+        //bool sorted = false;
+        //while (!sorted)
+        //{
+        //    sorted = true;
+        //    for (int i = 0; i < dataIngestEngine.SSID_LIST.Count - 1; i++)
+        //    {
+        //        if (dataIngestEngine.SIGNAL_STRENGTH_LIST[i] < dataIngestEngine.SIGNAL_STRENGTH_LIST[i+1])
+        //        {
+        //            signalIndex[i] = i+1;
+        //            signalIndex[i + 1] = i;
+        //        }
+        //    }
+        //}
         for (int i = 0; i < dataIngestEngine.SSID_LIST.Count; i++)
         {
             AccessPoints.Add(new dataModelStructure
