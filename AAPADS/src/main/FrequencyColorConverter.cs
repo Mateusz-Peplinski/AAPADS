@@ -21,7 +21,7 @@ namespace AAPADS
                 }
                 else if (frequency.StartsWith("5"))
                 {
-                    return Brushes.LightBlue;
+                    return Brushes.LightSkyBlue;
                 }
             }
             return Brushes.AntiqueWhite;

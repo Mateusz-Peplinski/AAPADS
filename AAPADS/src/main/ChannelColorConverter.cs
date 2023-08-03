@@ -19,7 +19,7 @@ namespace AAPADS
             }
             else
             {
-                return Brushes.LightBlue;
+                return Brushes.LightSkyBlue;
             }
         }
 
