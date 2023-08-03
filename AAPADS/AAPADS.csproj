@@ -124,17 +124,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="src\main\ChannelColorConverter.cs" />
-    <Compile Include="src\main\FrequencyColorConverter.cs" />
-    <Compile Include="src\main\FrequencyBandColorConverter.cs" />
-    <Compile Include="src\main\RSSIIconConverter.cs" />
+    <Compile Include="src\main\converters\CriticalityLevelToColorConverter.cs" />
+    <Compile Include="src\main\converters\CriticalityLevelToTextConverter.cs" />
+    <Compile Include="src\main\converters\ChannelColorConverter.cs" />
+    <Compile Include="src\main\converters\FrequencyColorConverter.cs" />
+    <Compile Include="src\main\converters\FrequencyBandColorConverter.cs" />
+    <Compile Include="src\main\converters\RSSIIconConverter.cs" />
     <Compile Include="src\engine\data\baselineData.cs" />
     <Compile Include="src\dataModels\detectionViewDataModel.cs" />
     <Compile Include="src\engine\detectionEngine.cs" />
     <Compile Include="src\main\about.xaml.cs">
       <DependentUpon>about.xaml</DependentUpon>
     </Compile>
-    <Compile Include="src\main\RSSIColorConverter.cs" />
+    <Compile Include="src\main\converters\RSSIColorConverter.cs" />
     <Compile Include="src\engine\dataIngestEngine.cs" />
     <Compile Include="src\dataModels\dataModelStructure.cs" />
     <Compile Include="src\dataModels\baseDataModel.cs" />

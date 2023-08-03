@@ -23,20 +23,22 @@
         <local:FrequencyBandColorConverter x:Key="FrequencyBandColorConverter" />
         <local:ChannelColorConverter x:Key="ChannelColorConverter" />
         <local:FrequencyColorConverter x:Key="FrequencyColorConverter" />
+        <local:CriticalityLevelToColorConverter x:Key="CriticalityColorConverter" />
+        <local:CriticalityLevelToTextConverter x:Key="CriticalityTextConverter" />
     </Window.Resources>
 
     <materialDesign:Card Background="#303030">
         <TabControl
             HorizontalContentAlignment="Left"
             materialDesign:ColorZoneAssist.Background="#424242"
-            materialDesign:ColorZoneAssist.Foreground="#ffc107"
+            materialDesign:ColorZoneAssist.Foreground="#08b4ca"
             materialDesign:ColorZoneAssist.Mode="Custom">
             <TabItem Name="overviewTab">
                 <TabItem.Header>
                     <StackPanel MouseLeftButtonDown="overviewTab_Click" Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#ffc107"
+                            Foreground="#08b4ca"
                             Kind="RouterNetworkWireless" />
                         <TextBlock Text="OVERVIEW" />
                     </StackPanel>
@@ -65,7 +67,7 @@
                             <Menu.Resources>
                                 <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
                                     <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="Foreground" Value="#ffc107" />
+                                    <Setter Property="Foreground" Value="#08b4ca" />
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="{DynamicResource MaterialDesignDarkBackground}" />
@@ -102,7 +104,7 @@
                                 <GridView>
                                     <GridView.ColumnHeaderContainerStyle>
                                         <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="GridViewColumnHeader">
-                                            <Setter Property="Foreground" Value="#ffc107" />
+                                            <Setter Property="Foreground" Value="#08b4ca" />
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
 
@@ -206,7 +208,7 @@
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Background" Value="#424242" />
-                                    <Setter Property="Foreground" Value="#ffc107" />
+                                    <Setter Property="Foreground" Value="#08b4ca" />
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ListViewItem">
@@ -238,9 +240,9 @@
                     <ProgressBar Grid.Row="2" IsIndeterminate="True">
                         <ProgressBar.Style>
                             <Style BasedOn="{StaticResource {x:Type ProgressBar}}" TargetType="ProgressBar">
-                                <Setter Property="Foreground" Value="#ffc107" />
-                                <Setter Property="Background" Value="#ffc107" />
-
+                                <Setter Property="Foreground" Value="#08b4ca" />
+                                <Setter Property="Background" Value="#08b4ca" />
+                                <Setter Property="BorderBrush" Value="Transparent" />
                             </Style>
                         </ProgressBar.Style>
                     </ProgressBar>
@@ -249,7 +251,7 @@
 
                         <Border Background="{DynamicResource MaterialDesignDarkBackground}">
                             <GroupBox
-                                materialDesign:ColorZoneAssist.Background="#ffc107"
+                                materialDesign:ColorZoneAssist.Background="#08b4ca"
                                 materialDesign:ColorZoneAssist.Foreground="Black"
                                 materialDesign:ColorZoneAssist.Mode="Custom"
                                 Header="Custom Header">
@@ -292,7 +294,7 @@
                     <StackPanel MouseLeftButtonDown="detectionsTab_Click" Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#ffc107"
+                            Foreground="#08b4ca"
                             Kind="WifiStrength4Alert" />
                         <TextBlock Text="DETECTIONS" />
                     </StackPanel>
@@ -301,45 +303,65 @@
 
                     <ListView
                         x:Name="DETECTION_TABLE"
-                        Foreground="#ffc107"
+                        Foreground="#08b4ca"
                         ItemsSource="{Binding DETECTIONS}">
                         <ListView.View>
 
                             <GridView>
                                 <GridView.ColumnHeaderContainerStyle>
                                     <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="GridViewColumnHeader">
-                                        <Setter Property="Foreground" Value="#ffc107" />
+                                        <Setter Property="Foreground" Value="#08b4ca" />
                                     </Style>
                                 </GridView.ColumnHeaderContainerStyle>
-                                <GridViewColumn Header="BSSID">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Foreground="Green" Text="{Binding BSSID}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="SSID">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Foreground="Green" Text="{Binding SSID}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
 
                                 <GridViewColumn Header="CRITICALITY">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Foreground="#ffc107" Text="{Binding WIFI_CHANNEL}" />
+                                            <Grid Width="100" Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="Bold"
+                                                    Foreground="Black"
+                                                    Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}" />
+                                            </Grid>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
+
+
+
 
                             </GridView>
                         </ListView.View>
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="Background" Value="#424242" />
-                                <Setter Property="Foreground" Value="#ffc107" />
+                                <Setter Property="Foreground" Value="#08b4ca" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <Border
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="Transparent"
+                                                BorderThickness="0">
+                                                <GridViewRowPresenter
+                                                    Width="{TemplateBinding Width}"
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                    Content="{TemplateBinding Content}" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="Black" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="Black" />
+                                    </Trigger>
+                                </Style.Triggers>
                             </Style>
                         </ListView.ItemContainerStyle>
                     </ListView>
@@ -350,7 +372,7 @@
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#ffc107"
+                            Foreground="#08b4ca"
                             Kind="Console" />
                         <TextBlock Text="COMMAND &amp; CONTROL CENTER" />
                     </StackPanel>
@@ -362,7 +384,7 @@
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#ffc107"
+                            Foreground="#08b4ca"
                             Kind="AccessPointNetwork" />
                         <TextBlock Text="NETWORK ADAPTERS" />
                     </StackPanel>
