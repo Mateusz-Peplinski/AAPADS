@@ -17,6 +17,7 @@ namespace AAPADS
         private string _FREQUENCY;  
         private string _AUTHENTICATION_USED;  
         private int _TOTAL_DETECTED_AP;    
+        private string _CRITICAILITY_LEVEL;    
 
         public bool IsSelected
         {
@@ -81,6 +82,11 @@ namespace AAPADS
         {
             get => _TOTAL_DETECTED_AP;
             set => SetProperty(ref _TOTAL_DETECTED_AP, value);
-        }   
+        }
+        public string CRITICAILITY_LEVEL
+        {
+            get => _CRITICAILITY_LEVEL;
+            set => SetProperty(ref _CRITICAILITY_LEVEL, value);
+        }
     }
 }

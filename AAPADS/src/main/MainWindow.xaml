@@ -311,25 +311,11 @@
                                         <Setter Property="Foreground" Value="#ffc107" />
                                     </Style>
                                 </GridView.ColumnHeaderContainerStyle>
-                                <GridViewColumn Header="BSSID">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Foreground="Green" Text="{Binding BSSID}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="SSID">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Foreground="Green" Text="{Binding SSID}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
 
                                 <GridViewColumn Header="CRITICALITY">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Foreground="#ffc107" Text="{Binding WIFI_CHANNEL}" />
+                                            <TextBlock Foreground="#ffc107" Text="{Binding CRITICAILITY_LEVEL}" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

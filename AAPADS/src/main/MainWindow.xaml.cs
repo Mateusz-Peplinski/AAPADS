@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AAPADS.src.engine;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -23,26 +24,34 @@ namespace AAPADS
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly DataIngestEngine engine;
-        private readonly overviewViewDataModel viewModel;
+        private readonly DataIngestEngine dataIngestionEngineObject;
+        private readonly DetectionEngine detectionEngineObject;
+
+        private readonly overviewViewDataModel overviewViewDisplay;
+
+        private readonly detectionsViewDataModel detectionsDisplay;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            engine = new DataIngestEngine();
-            viewModel = new overviewViewDataModel();
-            engine.SSIDDataCollected += UpdateUI;
-            engine.Start();
+            dataIngestionEngineObject = new DataIngestEngine();
+            overviewViewDisplay = new overviewViewDataModel();
+            dataIngestionEngineObject.SSIDDataCollected += UpdateOverviewTabUI;
+            dataIngestionEngineObject.Start();
 
-            DataContext = viewModel;
+            detectionEngineObject = new DetectionEngine();
+            detectionsDisplay = new detectionsViewDataModel();
+            detectionEngineObject.DetectionDiscovered += updateDetectionTabUI;
+            detectionEngineObject.startdetection();
+
+            DataContext = overviewViewDisplay;
 
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            about aboutWindow = new about();
-            aboutWindow.Show();
+            //
         }
 
         private void EXIT_Click(object sender, RoutedEventArgs e)
@@ -52,19 +61,26 @@ namespace AAPADS
 
         private void overviewTab_Click(object sender, RoutedEventArgs e)
         {
-            DataContext = viewModel;
+            DataContext = overviewViewDisplay;
         }
 
         private void detectionsTab_Click(object sender, RoutedEventArgs e)
         {
-            DataContext = new detectionsViewDataModel();
+            DataContext = detectionsDisplay;
         }
 
-        private void UpdateUI(object sender, EventArgs e)
+        private void UpdateOverviewTabUI(object sender, EventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
-                viewModel.UpdateAccessPoints(engine);
+                overviewViewDisplay.UpdateAccessPoints(dataIngestionEngineObject);
+            });
+        }
+        private void updateDetectionTabUI(object sender, EventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                detectionsDisplay.updateDetections(detectionEngineObject);
             });
         }
     }
