@@ -265,24 +265,191 @@
                                     </DataTemplate>
                                 </GroupBox.HeaderTemplate>
                                 <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel>
-                                        <TextBlock Foreground="Beige">
-                                            <Run FontWeight="Bold" Text="ACCESS POINTS DETECTED:" />
-                                            <Run Foreground="OrangeRed" Text="{Binding TOTAL_DETECTED_AP}" />
-                                        </TextBlock>
-                                        <TextBlock Foreground="Beige">
-                                            <Run FontWeight="Bold" Text="SECURE ACCESS POINTS: " />
-                                            <Run Foreground="OrangeRed" Text="{Binding TOTAL_SECURE_AP}" />
-                                        </TextBlock>
-                                        <TextBlock Foreground="Beige">
-                                            <Run FontWeight="Bold" Text="VULNERABLE ACCESS POINTS: " />
-                                            <Run Foreground="OrangeRed" Text="{Binding TOTAL_VULNERABLE_AP}" />
-                                        </TextBlock>
-                                    </StackPanel>
+                                    <materialDesign:Card>
+                                        <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
+                                            <TabItem>
+                                                <TabItem.Header>
+                                                    <StackPanel Width="auto" Height="auto">
+                                                        <materialDesign:PackIcon
+                                                            Width="24"
+                                                            Height="24"
+                                                            HorizontalAlignment="Center"
+                                                            Foreground="AntiqueWhite"
+                                                            Kind="NoteSearchOutline" />
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            FontSize="12"
+                                                            Foreground="AntiqueWhite"
+                                                            Text="SUMMARY" />
+                                                    </StackPanel>
+                                                </TabItem.Header>
+
+                                                <DockPanel LastChildFill="True">
+                                                    <StackPanel DockPanel.Dock="Left">
+                                                        <Border
+                                                            Margin="2"
+                                                            Padding="2"
+                                                            Background="#424242"
+                                                            CornerRadius="5">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock
+                                                                    Grid.Column="0"
+                                                                    VerticalAlignment="Center"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="Beige"
+                                                                    Text="ACCESS POINTS DETECTED:" />
+                                                                <Border
+                                                                    Grid.Column="1"
+                                                                    Margin="5,0,0,0"
+                                                                    Padding="5"
+                                                                    Background="OrangeRed"
+                                                                    CornerRadius="5">
+                                                                    <TextBlock
+                                                                        VerticalAlignment="Center"
+                                                                        Foreground="White"
+                                                                        Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                </Border>
+                                                            </Grid>
+                                                        </Border>
+                                                        <Border
+                                                            Margin="2"
+                                                            Padding="2"
+                                                            Background="#424242"
+                                                            CornerRadius="5">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock
+                                                                    Grid.Column="0"
+                                                                    VerticalAlignment="Center"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="Beige"
+                                                                    Text="SECURE ACCESS POINTS:" />
+                                                                <Border
+                                                                    Grid.Column="1"
+                                                                    Margin="5,0,0,0"
+                                                                    Padding="5"
+                                                                    Background="OrangeRed"
+                                                                    CornerRadius="5">
+                                                                    <TextBlock
+                                                                        VerticalAlignment="Center"
+                                                                        Foreground="White"
+                                                                        Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                </Border>
+                                                            </Grid>
+                                                        </Border>
+                                                        <Border
+                                                            Margin="2"
+                                                            Padding="2"
+                                                            Background="#424242"
+                                                            CornerRadius="5">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock
+                                                                    Grid.Column="0"
+                                                                    VerticalAlignment="Center"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="Beige"
+                                                                    Text="2.4 Ghz NETWORKS:" />
+                                                                <Border
+                                                                    Grid.Column="1"
+                                                                    Margin="5,0,0,0"
+                                                                    Padding="5"
+                                                                    Background="OrangeRed"
+                                                                    CornerRadius="5">
+                                                                    <TextBlock
+                                                                        VerticalAlignment="Center"
+                                                                        Foreground="White"
+                                                                        Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                </Border>
+                                                            </Grid>
+                                                        </Border>
+                                                        <Border
+                                                            Margin="2"
+                                                            Padding="2"
+                                                            Background="#424242"
+                                                            CornerRadius="5">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock
+                                                                    Grid.Column="0"
+                                                                    VerticalAlignment="Center"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="Beige"
+                                                                    Text="5 Ghz NETWORKS:" />
+                                                                <Border
+                                                                    Grid.Column="1"
+                                                                    Margin="5,0,0,0"
+                                                                    Padding="5"
+                                                                    Background="OrangeRed"
+                                                                    CornerRadius="5">
+                                                                    <TextBlock
+                                                                        VerticalAlignment="Center"
+                                                                        Foreground="White"
+                                                                        Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                </Border>
+                                                            </Grid>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <GroupBox Width="750" Header="LIVE CONSOLE">
+                                                        <GroupBox.HeaderTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock
+                                                                    FontWeight="Bold"
+                                                                    Text="LIVE CONSOLE"
+                                                                    TextAlignment="Center" />
+                                                            </DataTemplate>
+                                                        </GroupBox.HeaderTemplate>
+                                                        <TextBox
+                                                            Foreground="Beige"
+                                                            IsHitTestVisible="False"
+                                                            IsReadOnly="True"
+                                                            Text="{Binding LiveLog, Mode=OneWay}"
+                                                            TextWrapping="Wrap"
+                                                            VerticalScrollBarVisibility="Auto" />
+                                                    </GroupBox>
+                                                </DockPanel>
+                                            </TabItem>
+
+                                            <TabItem>
+                                                <TabItem.Header>
+                                                    <StackPanel Width="auto" Height="auto">
+                                                        <materialDesign:PackIcon
+                                                            Width="24"
+                                                            Height="24"
+                                                            HorizontalAlignment="Center"
+                                                            Foreground="AntiqueWhite"
+                                                            Kind="ChartBellCurve" />
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            FontSize="12"
+                                                            Foreground="AntiqueWhite"
+                                                            Text="GRAPH" />
+                                                    </StackPanel>
+                                                </TabItem.Header>
+                                                <TextBlock>
+                                                    <Run Text="tab 2 content. Default look and behaviors." />
+                                                    <LineBreak />
+                                                    <LineBreak />
+                                                    <Run FontStyle="Italic">
+                                                        Praesent sed dui arcu. Vivamus porta auctor sagittis
+                                                    </Run>
+                                                </TextBlock>
+                                            </TabItem>
+                                        </TabControl>
+                                    </materialDesign:Card>
                                 </Grid>
                             </GroupBox>
                         </Border>
