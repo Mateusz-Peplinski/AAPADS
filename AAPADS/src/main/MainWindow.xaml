@@ -233,11 +233,6 @@
                                     </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>
-
-
-
-
-
                         </ListView>
                     </ScrollViewer>
                     <ProgressBar Grid.Row="2" IsIndeterminate="True">
@@ -289,7 +284,6 @@
                                 </Grid>
                             </GroupBox>
                         </Border>
-
                     </ScrollViewer>
                 </Grid>
             </TabItem>
