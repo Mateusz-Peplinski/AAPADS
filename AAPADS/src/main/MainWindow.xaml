@@ -17,6 +17,13 @@
     TextOptions.TextFormattingMode="Ideal"
     TextOptions.TextRenderingMode="Auto"
     mc:Ignorable="d">
+    <Window.Resources>
+        <local:RSSIIconConverter x:Key="RSSIIconConverter" />
+        <local:RSSIColorConverter x:Key="RSSIColorConverter" />
+        <local:FrequencyBandColorConverter x:Key="FrequencyBandColorConverter" />
+        <local:ChannelColorConverter x:Key="ChannelColorConverter" />
+        <local:FrequencyColorConverter x:Key="FrequencyColorConverter" />
+    </Window.Resources>
 
     <materialDesign:Card Background="#303030">
         <TabControl
@@ -88,7 +95,7 @@
 
                         <ListView
                             x:Name="MAIN_OVERVIEW_TABLE"
-                            Foreground="#ffc107"
+                            Foreground="AntiqueWhite"
                             ItemsSource="{Binding AccessPoints}">
                             <ListView.View>
 
@@ -98,10 +105,19 @@
                                             <Setter Property="Foreground" Value="#ffc107" />
                                         </Style>
                                     </GridView.ColumnHeaderContainerStyle>
-                                    <GridViewColumn Header="AP">
+
+                                    <GridViewColumn Header="STRENGTH">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
-                                                <materialDesign:PackIcon Margin="0,0,0,0" Kind="Wifi" />
+                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                    <materialDesign:PackIcon Foreground="{Binding RSSI, Converter={StaticResource RSSIColorConverter}}" Kind="{Binding RSSI, Converter={StaticResource RSSIIconConverter}}" />
+                                                    <TextBlock
+                                                        FontWeight="Bold"
+                                                        Foreground="AntiqueWhite"
+                                                        Text="{Binding RSSI, StringFormat={}{0}%}"
+                                                        TextAlignment="Center" />
+                                                </StackPanel>
+
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
@@ -110,7 +126,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
-                                                    Foreground="Green"
+                                                    Foreground="AntiqueWhite"
                                                     Text="{Binding BSSID}"
                                                     TextAlignment="Center" />
                                             </DataTemplate>
@@ -120,37 +136,16 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <DockPanel Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
-                                                    <TextBlock Foreground="Green" Text="{Binding SSID}" />
+                                                    <TextBlock Foreground="AntiqueWhite" Text="{Binding SSID}" />
                                                 </DockPanel>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-
-                                    <GridViewColumn Header="STRENGTH">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock TextAlignment="Center">
-                                                    <TextBlock.Text>
-                                                        <Binding Path="RSSI" StringFormat="{}{0}%" />
-                                                    </TextBlock.Text>
-                                                    <TextBlock.Foreground>
-                                                        <Binding Path="RSSI">
-                                                            <Binding.Converter>
-                                                                <local:RSSIColorConverter />
-                                                            </Binding.Converter>
-                                                        </Binding>
-                                                    </TextBlock.Foreground>
-                                                </TextBlock>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-
-
-                                    <GridViewColumn Header="WLAN STANDARD">
+                                    <GridViewColumn Header="STANDARD">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
-                                                    Foreground="#ffc107"
+                                                    Foreground="AntiqueWhite"
                                                     Text="{Binding WLAN_STANDARD}"
                                                     TextAlignment="Center" />
                                             </DataTemplate>
@@ -160,7 +155,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
-                                                    Foreground="#ffc107"
+                                                    Foreground="{Binding WIFI_CHANNEL, Converter={StaticResource ChannelColorConverter}}"
                                                     Text="{Binding WIFI_CHANNEL}"
                                                     TextAlignment="Center" />
                                             </DataTemplate>
@@ -170,7 +165,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
-                                                    Foreground="#ffc107"
+                                                    Foreground="{Binding FREQ_BAND, Converter={StaticResource FrequencyBandColorConverter}}"
                                                     Text="{Binding FREQ_BAND}"
                                                     TextAlignment="Center" />
                                             </DataTemplate>
@@ -180,7 +175,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
-                                                    Foreground="#ffc107"
+                                                    Foreground="{Binding FREQUENCY, Converter={StaticResource FrequencyColorConverter}}"
                                                     Text="{Binding FREQUENCY}"
                                                     TextAlignment="Center" />
                                             </DataTemplate>
@@ -190,7 +185,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
-                                                    Foreground="#1de9b6"
+                                                    Foreground="AntiqueWhite"
                                                     Text="{Binding ENCRYPTION_USED}"
                                                     TextAlignment="Center" />
                                             </DataTemplate>
@@ -200,7 +195,7 @@
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
-                                                    Foreground="#1de9b6"
+                                                    Foreground="AntiqueWhite"
                                                     Text="{Binding AUTHENTICATION}"
                                                     TextAlignment="Center" />
                                             </DataTemplate>
@@ -212,9 +207,37 @@
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Background" Value="#424242" />
                                     <Setter Property="Foreground" Value="#ffc107" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewItem">
+                                                <Border
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="Transparent"
+                                                    BorderThickness="0">
+                                                    <GridViewRowPresenter
+                                                        Width="{TemplateBinding Width}"
+                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        Content="{TemplateBinding Content}" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="Black" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="Black" />
+                                        </Trigger>
+                                    </Style.Triggers>
                                 </Style>
                             </ListView.ItemContainerStyle>
+
+
+
+
+
                         </ListView>
                     </ScrollViewer>
                     <ProgressBar Grid.Row="2" IsIndeterminate="True">
@@ -244,7 +267,6 @@
                                             Text="SUMMARY" />
                                     </DataTemplate>
                                 </GroupBox.HeaderTemplate>
-
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -264,25 +286,6 @@
                                             <Run Foreground="OrangeRed" Text="{Binding TOTAL_VULNERABLE_AP}" />
                                         </TextBlock>
                                     </StackPanel>
-                                    <Button
-                                        Grid.Column="1"
-                                        Margin="2,0"
-                                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
-                                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
-                                        materialDesign:ButtonProgressAssist.Value="-1"
-                                        Background="#ffc107"
-                                        BorderThickness="0"
-                                        Foreground="Black"
-                                        IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                        Style="{StaticResource MaterialDesignRaisedButton}">
-
-                                        <Button.Content>
-                                            <StackPanel Orientation="Horizontal">
-                                                <materialDesign:PackIcon Kind="RefreshCircle" />
-                                                <TextBlock Margin="5,0,0,0" Text="Refresh" />
-                                            </StackPanel>
-                                        </Button.Content>
-                                    </Button>
                                 </Grid>
                             </GroupBox>
                         </Border>

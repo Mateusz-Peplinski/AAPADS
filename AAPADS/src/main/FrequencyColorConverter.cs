@@ -9,31 +9,22 @@ using System.Windows.Media;
 
 namespace AAPADS
 {
-    public class RSSIColorConverter : IValueConverter
+    public class FrequencyColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is int rssi)
+            if (value is string frequency && frequency != null)
             {
-                if (rssi >= 0 && rssi <= 30)
+                if (frequency.StartsWith("2"))
                 {
-                    return Brushes.Red;
+                    return Brushes.YellowGreen;
                 }
-                else if (rssi > 30 && rssi <= 60)
+                else if (frequency.StartsWith("5"))
                 {
-                    return Brushes.Orange;
-                }
-                else if (rssi > 60 && rssi <= 80)
-                {
-                    return Brushes.Yellow;
-                }
-                else if (rssi > 80 && rssi <= 100)
-                {
-                    return Brushes.Green;
+                    return Brushes.LightSkyBlue;
                 }
             }
-
-            return Brushes.Black; // Default color
+            return Brushes.AntiqueWhite;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

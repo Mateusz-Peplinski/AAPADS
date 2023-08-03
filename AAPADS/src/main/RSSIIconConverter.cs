@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace AAPADS
 {
-    public class RSSIColorConverter : IValueConverter
+    public class RSSIIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -17,23 +16,22 @@ namespace AAPADS
             {
                 if (rssi >= 0 && rssi <= 30)
                 {
-                    return Brushes.Red;
+                    return MaterialDesignThemes.Wpf.PackIconKind.SignalCellularOutline;
                 }
                 else if (rssi > 30 && rssi <= 60)
                 {
-                    return Brushes.Orange;
+                    return MaterialDesignThemes.Wpf.PackIconKind.SignalCellular1;
                 }
                 else if (rssi > 60 && rssi <= 80)
                 {
-                    return Brushes.Yellow;
+                    return MaterialDesignThemes.Wpf.PackIconKind.SignalCellular2;
                 }
                 else if (rssi > 80 && rssi <= 100)
                 {
-                    return Brushes.Green;
+                    return MaterialDesignThemes.Wpf.PackIconKind.SignalCellular3;
                 }
             }
-
-            return Brushes.Black; // Default color
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -41,4 +39,5 @@ namespace AAPADS
             throw new NotImplementedException();
         }
     }
+
 }

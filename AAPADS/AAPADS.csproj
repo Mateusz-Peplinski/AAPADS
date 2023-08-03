@@ -124,6 +124,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\main\ChannelColorConverter.cs" />
+    <Compile Include="src\main\FrequencyColorConverter.cs" />
+    <Compile Include="src\main\FrequencyBandColorConverter.cs" />
+    <Compile Include="src\main\RSSIIconConverter.cs" />
     <Compile Include="src\engine\data\baselineData.cs" />
     <Compile Include="src\dataModels\detectionViewDataModel.cs" />
     <Compile Include="src\engine\detectionEngine.cs" />
@@ -134,7 +138,6 @@
     <Compile Include="src\engine\dataIngestEngine.cs" />
     <Compile Include="src\dataModels\dataModelStructure.cs" />
     <Compile Include="src\dataModels\baseDataModel.cs" />
-    <Compile Include="src\main\SSIDColorConverter.cs" />
     <Compile Include="src\WIFIScanInvoker\WifiScanner.cs" />
     <Page Include="src\main\about.xaml">
       <SubType>Designer</SubType>
