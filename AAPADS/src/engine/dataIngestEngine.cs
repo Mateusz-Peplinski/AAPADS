@@ -210,51 +210,6 @@ namespace AAPADS
                         //MessageBox.Show("ERROR - int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel)");
                     }
                     break;
-                SSID_LIST.Add(value);
-            }
-            else if (output.StartsWith("Authentication"))
-            {
-                AUTH_LIST.Add(value);
-            }
-            else if (output.StartsWith("Encryption"))
-            {
-                ENCRYPTION_TYPE_LIST.Add(value);
-            }
-            else if (output.StartsWith("BSSID"))
-            {
-                BSSID_LIST.Add(value);
-            }
-            else if (output.StartsWith("Signal"))
-            {
-                int endIndex = output.IndexOf("%");
-                if (endIndex > index && endIndex < output.Length)
-                {
-                    string signalValue = output.Substring(index + 1, endIndex - index - 1).Trim();
-                    if (int.TryParse(signalValue, out int signal))
-                    {
-                        SIGNAL_STRENGTH_LIST.Add(signal);
-                    }
-                }
-            }
-            else if (output.StartsWith("Radio type"))
-            {
-                WIFI_STANDARD_LIST.Add(value);
-            }
-            else if (output.StartsWith("Band"))
-            {
-                BAND_LIST.Add(value);
-            }
-            else if (output.StartsWith("Channel"))
-            {
-                if (int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel))
-                {
-                    CHANNEL_LIST.Add(channel);
-                    FREQUENCY_LIST.Add(channelToFrequencies[channel]);
-                }
-                else
-                {
-                    //MessageBox.Show("ERROR - int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel)");
-                }
             }
         }
         
