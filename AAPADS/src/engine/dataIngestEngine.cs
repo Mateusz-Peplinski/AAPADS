@@ -175,6 +175,10 @@ namespace AAPADS
                     ENCRYPTION_TYPE_LIST.Add(value);
                     break;
 
+                case "Authentication":
+                    AUTH_LIST.Add(value);
+                    break;
+
                 case "BSSID":
                     BSSID_LIST.Add(value);
                     break;
