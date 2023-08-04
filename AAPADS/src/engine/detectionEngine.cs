@@ -9,6 +9,8 @@ namespace AAPADS.src.engine
     public class DetectionEngine
     {
         public List<string> CRITICALITY_LEVEL = new List<string>();
+        public List<int> RISK_LEVEL = new List<int>();
+        public List<string> DETECTION_STATUS = new List<string>();
         public event EventHandler DetectionDiscovered;
 
         public void startdetection()
@@ -25,6 +27,18 @@ namespace AAPADS.src.engine
             CRITICALITY_LEVEL.Add("LEVEL_3"); // MEDIUM (RISK SCORE: 40 - 60)
             CRITICALITY_LEVEL.Add("LEVEL_2"); // LOW (RISK SCORE: 20 - 40)
             CRITICALITY_LEVEL.Add("LEVEL_1"); // INFO (RISK SCORE: 0 - 20)
+
+            RISK_LEVEL.Add(95);
+            RISK_LEVEL.Add(70);
+            RISK_LEVEL.Add(57);
+            RISK_LEVEL.Add(22);
+            RISK_LEVEL.Add(15);
+
+            DETECTION_STATUS.Add("NEW");
+            DETECTION_STATUS.Add("OPEN");
+            DETECTION_STATUS.Add("CLOSED");
+            DETECTION_STATUS.Add("CLOSED");
+            DETECTION_STATUS.Add("CLOSED");
         }
 
     }

@@ -477,6 +477,120 @@
                         x:Name="DETECTION_TABLE"
                         Foreground="#08b4ca"
                         ItemsSource="{Binding DETECTIONS}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Expander>
+                                    <Expander.Header>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Background="LightSkyBlue"
+                                                    CornerRadius="6">
+                                                    <Grid VerticalAlignment="Center">
+                                                        <TextBlock
+                                                            Margin="0,0,0,0"
+                                                            Text="STATUS"
+                                                            TextAlignment="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <Border
+                                                Grid.Column="2"
+                                                MaxWidth="100"
+                                                Margin="2"
+                                                Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
+                                                CornerRadius="6">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Grid VerticalAlignment="Center">
+                                                        <TextBlock
+                                                            Width="65"
+                                                            Margin="0,0,0,0"
+                                                            FontWeight="Bold"
+                                                            Foreground="Black"
+                                                            Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}"
+                                                            TextAlignment="Center" />
+                                                    </Grid>
+                                                    <Border
+                                                        Margin="2"
+                                                        Background="Black"
+                                                        CornerRadius="8">
+                                                        <Grid Margin="2" VerticalAlignment="Center">
+                                                            <TextBlock
+                                                                Width="20"
+                                                                Background="Black"
+                                                                FontWeight="Bold"
+                                                                Foreground="AntiqueWhite"
+                                                                Text="{Binding RISK_LEVEL}"
+                                                                TextAlignment="Center" />
+                                                        </Grid>
+                                                    </Border>
+
+                                                </StackPanel>
+                                            </Border>
+                                            <Border
+                                                Grid.Column="3"
+                                                Background="#424242"
+                                                CornerRadius="6">
+                                                <Grid VerticalAlignment="Center">
+                                                    <TextBlock Margin="8,0,0,0" Text="Detection: Possible DeAuth Attack" />
+                                                </Grid>
+                                            </Border>
+                                            <Border
+                                                Grid.Column="4"
+                                                Background="#424242"
+                                                CornerRadius="6">
+                                                <Grid VerticalAlignment="Center">
+                                                    <TextBlock Margin="8,0,0,0" Text="Time of Detection: 13:30:12 [Date: 13th July 2023]" />
+                                                </Grid>
+                                            </Border>
+
+                                        </Grid>
+                                    </Expander.Header>
+                                    <StackPanel>
+                                        <TextBlock Text="Mercury" />
+                                        <TextBlock Text="Venus" />
+                                        <TextBlock Text="Earth" />
+                                        <TextBlock Text="Mars" />
+                                        <TextBlock Text="Jupiter" />
+                                        <TextBlock Text="Saturn" />
+                                        <TextBlock Text="Uranus" />
+                                        <TextBlock Text="Neptune" />
+                                    </StackPanel>
+                                </Expander>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Background" Value="#424242" />
+                                <Setter Property="Foreground" Value="AntiqueWhite" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+
+
+
+
+
+
+
+
+
+
+
+                    <!--<ListView
+                        x:Name="DETECTION_TABLE"
+                        Foreground="#08b4ca"
+                        ItemsSource="{Binding DETECTIONS}">
                         <ListView.View>
 
                             <GridView>
@@ -489,17 +603,22 @@
                                 <GridViewColumn Header="CRITICALITY">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Grid Width="100" Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}">
+                                            <Border
+                                                Width="100"
+                                                Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
+                                                BorderThickness="0"
+                                                CornerRadius="5">
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontWeight="Bold"
                                                     Foreground="Black"
                                                     Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}" />
-                                            </Grid>
+                                            </Border>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
+
 
 
 
@@ -536,7 +655,7 @@
                                 </Style.Triggers>
                             </Style>
                         </ListView.ItemContainerStyle>
-                    </ListView>
+                    </ListView>-->
                 </ScrollViewer>
             </TabItem>
             <TabItem>

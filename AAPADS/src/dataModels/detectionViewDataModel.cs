@@ -28,6 +28,8 @@ public class detectionsViewDataModel : baseDataModel, INotifyPropertyChanged
             DETECTIONS.Add(new dataModelStructure()
             {
                 CRITICAILITY_LEVEL = detectionEngine.CRITICALITY_LEVEL[i],
+                RISK_LEVEL = detectionEngine.RISK_LEVEL[i],
+                DETECTION_STATUS = detectionEngine.DETECTION_STATUS[i],
         } );
             
         }
