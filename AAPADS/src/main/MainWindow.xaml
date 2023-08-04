@@ -359,7 +359,7 @@
                                                                     VerticalAlignment="Center"
                                                                     FontWeight="Bold"
                                                                     Foreground="Beige"
-                                                                    Text="2.4 Ghz NETWORKS:" />
+                                                                    Text="2.4 GHz NETWORKS:" />
                                                                 <Border
                                                                     Grid.Column="1"
                                                                     Margin="5,0,0,0"
@@ -388,7 +388,7 @@
                                                                     VerticalAlignment="Center"
                                                                     FontWeight="Bold"
                                                                     Foreground="Beige"
-                                                                    Text="5 Ghz NETWORKS:" />
+                                                                    Text="5 GHz NETWORKS:" />
                                                                 <Border
                                                                     Grid.Column="1"
                                                                     Margin="5,0,0,0"
@@ -403,7 +403,12 @@
                                                             </Grid>
                                                         </Border>
                                                     </StackPanel>
-                                                    <GroupBox Width="750" Header="LIVE CONSOLE">
+                                                    <GroupBox
+                                                        Width="750"
+                                                        materialDesign:ColorZoneAssist.Background="OrangeRed"
+                                                        materialDesign:ColorZoneAssist.Foreground="Black"
+                                                        materialDesign:ColorZoneAssist.Mode="Custom"
+                                                        Header="LIVE CONSOLE">
                                                         <GroupBox.HeaderTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
@@ -413,12 +418,12 @@
                                                             </DataTemplate>
                                                         </GroupBox.HeaderTemplate>
                                                         <TextBox
+                                                            Background="#424242"
                                                             Foreground="Beige"
                                                             IsHitTestVisible="False"
                                                             IsReadOnly="True"
                                                             Text="{Binding LiveLog, Mode=OneWay}"
-                                                            TextWrapping="Wrap"
-                                                            VerticalScrollBarVisibility="Auto" />
+                                                            TextWrapping="Wrap" />
                                                     </GroupBox>
                                                 </DockPanel>
                                             </TabItem>
@@ -440,11 +445,11 @@
                                                     </StackPanel>
                                                 </TabItem.Header>
                                                 <TextBlock>
-                                                    <Run Text="tab 2 content. Default look and behaviors." />
+                                                    <Run Text="THIS IS WHERE THE GRAPHS WILL GO " />
                                                     <LineBreak />
                                                     <LineBreak />
                                                     <Run FontStyle="Italic">
-                                                        Praesent sed dui arcu. Vivamus porta auctor sagittis
+                                                        MAKE 2 TABS one for 5GHz and 2.4GHz
                                                     </Run>
                                                 </TextBlock>
                                             </TabItem>
