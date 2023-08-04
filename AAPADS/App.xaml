@@ -12,6 +12,29 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Orange.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!--  START TreeViewItem Style  -->
+            <Style TargetType="{x:Type TreeViewItem}">
+                <Setter Property="Margin" Value="5,5,5,5" />
+                <Setter Property="Background" Value="#424242" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="5">
+                                <StackPanel>
+                                    <ContentPresenter ContentSource="Header" />
+                                    <ItemsPresenter />
+                                </StackPanel>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--  END TreeViewItem Style  -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>
