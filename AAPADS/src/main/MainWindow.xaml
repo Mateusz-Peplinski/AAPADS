@@ -25,6 +25,7 @@
         <local:FrequencyColorConverter x:Key="FrequencyColorConverter" />
         <local:CriticalityLevelToColorConverter x:Key="CriticalityColorConverter" />
         <local:CriticalityLevelToTextConverter x:Key="CriticalityTextConverter" />
+        <local:DetectionStatusToColorConverter x:Key="DetectionStatusToColorConverter" />
     </Window.Resources>
 
     <materialDesign:Card Background="#303030">
@@ -495,56 +496,70 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Border
-                                                    Grid.Column="1"
-                                                    Background="LightSkyBlue"
-                                                    CornerRadius="6">
-                                                    <Grid VerticalAlignment="Center">
+                                            <Border
+                                                Margin="2"
+                                                Background="#424242"
+                                                CornerRadius="5">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border
+                                                        Grid.Column="0"
+                                                        Margin="5"
+                                                        Background="{Binding DETECTION_STATUS, Converter={StaticResource DetectionStatusToColorConverter}}"
+                                                        CornerRadius="3">
                                                         <TextBlock
-                                                            Width="45"
+                                                            Width="85"
                                                             Margin="0,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Foreground="Black"
                                                             Text="{Binding DETECTION_STATUS}"
                                                             TextAlignment="Center" />
-                                                    </Grid>
-                                                </Border>
-                                            </StackPanel>
-
-                                            <Border
-                                                Grid.Column="2"
-                                                MaxWidth="100"
-                                                Margin="2"
-                                                Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
-                                                CornerRadius="6">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Grid VerticalAlignment="Center">
-                                                        <TextBlock
-                                                            Width="65"
-                                                            Margin="0,0,0,0"
-                                                            FontWeight="Bold"
-                                                            Foreground="Black"
-                                                            Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}"
-                                                            TextAlignment="Center" />
-                                                    </Grid>
+                                                    </Border>
                                                     <Border
-                                                        Margin="2"
-                                                        Background="Black"
-                                                        CornerRadius="8">
-                                                        <Grid Margin="2" VerticalAlignment="Center">
+                                                        Grid.Column="1"
+                                                        MaxWidth="100"
+                                                        Margin="5"
+                                                        Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
+                                                        CornerRadius="3">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
                                                             <TextBlock
-                                                                Width="20"
-                                                                Background="Black"
+                                                                Grid.Column="0"
+                                                                Width="65"
+                                                                Margin="0,0,0,0"
+                                                                VerticalAlignment="Center"
                                                                 FontWeight="Bold"
-                                                                Foreground="AntiqueWhite"
-                                                                Text="{Binding RISK_LEVEL}"
+                                                                Foreground="Black"
+                                                                Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}"
                                                                 TextAlignment="Center" />
+                                                            <Border
+                                                                Grid.Column="1"
+                                                                Margin="2"
+                                                                Background="Black"
+                                                                CornerRadius="12">
+                                                                <TextBlock
+                                                                    Width="20"
+                                                                    VerticalAlignment="Center"
+                                                                    Background="Black"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="AntiqueWhite"
+                                                                    Text="{Binding RISK_LEVEL}"
+                                                                    TextAlignment="Center" />
+                                                            </Border>
                                                         </Grid>
                                                     </Border>
-
-                                                </StackPanel>
+                                                </Grid>
                                             </Border>
+
                                             <Border
                                                 Grid.Column="3"
+                                                Margin="2"
                                                 Background="#424242"
                                                 CornerRadius="6">
                                                 <Grid VerticalAlignment="Center">
@@ -563,14 +578,96 @@
                                         </Grid>
                                     </Expander.Header>
                                     <StackPanel>
-                                        <TextBlock Text="Mercury" />
-                                        <TextBlock Text="Venus" />
-                                        <TextBlock Text="Earth" />
-                                        <TextBlock Text="Mars" />
-                                        <TextBlock Text="Jupiter" />
-                                        <TextBlock Text="Saturn" />
-                                        <TextBlock Text="Uranus" />
-                                        <TextBlock Text="Neptune" />
+                                        <materialDesign:Card>
+                                            <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
+                                                <TabItem>
+                                                    <TabItem.Header>
+                                                        <StackPanel Width="auto" Height="auto">
+                                                            <materialDesign:PackIcon
+                                                                Width="24"
+                                                                Height="24"
+                                                                HorizontalAlignment="Center"
+                                                                Foreground="AntiqueWhite"
+                                                                Kind="ShieldAlert" />
+                                                            <TextBlock
+                                                                HorizontalAlignment="Center"
+                                                                FontSize="12"
+                                                                Foreground="AntiqueWhite"
+                                                                Text="INFO" />
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+                                                    <materialDesign:Card>
+                                                        <TabControl
+                                                            HorizontalContentAlignment="Left"
+                                                            materialDesign:ColorZoneAssist.Background="#424242"
+                                                            materialDesign:ColorZoneAssist.Foreground="#08b4ca"
+                                                            materialDesign:ColorZoneAssist.Mode="Custom">
+                                                            <TabItem Header="INCIDENT OVERVIEW">
+                                                                <TextBlock>
+                                                                    <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
+                                                                    <LineBreak />
+                                                                    <LineBreak />
+                                                                    <Run FontStyle="Italic">
+                                                                        Need to find out what information here is usefull
+                                                                    </Run>
+                                                                </TextBlock>
+                                                            </TabItem>
+                                                            <TabItem Header="ACCESS POINT INFORMATION">
+                                                                <TextBlock>
+                                                                    <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
+                                                                    <LineBreak />
+                                                                    <LineBreak />
+                                                                    <Run FontStyle="Italic">
+                                                                        Need to find out what information here is usefull
+                                                                    </Run>
+                                                                </TextBlock>
+                                                            </TabItem>
+                                                            <TabItem Header="PACKET/FRAME DATA">
+                                                                <TextBlock>
+                                                                    <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
+                                                                    <LineBreak />
+                                                                    <LineBreak />
+                                                                    <Run FontStyle="Italic">
+                                                                        Need to find out what information here is usefull
+                                                                    </Run>
+                                                                </TextBlock>
+                                                            </TabItem>
+                                                            <TabItem Header="EXTRA">
+                                                                <TextBlock Margin="8" Text="EXTRA" />
+                                                            </TabItem>
+                                                        </TabControl>
+                                                    </materialDesign:Card>
+
+                                                </TabItem>
+
+                                                <TabItem>
+                                                    <TabItem.Header>
+                                                        <StackPanel Width="auto" Height="auto">
+                                                            <materialDesign:PackIcon
+                                                                Width="24"
+                                                                Height="24"
+                                                                HorizontalAlignment="Center"
+                                                                Foreground="AntiqueWhite"
+                                                                Kind="ShieldAccount" />
+                                                            <TextBlock
+                                                                HorizontalAlignment="Center"
+                                                                FontSize="12"
+                                                                Foreground="AntiqueWhite"
+                                                                Text="ACTIONS" />
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+                                                    <TextBlock>
+                                                        <Run Text="THIS IS WHERE THE USER CAN PREFORM ACTIONS SUCH AS CHANGE STATUS... " />
+                                                        <LineBreak />
+                                                        <LineBreak />
+                                                        <Run FontStyle="Italic">
+                                                            Need to find out what information here is usefull
+                                                        </Run>
+                                                    </TextBlock>
+
+                                                </TabItem>
+                                            </TabControl>
+                                        </materialDesign:Card>
                                     </StackPanel>
                                 </Expander>
                             </DataTemplate>
