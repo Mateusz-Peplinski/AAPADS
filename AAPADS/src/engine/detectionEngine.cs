@@ -35,7 +35,7 @@ namespace AAPADS.src.engine
             RISK_LEVEL.Add(15);
 
             DETECTION_STATUS.Add("NEW");
-            DETECTION_STATUS.Add("OPEN");
+            DETECTION_STATUS.Add("IN-PROGRESS");
             DETECTION_STATUS.Add("CLOSED");
             DETECTION_STATUS.Add("CLOSED");
             DETECTION_STATUS.Add("CLOSED");

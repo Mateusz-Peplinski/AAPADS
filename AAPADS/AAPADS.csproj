@@ -124,6 +124,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\main\converters\DetectionStatusToColorConverter.cs" />
     <Compile Include="src\main\converters\CriticalityLevelToColorConverter.cs" />
     <Compile Include="src\main\converters\CriticalityLevelToTextConverter.cs" />
     <Compile Include="src\main\converters\ChannelColorConverter.cs" />
@@ -140,7 +141,7 @@
     <Compile Include="src\engine\dataIngestEngine.cs" />
     <Compile Include="src\dataModels\dataModelStructure.cs" />
     <Compile Include="src\dataModels\baseDataModel.cs" />
-    <Compile Include="src\WIFIScanInvoker\WifiScanner.cs" />
+    <Compile Include="src\WLANScanInvoker\WifiScanner.cs" />
     <Page Include="src\main\about.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
