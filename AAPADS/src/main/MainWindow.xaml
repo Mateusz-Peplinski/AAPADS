@@ -502,8 +502,9 @@
                                                     CornerRadius="6">
                                                     <Grid VerticalAlignment="Center">
                                                         <TextBlock
+                                                            Width="45"
                                                             Margin="0,0,0,0"
-                                                            Text="STATUS"
+                                                            Text="{Binding DETECTION_STATUS}"
                                                             TextAlignment="Center" />
                                                     </Grid>
                                                 </Border>
