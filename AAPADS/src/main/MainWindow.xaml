@@ -514,6 +514,7 @@
                                                             Width="85"
                                                             Margin="0,0,0,0"
                                                             VerticalAlignment="Center"
+                                                            FontWeight="Bold"
                                                             Foreground="Black"
                                                             Text="{Binding DETECTION_STATUS}"
                                                             TextAlignment="Center" />
@@ -656,15 +657,22 @@
                                                                 Text="ACTIONS" />
                                                         </StackPanel>
                                                     </TabItem.Header>
-                                                    <TextBlock>
-                                                        <Run Text="THIS IS WHERE THE USER CAN PREFORM ACTIONS SUCH AS CHANGE STATUS... " />
-                                                        <LineBreak />
-                                                        <LineBreak />
-                                                        <Run FontStyle="Italic">
-                                                            Need to find out what information here is usefull
-                                                        </Run>
-                                                    </TextBlock>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
 
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0">
+                                                            <Run Text="THIS IS WHERE THE USER CAN PREFORM ACTIONS SUCH AS CHANGE STATUS... " />
+                                                            <LineBreak />
+                                                            <LineBreak />
+                                                            <Run FontStyle="Italic">
+                                                                Need to find out what information here is usefull
+                                                            </Run>
+                                                        </TextBlock>
+
+                                                    </Grid>
                                                 </TabItem>
                                             </TabControl>
                                         </materialDesign:Card>
