@@ -19,7 +19,7 @@ namespace AAPADS
                 switch (level)
                 {
                     case "LEVEL_5":
-                        return Brushes.Red;
+                        return new SolidColorBrush(Colors.Red);
                     case "LEVEL_4":
                         return Brushes.Orange;
                     case "LEVEL_3":
