@@ -344,7 +344,7 @@
                                                                         <TextBlock
                                                                             VerticalAlignment="Center"
                                                                             Foreground="White"
-                                                                            Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                            Text="{Binding TOTAL_SECURE_AP}" />
                                                                     </Border>
                                                                 </Grid>
                                                             </Border>
@@ -373,7 +373,7 @@
                                                                         <TextBlock
                                                                             VerticalAlignment="Center"
                                                                             Foreground="White"
-                                                                            Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                            Text="{Binding TOTAL_2_4_GHz_AP}" />
                                                                     </Border>
                                                                 </Grid>
                                                             </Border>
@@ -402,7 +402,7 @@
                                                                         <TextBlock
                                                                             VerticalAlignment="Center"
                                                                             Foreground="White"
-                                                                            Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                            Text="{Binding TOTAL_5_GHz_AP}" />
                                                                     </Border>
                                                                 </Grid>
                                                             </Border>
