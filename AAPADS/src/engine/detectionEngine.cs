@@ -25,9 +25,6 @@ namespace AAPADS.src.engine
         public List<string> DETECTION_ACCESS_POINT_ENCRYPTION = new List<string>();
         public List<string> DETECTION_ACCESS_POINT_CONNECTED_CLIENTS = new List<string>();
         
-
-
-        // public event to trigger when a new detection is found. 
         public event EventHandler DetectionDiscovered;
 
         public void startdetection()
@@ -35,7 +32,7 @@ namespace AAPADS.src.engine
 
             populateDetectionViewModelStaticDataTest();
 
-            // trigger view model update in MainWindow.xaml.cs
+           
             DetectionDiscovered?.Invoke(this, EventArgs.Empty);
         }
 
@@ -65,18 +62,74 @@ namespace AAPADS.src.engine
             DETECTION_TIME.Add(DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"));
             DETECTION_TIME.Add(DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"));
 
-            detectionDictionary detectionDictionaryData = new detectionDictionary();
+            WirelessAttackDatabase detectionDictionaryData = new WirelessAttackDatabase();
 
             foreach (var attack in detectionDictionaryData.wirelessAttacks)
             {
-                DETECTION_TITLE.Add($"Title: {attack.Key}");
+                DETECTION_TITLE.Add(attack.Key); 
+                DETECTION_DESCRIPTION.Add(attack.Value.Description); 
+                DETECTION_REMEDIATION.Add(attack.Value.Remediation); 
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                DETECTION_ACCESS_POINT_SSID.Add($"SSID-{i}");
             }
 
-            foreach (var attack in detectionDictionaryData.wirelessAttacks)
-            {
-                DETECTION_DESCRIPTION.Add($"Title: {attack.Key}\nDescription: {attack.Value}\n");
-            }
             
+            DETECTION_ACCESS_POINT_MAC_ADDRESS.Add("00:0a:95:9d:68:16");
+            DETECTION_ACCESS_POINT_MAC_ADDRESS.Add("00:0a:95:9d:68:17");
+            DETECTION_ACCESS_POINT_MAC_ADDRESS.Add("00:0a:95:9d:68:18");
+            DETECTION_ACCESS_POINT_MAC_ADDRESS.Add("00:0a:95:9d:68:19");
+            DETECTION_ACCESS_POINT_MAC_ADDRESS.Add("00:0a:95:9d:68:20");
+
+           
+            DETECTION_ACCESS_POINT_SIGNAL_STRENGTH.Add("-45 dBm");
+            DETECTION_ACCESS_POINT_SIGNAL_STRENGTH.Add("-60 dBm");
+            DETECTION_ACCESS_POINT_SIGNAL_STRENGTH.Add("-30 dBm");
+            DETECTION_ACCESS_POINT_SIGNAL_STRENGTH.Add("-50 dBm");
+            DETECTION_ACCESS_POINT_SIGNAL_STRENGTH.Add("-55 dBm");
+
+            
+            DETECTION_ACCESS_POINT_OPEN_CHANNEL.Add("6");
+            DETECTION_ACCESS_POINT_OPEN_CHANNEL.Add("11");
+            DETECTION_ACCESS_POINT_OPEN_CHANNEL.Add("1");
+            DETECTION_ACCESS_POINT_OPEN_CHANNEL.Add("9");
+            DETECTION_ACCESS_POINT_OPEN_CHANNEL.Add("3");
+
+            
+            DETECTION_ACCESS_POINT_FREQUENCY.Add("2.412 GHz");
+            DETECTION_ACCESS_POINT_FREQUENCY.Add("2.462 GHz");
+            DETECTION_ACCESS_POINT_FREQUENCY.Add("2.417 GHz");
+            DETECTION_ACCESS_POINT_FREQUENCY.Add("2.452 GHz");
+            DETECTION_ACCESS_POINT_FREQUENCY.Add("2.422 GHz");
+
+            
+            DETECTION_ACCESS_POINT_IS_STILL_ACTIVE.Add("Yes");
+            DETECTION_ACCESS_POINT_IS_STILL_ACTIVE.Add("No");
+            DETECTION_ACCESS_POINT_IS_STILL_ACTIVE.Add("Yes");
+            DETECTION_ACCESS_POINT_IS_STILL_ACTIVE.Add("Yes");
+            DETECTION_ACCESS_POINT_IS_STILL_ACTIVE.Add("No");
+
+            
+            DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED.Add("14:20:15 [Date: 15th July 2023]");
+            DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED.Add("10:25:05 [Date: 15th July 2023]");
+            DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED.Add("11:30:45 [Date: 15th July 2023]");
+            DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED.Add("16:45:10 [Date: 15th July 2023]");
+            DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED.Add("17:10:50 [Date: 15th July 2023]");
+
+            
+            DETECTION_ACCESS_POINT_ENCRYPTION.Add("WPA2");
+            DETECTION_ACCESS_POINT_ENCRYPTION.Add("WEP");
+            DETECTION_ACCESS_POINT_ENCRYPTION.Add("WPA3");
+            DETECTION_ACCESS_POINT_ENCRYPTION.Add("Open");
+            DETECTION_ACCESS_POINT_ENCRYPTION.Add("WPA2");
+
+            
+            DETECTION_ACCESS_POINT_CONNECTED_CLIENTS.Add("5");
+            DETECTION_ACCESS_POINT_CONNECTED_CLIENTS.Add("2");
+            DETECTION_ACCESS_POINT_CONNECTED_CLIENTS.Add("7");
+            DETECTION_ACCESS_POINT_CONNECTED_CLIENTS.Add("3");
+            DETECTION_ACCESS_POINT_CONNECTED_CLIENTS.Add("0");
 
         }
 

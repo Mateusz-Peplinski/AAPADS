@@ -21,6 +21,21 @@ namespace AAPADS
         private int _RISK_LEVEL;
         private string _DETECTION_STATUS;
 
+        //NEW BELOW
+        private string _DETECTION_TIME;
+        private string _DETECTION_TITLE;
+        private string _DETECTION_DESCRIPTION;
+        private string _DETECTION_REMEDIATION;
+        private string _DETECTION_ACCESS_POINT_SSID;
+        private string _DETECTION_ACCESS_POINT_MAC_ADDRESS;
+        private string _DETECTION_ACCESS_POINT_SIGNAL_STRENGTH;
+        private string _DETECTION_ACCESS_POINT_OPEN_CHANNEL;
+        private string _DETECTION_ACCESS_POINT_FREQUENCY;
+        private string _DETECTION_ACCESS_POINT_IS_STILL_ACTIVE;
+        private string _DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED;
+        private string _DETECTION_ACCESS_POINT_ENCRYPTION;
+        private string _DETECTION_ACCESS_POINT_CONNECTED_CLIENTS;
+
         public bool IsSelected
         {
             get => _isSelected;
@@ -100,5 +115,83 @@ namespace AAPADS
             get => _DETECTION_STATUS;
             set => SetProperty(ref _DETECTION_STATUS, value);
         }
+        public string DETECTION_TIME
+        {
+            get => _DETECTION_TIME;
+            set => SetProperty(ref _DETECTION_TIME, value);
+        }
+
+        public string DETECTION_TITLE
+        {
+            get => _DETECTION_TITLE;
+            set => SetProperty(ref _DETECTION_TITLE, value);
+        }
+
+        public string DETECTION_DESCRIPTION
+        {
+            get => _DETECTION_DESCRIPTION;
+            set => SetProperty(ref _DETECTION_DESCRIPTION, value);
+        }
+
+        public string DETECTION_REMEDIATION
+        {
+            get => _DETECTION_REMEDIATION;
+            set => SetProperty(ref _DETECTION_REMEDIATION, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_SSID
+        {
+            get => _DETECTION_ACCESS_POINT_SSID;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_SSID, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_MAC_ADDRESS
+        {
+            get => _DETECTION_ACCESS_POINT_MAC_ADDRESS;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_MAC_ADDRESS, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_SIGNAL_STRENGTH
+        {
+            get => _DETECTION_ACCESS_POINT_SIGNAL_STRENGTH;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_SIGNAL_STRENGTH, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_OPEN_CHANNEL
+        {
+            get => _DETECTION_ACCESS_POINT_OPEN_CHANNEL;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_OPEN_CHANNEL, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_FREQUENCY
+        {
+            get => _DETECTION_ACCESS_POINT_FREQUENCY;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_FREQUENCY, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_IS_STILL_ACTIVE
+        {
+            get => _DETECTION_ACCESS_POINT_IS_STILL_ACTIVE;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_IS_STILL_ACTIVE, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED
+        {
+            get => _DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_ENCRYPTION
+        {
+            get => _DETECTION_ACCESS_POINT_ENCRYPTION;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_ENCRYPTION, value);
+        }
+
+        public string DETECTION_ACCESS_POINT_CONNECTED_CLIENTS
+        {
+            get => _DETECTION_ACCESS_POINT_CONNECTED_CLIENTS;
+            set => SetProperty(ref _DETECTION_ACCESS_POINT_CONNECTED_CLIENTS, value);
+        }
+
     }
 }
