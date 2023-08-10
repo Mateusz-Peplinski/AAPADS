@@ -564,7 +564,10 @@
                                                 Background="#424242"
                                                 CornerRadius="6">
                                                 <Grid VerticalAlignment="Center">
-                                                    <TextBlock Margin="8,0,0,0" Text="Detection: Possible DeAuth Attack" />
+                                                    <TextBlock
+                                                        Margin="8,0,0,0"
+                                                        Text="Detection: Possible DeAuth Attack"
+                                                        TextWrapping="NoWrap" />
                                                 </Grid>
                                             </Border>
                                             <Border
@@ -572,14 +575,17 @@
                                                 Background="#424242"
                                                 CornerRadius="6">
                                                 <Grid VerticalAlignment="Center">
-                                                    <TextBlock Margin="8,0,0,0" Text="Time of Detection: 13:30:12 [Date: 13th July 2023]" />
+                                                    <TextBlock
+                                                        Margin="8,0,0,0"
+                                                        Text="Time of Detection: 13:30:12 [Date: 13th July 2023]"
+                                                        TextWrapping="NoWrap" />
                                                 </Grid>
                                             </Border>
 
                                         </Grid>
                                     </Expander.Header>
                                     <StackPanel>
-                                        <materialDesign:Card>
+                                        <materialDesign:Card Margin="20">
                                             <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
                                                 <TabItem>
                                                     <TabItem.Header>
@@ -688,86 +694,6 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                     </ListView>
-
-
-
-
-
-
-
-
-
-
-
-                    <!--<ListView
-                        x:Name="DETECTION_TABLE"
-                        Foreground="#08b4ca"
-                        ItemsSource="{Binding DETECTIONS}">
-                        <ListView.View>
-
-                            <GridView>
-                                <GridView.ColumnHeaderContainerStyle>
-                                    <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="GridViewColumnHeader">
-                                        <Setter Property="Foreground" Value="#08b4ca" />
-                                    </Style>
-                                </GridView.ColumnHeaderContainerStyle>
-
-                                <GridViewColumn Header="CRITICALITY">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Border
-                                                Width="100"
-                                                Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
-                                                BorderThickness="0"
-                                                CornerRadius="5">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontWeight="Bold"
-                                                    Foreground="Black"
-                                                    Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}" />
-                                            </Border>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-
-
-
-
-
-                            </GridView>
-                        </ListView.View>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Background" Value="#424242" />
-                                <Setter Property="Foreground" Value="#08b4ca" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <Border
-                                                Background="{TemplateBinding Background}"
-                                                BorderBrush="Transparent"
-                                                BorderThickness="0">
-                                                <GridViewRowPresenter
-                                                    Width="{TemplateBinding Width}"
-                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                    Content="{TemplateBinding Content}" />
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="Black" />
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="Black" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>-->
                 </ScrollViewer>
             </TabItem>
             <TabItem>
