@@ -17,11 +17,12 @@ namespace AAPADS
         private string _FREQUENCY;  
         private string _AUTHENTICATION_USED;  
         private int _TOTAL_DETECTED_AP;    
+        private int _TOTAL_SECURE_AP;    
+        private int _TOTAL_2_4_GHz_AP;    
+        private int _TOTAL_5_GHz_AP;    
         private string _CRITICAILITY_LEVEL;   
         private int _RISK_LEVEL;
         private string _DETECTION_STATUS;
-
-        //NEW BELOW
         private string _DETECTION_TIME;
         private string _DETECTION_TITLE;
         private string _DETECTION_DESCRIPTION;
@@ -99,6 +100,21 @@ namespace AAPADS
         {
             get => _TOTAL_DETECTED_AP;
             set => SetProperty(ref _TOTAL_DETECTED_AP, value);
+        }
+        public int TOTAL_SECURE_AP
+        {
+            get => _TOTAL_SECURE_AP;
+            set => SetProperty(ref _TOTAL_SECURE_AP, value);
+        }
+        public int TOTAL_2_4_GHz_AP
+        {
+            get => _TOTAL_2_4_GHz_AP;
+            set => SetProperty(ref _TOTAL_2_4_GHz_AP, value);
+        }
+        public int TOTAL_5_GHz_AP
+        {
+            get => _TOTAL_5_GHz_AP;
+            set => SetProperty(ref _TOTAL_5_GHz_AP, value);
         }
         public string CRITICAILITY_LEVEL
         {

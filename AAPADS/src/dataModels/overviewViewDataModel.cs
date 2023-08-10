@@ -1,5 +1,4 @@
 using AAPADS;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -7,20 +6,58 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 {
     public ObservableCollection<dataModelStructure> AccessPoints { get; }
 
-    private int _totalDetectedAp;
+    private int _totalDetectedAP;
+    private int _totalSecureAP;
+    private int _total24GHzNetworks;
+    private int _total5GHzNetworks;
     public int TOTAL_DETECTED_AP
     {
-        get { return _totalDetectedAp; }
+        get { return _totalDetectedAP; }
         set
         {
-            if (_totalDetectedAp != value)
+            if (_totalDetectedAP != value)
             {
-                _totalDetectedAp = value;
+                _totalDetectedAP = value;
                 OnPropertyChanged(nameof(TOTAL_DETECTED_AP));
             }
         }
     }
-
+    public int TOTAL_SECURE_AP
+    {
+        get { return _totalSecureAP; }
+        set
+        {
+            if (_totalSecureAP != value)
+            {
+                _totalSecureAP = value;
+                OnPropertyChanged(nameof(TOTAL_SECURE_AP));
+            }
+        }
+    }
+    public int TOTAL_2_4_GHz_AP
+    {
+        get { return _total24GHzNetworks; }
+        set
+        {
+            if (_total24GHzNetworks != value)
+            {
+                _total24GHzNetworks = value;
+                OnPropertyChanged(nameof(TOTAL_2_4_GHz_AP));
+            }
+        }
+    }
+    public int TOTAL_5_GHz_AP
+    {
+        get { return _total5GHzNetworks; }
+        set
+        {
+            if (_total5GHzNetworks != value)
+            {
+                _total5GHzNetworks = value;
+                OnPropertyChanged(nameof(_total5GHzNetworks));
+            }
+        }
+    }
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
@@ -64,9 +101,59 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 AUTHENTICATION = dataIngestEngine.AUTH_LIST[i],
             });
 
-            TOTAL_DETECTED_AP = dataIngestEngine.SSID_LIST.Count;
-            // update TOTAL_SECURE_AP and TOTAL_VULNERABLE_AP in a similar way
         }
+        TOTAL_DETECTED_AP = dataIngestEngine.SSID_LIST.Count;
+        TOTAL_SECURE_AP = calculateTotalSecureAccessPoints(dataIngestEngine);
+        TOTAL_2_4_GHz_AP = calculateTotal24GHzAccessPoints(dataIngestEngine);
+        TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);
+    }
+
+    private int calculateTotalSecureAccessPoints(DataIngestEngine dataIngestEngine)
+    {
+
+        int secureAccessPointCount = 0;
+
+        foreach (var acessPointEncMethod in dataIngestEngine.ENCRYPTION_TYPE_LIST)
+        {
+            if (acessPointEncMethod == "None")
+            {
+
+            }
+            else
+            {
+                secureAccessPointCount++;
+            }
+        }
+
+        return secureAccessPointCount;
+    }
+
+    private int calculateTotal24GHzAccessPoints(DataIngestEngine dataIngestEngine)
+    {
+        int total24GHzAPs = 0;
+
+        foreach (var accessPoint in dataIngestEngine.BAND_LIST)
+        {
+            if (accessPoint == "2.4 GHz")
+            {
+                total24GHzAPs++;
+            }
+        }
+
+        return total24GHzAPs;
+    }
+    private int calculateTotal5GHzAccessPoints(DataIngestEngine dataIngestEngine)
+    {
+        int total5GHzAPs = 0;
+        foreach (var accessPoint in dataIngestEngine.BAND_LIST)
+        {
+            if (accessPoint == "5 GHz")
+            {
+                total5GHzAPs++;
+            }
+        }
+
+        return total5GHzAPs;
     }
 }
 
