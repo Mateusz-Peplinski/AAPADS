@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace AAPADS
 {
-    public class DataIngestEngine  
+    public class DataIngestEngine
     {
 
         public event EventHandler SSIDDataCollected;
@@ -69,6 +69,18 @@ namespace AAPADS
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
         private bool isRunning = true;
 
+
+        private string currentSSID = null;
+        private string currentEncryption = null;
+        private string currentAuth = null;
+        private string currentBSSID = null;
+        private int currentSignal = 0;
+        private string currentRadio = null;
+        private string currentBand = null;
+        private int currentChannel = 0;
+        private string currentFrequency = null;
+
+
         public void Start()
         {
             SSID_LIST = new List<string>();
@@ -78,8 +90,8 @@ namespace AAPADS
             WIFI_STANDARD_LIST = new List<string>();
             BAND_LIST = new List<string>();
             CHANNEL_LIST = new List<int>();
-            FREQUENCY_LIST = new List<string>();  
-            AUTH_LIST = new List<string>();  
+            FREQUENCY_LIST = new List<string>();
+            AUTH_LIST = new List<string>();
 
             Task.Run(RunNetworkScanning);
         }
@@ -99,10 +111,6 @@ namespace AAPADS
                     MessageBox.Show(ex.Message);
                 }
 
-                RunNetshCommand();
-
-                SSIDDataCollected?.Invoke(this, EventArgs.Empty);
-
                 if (SSID_LIST != null && ENCRYPTION_TYPE_LIST != null && BSSID_LIST != null &&
                     SIGNAL_STRENGTH_LIST != null && WIFI_STANDARD_LIST != null && BAND_LIST != null &&
                     CHANNEL_LIST != null && FREQUENCY_LIST != null && AUTH_LIST != null)
@@ -117,6 +125,10 @@ namespace AAPADS
                     FREQUENCY_LIST.Clear();
                     AUTH_LIST.Clear();
                 }
+
+                RunNetshCommand();
+
+                SSIDDataCollected?.Invoke(this, EventArgs.Empty);
 
                 semaphore.Release();
 
@@ -155,6 +167,7 @@ namespace AAPADS
                 ParseNetworkInformation(e.Data);
             }
         }
+        
 
         private void ParseNetworkInformation(string output)
         {
@@ -164,23 +177,30 @@ namespace AAPADS
                 return;
 
             string value = output.Substring(index + 1).Trim();
-
             string title = output.Substring(0, index).Split(' ')[0];
-            switch(title) {
+
+            switch (title)
+            {
                 case "SSID":
-                    SSID_LIST.Add(value);
+                    AddCurrentDataToGlobalLists();
+                    ClearCurrentData();
+
+                    currentSSID = value;
                     break;
 
                 case "Encryption":
-                    ENCRYPTION_TYPE_LIST.Add(value);
+                    currentEncryption = value;
                     break;
 
                 case "Authentication":
-                    AUTH_LIST.Add(value);
+                    currentAuth = value;
                     break;
 
                 case "BSSID":
-                    BSSID_LIST.Add(value);
+                    AddCurrentDataToGlobalLists();
+                    ClearBssidRelatedData();
+
+                    currentBSSID = value;
                     break;
 
                 case "Signal":
@@ -190,32 +210,62 @@ namespace AAPADS
                         string signalValue = output.Substring(index + 1, endIndex - index - 1).Trim();
                         if (int.TryParse(signalValue, out int signal))
                         {
-                            SIGNAL_STRENGTH_LIST.Add(signal);
+                            currentSignal = signal;
                         }
                     }
                     break;
 
                 case "Radio":
-                    WIFI_STANDARD_LIST.Add(value);
+                    currentRadio = value;
                     break;
 
                 case "Band":
-                    BAND_LIST.Add(value);
+                    currentBand = value;
                     break;
 
                 case "Channel":
                     if (int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel))
                     {
-                        CHANNEL_LIST.Add(channel);
-                        FREQUENCY_LIST.Add(channelToFrequencies[channel]);
-                    }
-                    else
-                    {
-                        //MessageBox.Show("ERROR - int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel)");
+                        currentChannel = channel;
+                        currentFrequency = channelToFrequencies[channel];
                     }
                     break;
             }
         }
-        
+
+        private void AddCurrentDataToGlobalLists()
+        {
+            if (!string.IsNullOrEmpty(currentSSID) && !string.IsNullOrEmpty(currentBSSID))
+            {
+                SSID_LIST.Add(currentSSID);
+                ENCRYPTION_TYPE_LIST.Add(currentEncryption);
+                AUTH_LIST.Add(currentAuth);
+                BSSID_LIST.Add(currentBSSID);
+                SIGNAL_STRENGTH_LIST.Add(currentSignal);
+                WIFI_STANDARD_LIST.Add(currentRadio);
+                BAND_LIST.Add(currentBand);
+                CHANNEL_LIST.Add(currentChannel);
+                FREQUENCY_LIST.Add(currentFrequency);
+            }
+        }
+
+        private void ClearCurrentData()
+        {
+            currentSSID = null;
+            currentEncryption = null;
+            currentAuth = null;
+            ClearBssidRelatedData();
+        }
+
+        private void ClearBssidRelatedData()
+        {
+            currentBSSID = null;
+            currentSignal = 0;
+            currentRadio = null;
+            currentBand = null;
+            currentChannel = 0;
+            currentFrequency = null;
+        }
+
     }
 }
