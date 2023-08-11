@@ -57,13 +57,13 @@
                         <RowDefinition Height="20px" />
                         <!--  MENU  -->
 
-                        <RowDefinition Height="300px" />
+                        <RowDefinition Height="*" />
                         <!--  MAIN DISPLAY  -->
 
-                        <RowDefinition Height="5px" />
+                        <RowDefinition Height="5" />
                         <!--  LOAD BAR  -->
 
-                        <RowDefinition Height="200px" />
+                        <RowDefinition Height="*" />
                         <!--  SUMMARY  -->
 
                         <RowDefinition Height="Auto" />
