@@ -11,10 +11,13 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 
 ## 📖 Overview
 
-To comprehend the intricacies of AAPADS, it's crucial to understand its three-stage architecture.
+AAPADS consists of a three-stage architecture.
 
 ### 📐 Architecture
 ![Figure 1 – Basic architecture of AAPADS](AAPADS/res/graphics/ARCH_AAPADS.png)
+<p align="center">
+  <italic>Not Final Version</italic>
+</p>
 
 ### 1️⃣ Data Ingest Engine 
 * **Function**: Collects data about the wireless environment in which AAPADS operates.
