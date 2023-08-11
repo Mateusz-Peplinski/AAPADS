@@ -10,6 +10,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     private int _totalSecureAP;
     private int _total24GHzNetworks;
     private int _total5GHzNetworks;
+    private bool _isLoading;
     public int TOTAL_DETECTED_AP
     {
         get { return _totalDetectedAP; }
@@ -54,7 +55,19 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             if (_total5GHzNetworks != value)
             {
                 _total5GHzNetworks = value;
-                OnPropertyChanged(nameof(_total5GHzNetworks));
+                OnPropertyChanged(nameof(TOTAL_5_GHz_AP));
+            }
+        }
+    }
+    public bool IS_LOADING
+    {
+        get { return _isLoading; }
+        set
+        {
+            if (_isLoading != value)
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IS_LOADING));
             }
         }
     }
@@ -106,6 +119,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         TOTAL_SECURE_AP = calculateTotalSecureAccessPoints(dataIngestEngine);
         TOTAL_2_4_GHz_AP = calculateTotal24GHzAccessPoints(dataIngestEngine);
         TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);
+        IS_LOADING = dataIngestEngine.isLoading;
     }
 
     private int calculateTotalSecureAccessPoints(DataIngestEngine dataIngestEngine)
