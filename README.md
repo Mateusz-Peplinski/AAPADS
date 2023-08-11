@@ -9,9 +9,12 @@
 ## 📌 Introduction
 The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively mitigates the increased risk of data interception and provides early detection of possible wireless attacks.
 
-## 📖 Overview
+Technical Overview 🖥️
+Platform & Development Environment:
 
-AAPADS consists of a three-stage architecture.
+Primary Language: C#
+Platform: x64 (64-bit) Windows operating system.
+User Interface: Developed using Microsoft's WPF (Windows Presentation Foundation) to ensure an interactive and engaging frontend experience.
 
 ### 📐 Architecture
 ![Figure 1 – Basic architecture of AAPADS](AAPADS/res/graphics/ARCH_AAPADS.png)
