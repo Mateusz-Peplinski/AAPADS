@@ -2,8 +2,6 @@
   <img src="AAPADS/res/graphics/LargeLogoNoBackground.png" width="800">
 </p>
 
-
-
 <p align="center">
   <strong>🛡️ Advanced Access Point Anomaly Detection System 🛡️</strong>
 </p>
