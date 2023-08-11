@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -133,7 +134,7 @@ namespace AAPADS
                 }
 
                 RunNetshCommand();
-
+                
                 SSIDDataCollected?.Invoke(this, EventArgs.Empty);
                 isLoading = false;
                 semaphore.Release();
@@ -271,6 +272,8 @@ namespace AAPADS
             currentChannel = 0;
             currentFrequency = null;
         }
-
+       
     }
+    
+
 }

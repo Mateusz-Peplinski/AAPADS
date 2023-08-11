@@ -124,6 +124,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\dataModels\networkAdapterInformationDataModel.cs" />
     <Compile Include="src\engine\data\detectionDictionary.cs" />
     <Compile Include="src\main\converters\DetectionStatusToColorConverter.cs" />
     <Compile Include="src\main\converters\CriticalityLevelToColorConverter.cs" />
