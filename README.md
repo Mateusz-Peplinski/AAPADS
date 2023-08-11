@@ -9,8 +9,8 @@
 ## 📌 Introduction
 The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively mitigates the increased risk of data interception and provides early detection of possible wireless attacks.
 
-Technical Overview 🖥️
-Platform & Development Environment:
+## Technical Overview 🖥️
+### Platform & Development Environment:
 
 Primary Language: C#
 Platform: x64 (64-bit) Windows operating system.
