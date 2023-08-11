@@ -71,6 +71,19 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
+    private string _liveLog;
+    public string LiveLog
+    {
+        get { return _liveLog; }
+        set
+        {
+            if (_liveLog != value)
+            {
+                _liveLog = value;
+                OnPropertyChanged("LiveLog");
+            }
+        }
+    }
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
@@ -85,20 +98,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     public void UpdateAccessPoints(DataIngestEngine dataIngestEngine)
     {
         AccessPoints.Clear();
-        //List<int> signalIndex = new List<int>();
-        //bool sorted = false;
-        //while (!sorted)
-        //{
-        //    sorted = true;
-        //    for (int i = 0; i < dataIngestEngine.SSID_LIST.Count - 1; i++)
-        //    {
-        //        if (dataIngestEngine.SIGNAL_STRENGTH_LIST[i] < dataIngestEngine.SIGNAL_STRENGTH_LIST[i+1])
-        //        {
-        //            signalIndex[i] = i+1;
-        //            signalIndex[i + 1] = i;
-        //        }
-        //    }
-        //}
+
         for (int i = 0; i < dataIngestEngine.SSID_LIST.Count; i++)
         {
             AccessPoints.Add(new dataModelStructure
@@ -131,7 +131,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         {
             if (acessPointEncMethod == "None")
             {
-
+                
             }
             else
             {
@@ -168,6 +168,18 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         }
 
         return total5GHzAPs;
+    }
+    public void AppendToLog(string message)
+    {
+        if (string.IsNullOrEmpty(LiveLog))
+        {
+            LiveLog = message;
+        }
+        else
+        {
+            LiveLog += "\n" + message;
+        }
+        
     }
 }
 

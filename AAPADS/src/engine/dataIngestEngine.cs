@@ -83,9 +83,13 @@ namespace AAPADS
         private int currentChannel = 0;
         private string currentFrequency = null;
 
+        //private overviewViewDataModel liveLogDataModelConsole;
+
 
         public void Start()
         {
+            //liveLogDataModelConsole = new overviewViewDataModel();
+
             SSID_LIST = new List<string>();
             ENCRYPTION_TYPE_LIST = new List<string>();
             BSSID_LIST = new List<string>();
@@ -146,6 +150,8 @@ namespace AAPADS
 
         private void RunNetshCommand()
         {
+           //liveLogDataModelConsole.AppendToLog("init netsh");
+
             ProcessStartInfo processInfo = new ProcessStartInfo
             {
                 FileName = "netsh",
