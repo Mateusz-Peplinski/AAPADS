@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="AAPADS/res/graphics/LargeLogoNoBackground.png" width="600">
+</p>
+
+<p align="center">
   <h1 align="center">🛡️ AAPADS 🛡️</h1>
 </p>
 
