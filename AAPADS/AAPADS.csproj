@@ -52,7 +52,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon_256.ico</ApplicationIcon>
+    <ApplicationIcon>SmallLogoNoBackground.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -191,12 +191,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="res\icons\icon_256.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="icon_256.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
@@ -209,10 +203,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="res\icons\AAPADS_icon_256.png" />
+    <Resource Include="res\graphics\ARCH_AAPADS.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="res\graphics\ARCH_AAPADS.png" />
+    <Resource Include="res\icons\icon.png" />
+    <Resource Include="res\graphics\LargeLogoBlackBackground.png" />
+    <Resource Include="res\graphics\LargeLogoNoBackground.png" />
+    <Resource Include="res\icons\SmallLogoNoBackground.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SmallLogoNoBackground.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets')" />
