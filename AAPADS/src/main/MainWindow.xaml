@@ -26,6 +26,7 @@
         <local:CriticalityLevelToColorConverter x:Key="CriticalityColorConverter" />
         <local:CriticalityLevelToTextConverter x:Key="CriticalityTextConverter" />
         <local:DetectionStatusToColorConverter x:Key="DetectionStatusToColorConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
     </Window.Resources>
 
     <materialDesign:Card Background="#303030">
@@ -236,8 +237,19 @@
                                         </Style.Triggers>
                                     </Style>
                                 </ListView.ItemContainerStyle>
-
                             </ListView>
+                            <materialDesign:Card
+                                Padding="4"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                UniformCornerRadius="14"
+                                Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}">
+                                <ProgressBar
+                                    IsIndeterminate="True"
+                                    Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                    Value="50" />
+                            </materialDesign:Card>
+
                         </DockPanel>
                     </ScrollViewer>
                     <ProgressBar Grid.Row="2" IsIndeterminate="True">

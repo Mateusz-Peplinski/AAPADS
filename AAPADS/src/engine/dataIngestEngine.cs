@@ -65,10 +65,12 @@ namespace AAPADS
             { 165, "5.825 GHz" }
         };
         public List<string> AUTH_LIST = new List<string>();
+        public bool isLoading = false;  
+        
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
         private bool isRunning = true;
-
+        private int programLoadCount = 0;
 
         private string currentSSID = null;
         private string currentEncryption = null;
@@ -101,7 +103,11 @@ namespace AAPADS
             while (isRunning)
             {
                 await semaphore.WaitAsync();
-
+                if (programLoadCount == 0)
+                {
+                    isLoading = true;
+                    programLoadCount++;
+                }
                 try
                 {
                     WifiScanner.PerformWifiScan();
@@ -129,7 +135,7 @@ namespace AAPADS
                 RunNetshCommand();
 
                 SSIDDataCollected?.Invoke(this, EventArgs.Empty);
-
+                isLoading = false;
                 semaphore.Release();
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
@@ -163,7 +169,6 @@ namespace AAPADS
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-
                 ParseNetworkInformation(e.Data);
             }
         }
