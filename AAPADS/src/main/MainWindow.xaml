@@ -28,10 +28,10 @@
         <local:DetectionStatusToColorConverter x:Key="DetectionStatusToColorConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
         <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-            <!--  Setters for properties you want to style  -->
+
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
-            <!--  Add more properties as needed  -->
+
         </Style>
     </Window.Resources>
 
@@ -39,14 +39,14 @@
         <TabControl
             HorizontalContentAlignment="Left"
             materialDesign:ColorZoneAssist.Background="#424242"
-            materialDesign:ColorZoneAssist.Foreground="#08b4ca"
+            materialDesign:ColorZoneAssist.Foreground="#D72323"
             materialDesign:ColorZoneAssist.Mode="Custom">
             <TabItem Name="overviewTab">
                 <TabItem.Header>
                     <StackPanel MouseLeftButtonDown="overviewTab_Click" Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#08b4ca"
+                            Foreground="#D72323"
                             Kind="RouterNetworkWireless" />
                         <TextBlock Text="OVERVIEW" />
                     </StackPanel>
@@ -75,7 +75,7 @@
                             <Menu.Resources>
                                 <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
                                     <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="Foreground" Value="#08b4ca" />
+                                    <Setter Property="Foreground" Value="AntiqueWhite" />
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="{DynamicResource MaterialDesignDarkBackground}" />
@@ -300,167 +300,32 @@
                                 </DataGrid.Columns>
 
                             </DataGrid>
-
-                            <!--<ListView
-                                x:Name="MAIN_OVERVIEW_TABLE"
-                                DockPanel.Dock="Top"
-                                Foreground="AntiqueWhite"
-                                ItemsSource="{Binding AccessPoints}">
-                                <ListView.View>
-
-                                    <GridView AllowsColumnReorder="True">
-                                        <GridView.ColumnHeaderContainerStyle>
-                                            <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="GridViewColumnHeader">
-                                                <Setter Property="Foreground" Value="#08b4ca" />
-                                            </Style>
-                                        </GridView.ColumnHeaderContainerStyle>
-
-                                        <GridViewColumn Header="STRENGTH">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                        <materialDesign:PackIcon Foreground="{Binding RSSI, Converter={StaticResource RSSIColorConverter}}" Kind="{Binding RSSI, Converter={StaticResource RSSIIconConverter}}" />
-                                                        <TextBlock
-                                                            FontWeight="Bold"
-                                                            Foreground="AntiqueWhite"
-                                                            Text="{Binding RSSI, StringFormat={}{0}%}"
-                                                            TextAlignment="Center" />
-                                                    </StackPanel>
-
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="BSSID">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding BSSID}"
-                                                        TextAlignment="Center" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="SSID">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <DockPanel Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
-                                                        <TextBlock Foreground="AntiqueWhite" Text="{Binding SSID}" />
-                                                    </DockPanel>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="STANDARD">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding WLAN_STANDARD}"
-                                                        TextAlignment="Center" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="CH">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Foreground="{Binding WIFI_CHANNEL, Converter={StaticResource ChannelColorConverter}}"
-                                                        Text="{Binding WIFI_CHANNEL}"
-                                                        TextAlignment="Center" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="BAND">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Foreground="{Binding FREQ_BAND, Converter={StaticResource FrequencyBandColorConverter}}"
-                                                        Text="{Binding FREQ_BAND}"
-                                                        TextAlignment="Center" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="FREQ">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Foreground="{Binding FREQUENCY, Converter={StaticResource FrequencyColorConverter}}"
-                                                        Text="{Binding FREQUENCY}"
-                                                        TextAlignment="Center" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="ENC">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding ENCRYPTION_USED}"
-                                                        TextAlignment="Center" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="AUTH">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding AUTHENTICATION}"
-                                                        TextAlignment="Center" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                    </GridView>
-                                </ListView.View>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="Background" Value="#424242" />
-                                        <Setter Property="Foreground" Value="#08b4ca" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListViewItem">
-                                                    <Border
-                                                        Background="{TemplateBinding Background}"
-                                                        BorderBrush="Transparent"
-                                                        BorderThickness="0">
-                                                        <GridViewRowPresenter
-                                                            Width="{TemplateBinding Width}"
-                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                            Content="{TemplateBinding Content}" />
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="Black" />
-                                            </Trigger>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter Property="Background" Value="Black" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                            </ListView>-->
                             <materialDesign:Card
                                 Padding="4"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
+                                Foreground="#D72323"
                                 UniformCornerRadius="14"
                                 Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}">
                                 <ProgressBar
                                     IsIndeterminate="True"
                                     Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                    Value="50" />
+                                    Value="50">
+                                    <!--  Override the default brush color for the ProgressBar  -->
+                                    <ProgressBar.Resources>
+                                        <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#D72323" />
+                                    </ProgressBar.Resources>
+                                </ProgressBar>
                             </materialDesign:Card>
+
 
                         </DockPanel>
                     </ScrollViewer>
                     <ProgressBar Grid.Row="2" IsIndeterminate="True">
                         <ProgressBar.Style>
                             <Style BasedOn="{StaticResource {x:Type ProgressBar}}" TargetType="ProgressBar">
-                                <Setter Property="Foreground" Value="#08b4ca" />
-                                <Setter Property="Background" Value="#08b4ca" />
+                                <Setter Property="Foreground" Value="#D72323" />
+                                <Setter Property="Background" Value="#D72323" />
                                 <Setter Property="BorderBrush" Value="Transparent" />
                             </Style>
                         </ProgressBar.Style>
@@ -470,7 +335,7 @@
                         <StackPanel>
                             <Border Background="{DynamicResource MaterialDesignDarkBackground}">
                                 <GroupBox
-                                    materialDesign:ColorZoneAssist.Background="#08b4ca"
+                                    materialDesign:ColorZoneAssist.Background="#D72323"
                                     materialDesign:ColorZoneAssist.Foreground="Black"
                                     materialDesign:ColorZoneAssist.Mode="Custom"
                                     DockPanel.Dock="Bottom"
@@ -689,7 +554,7 @@
                     <StackPanel MouseLeftButtonDown="detectionsTab_Click" Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#08b4ca"
+                            Foreground="#D72323"
                             Kind="WifiStrength4Alert" />
                         <TextBlock Text="DETECTIONS" />
                     </StackPanel>
@@ -698,7 +563,7 @@
 
                     <ListView
                         x:Name="DETECTION_TABLE"
-                        Foreground="#08b4ca"
+                        Foreground="#D72323"
                         ItemsSource="{Binding DETECTIONS}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -823,7 +688,7 @@
                                                         <TabControl
                                                             HorizontalContentAlignment="Left"
                                                             materialDesign:ColorZoneAssist.Background="#424242"
-                                                            materialDesign:ColorZoneAssist.Foreground="#08b4ca"
+                                                            materialDesign:ColorZoneAssist.Foreground="#D72323"
                                                             materialDesign:ColorZoneAssist.Mode="Custom">
                                                             <TabItem Header="INCIDENT OVERVIEW">
                                                                 <TextBlock>
@@ -917,7 +782,7 @@
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#08b4ca"
+                            Foreground="#D72323"
                             Kind="Console" />
                         <TextBlock Text="COMMAND &amp; CONTROL CENTER" />
                     </StackPanel>
@@ -929,7 +794,7 @@
                     <StackPanel MouseLeftButtonDown="NetworkAdapter_Click" Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
-                            Foreground="#08b4ca"
+                            Foreground="#D72323"
                             Kind="AccessPointNetwork" />
                         <TextBlock Text="NETWORK ADAPTERS" />
                     </StackPanel>
