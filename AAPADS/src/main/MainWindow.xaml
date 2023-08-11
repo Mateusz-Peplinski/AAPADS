@@ -27,6 +27,12 @@
         <local:CriticalityLevelToTextConverter x:Key="CriticalityTextConverter" />
         <local:DetectionStatusToColorConverter x:Key="DetectionStatusToColorConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <!--  Setters for properties you want to style  -->
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <!--  Add more properties as needed  -->
+        </Style>
     </Window.Resources>
 
     <materialDesign:Card Background="#303030">
@@ -97,14 +103,212 @@
 
                     <ScrollViewer Grid.Row="1">
                         <DockPanel LastChildFill="True">
-                            <ListView
+
+                            <DataGrid
+                                x:Name="MAIN_OVERVIEW_TABLE"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                materialDesign:DataGridAssist.CellPadding="16 8"
+                                materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
+                                AutoGenerateColumns="False"
+                                BorderBrush="Transparent"
+                                CanUserAddRows="False"
+                                CanUserSortColumns="True"
+                                CellStyle="{StaticResource DataGridCellStyle}"
+                                DockPanel.Dock="Top"
+                                Foreground="Transparent"
+                                ItemsSource="{Binding AccessPoints}">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="#424242" />
+
+                                        <!--  Define the Storyboards for the animations  -->
+                                        <Style.Resources>
+                                            <Storyboard x:Key="MouseOverAnimation">
+                                                <ColorAnimation
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="#767676"
+                                                    Duration="0:0:0.3" />
+                                            </Storyboard>
+                                            <Storyboard x:Key="MouseOutAnimation">
+                                                <ColorAnimation
+                                                    Storyboard.TargetProperty="Background.Color"
+                                                    To="#424242"
+                                                    Duration="0:0:0.3" />
+                                            </Storyboard>
+                                        </Style.Resources>
+
+                                        <!--  Apply the animations in the triggers  -->
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Trigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource MouseOverAnimation}" />
+                                                </Trigger.EnterActions>
+                                                <Trigger.ExitActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource MouseOutAnimation}" />
+                                                </Trigger.ExitActions>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <DataGrid.Columns>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="STRENGTH"
+                                        SortMemberPath="RSSI">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                    <materialDesign:PackIcon Foreground="{Binding RSSI, Converter={StaticResource RSSIColorConverter}}" Kind="{Binding RSSI, Converter={StaticResource RSSIIconConverter}}" />
+                                                    <TextBlock
+                                                        FontWeight="Bold"
+                                                        Foreground="AntiqueWhite"
+                                                        Text="{Binding RSSI, StringFormat={}{0}%}"
+                                                        TextAlignment="Center" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="BSSID"
+                                        SortMemberPath="BSSID">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Foreground="AntiqueWhite"
+                                                        Text="{Binding BSSID}"
+                                                        TextAlignment="Center" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="SSID"
+                                        SortMemberPath="SSID">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Foreground="AntiqueWhite"
+                                                        Text="{Binding SSID}"
+                                                        TextAlignment="Center" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="STANDARD"
+                                        SortMemberPath="WLAN_STANDARD">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Foreground="AntiqueWhite"
+                                                        Text="{Binding WLAN_STANDARD}"
+                                                        TextAlignment="Center" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="CH"
+                                        SortMemberPath="WIFI_CHANNEL">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    FontWeight="Bold"
+                                                    Foreground="{Binding WIFI_CHANNEL, Converter={StaticResource ChannelColorConverter}}"
+                                                    Text="{Binding WIFI_CHANNEL}"
+                                                    TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="BAND"
+                                        SortMemberPath="FREQ_BAND">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    FontWeight="Bold"
+                                                    Foreground="{Binding FREQ_BAND, Converter={StaticResource FrequencyBandColorConverter}}"
+                                                    Text="{Binding FREQ_BAND}"
+                                                    TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="FREQ"
+                                        SortMemberPath="FREQUENCY">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    FontWeight="Bold"
+                                                    Foreground="{Binding FREQUENCY, Converter={StaticResource FrequencyColorConverter}}"
+                                                    Text="{Binding FREQUENCY}"
+                                                    TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="ENC"
+                                        SortMemberPath="ENCRYPTION_USED">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Foreground="AntiqueWhite"
+                                                        Text="{Binding ENCRYPTION_USED}"
+                                                        TextAlignment="Center" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn
+                                        Width="*"
+                                        Header="AUTH"
+                                        SortMemberPath="AUTHENTICATION">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Foreground="AntiqueWhite"
+                                                        Text="{Binding AUTHENTICATION}"
+                                                        TextAlignment="Center" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+
+                            <!--<ListView
                                 x:Name="MAIN_OVERVIEW_TABLE"
                                 DockPanel.Dock="Top"
                                 Foreground="AntiqueWhite"
                                 ItemsSource="{Binding AccessPoints}">
                                 <ListView.View>
 
-                                    <GridView>
+                                    <GridView AllowsColumnReorder="True">
                                         <GridView.ColumnHeaderContainerStyle>
                                             <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="GridViewColumnHeader">
                                                 <Setter Property="Foreground" Value="#08b4ca" />
@@ -237,7 +441,7 @@
                                         </Style.Triggers>
                                     </Style>
                                 </ListView.ItemContainerStyle>
-                            </ListView>
+                            </ListView>-->
                             <materialDesign:Card
                                 Padding="4"
                                 HorizontalAlignment="Center"
@@ -722,7 +926,7 @@
             </TabItem>
             <TabItem>
                 <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel MouseLeftButtonDown="NetworkAdapter_Click" Orientation="Horizontal">
                         <materialDesign:PackIcon
                             Margin="0,0,5,0"
                             Foreground="#08b4ca"
@@ -730,7 +934,32 @@
                         <TextBlock Text="NETWORK ADAPTERS" />
                     </StackPanel>
                 </TabItem.Header>
-                <TextBlock Margin="8" Text="Secondary example tab 3333" />
+                <Grid>
+                    <DataGrid
+                        Margin="20"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        materialDesign:DataGridAssist.CellPadding="16 8"
+                        materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
+                        AutoGenerateColumns="False"
+                        BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                        CanUserAddRows="False"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding NETWORK_80211_ADAPTERS}"
+                        RowHeight="40">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_NAME}" Header="NAME" />
+                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_ID}" Header="ID" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding NETWORK_ADAPTER_DESCRIPTION}"
+                                Header="DESCRIPTION" />
+                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_STATUS}" Header="STATUS" />
+                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_SPEED_BYTES}" Header="SPEED" />
+                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_MAC_ADDRESS}" Header="MAC ADDRESS" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </TabItem>
         </TabControl>
     </materialDesign:Card>

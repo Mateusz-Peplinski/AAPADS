@@ -19,9 +19,7 @@ using System.Windows.Shapes;
 
 namespace AAPADS
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+   
     public partial class MainWindow : Window
     {
         private readonly DataIngestEngine dataIngestionEngineObject;
@@ -30,6 +28,8 @@ namespace AAPADS
         private readonly overviewViewDataModel overviewViewDisplay;
 
         private readonly detectionsViewDataModel detectionsDisplay;
+
+        private readonly networkAdapterInformationDataModel networkAdapterInformationDisplay;
 
         public MainWindow()
         {
@@ -46,6 +46,9 @@ namespace AAPADS
             detectionEngineObject.startdetection();
 
             DataContext = overviewViewDisplay;
+
+            networkAdapterInformationDisplay = new networkAdapterInformationDataModel();
+
 
         }
 
@@ -67,6 +70,13 @@ namespace AAPADS
         private void detectionsTab_Click(object sender, RoutedEventArgs e)
         {
             DataContext = detectionsDisplay;
+
+            
+        }
+        private void NetworkAdapter_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = networkAdapterInformationDisplay;
+            
         }
 
         private void UpdateOverviewTabUI(object sender, EventArgs e)
@@ -83,5 +93,6 @@ namespace AAPADS
                 detectionsDisplay.updateDetections(detectionEngineObject);
             });
         }
+
     }
 }
