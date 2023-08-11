@@ -1,13 +1,11 @@
 <p align="center">
-  <img src="AAPADS/res/graphics/LargeLogoNoBackground.png" width="600">
+  <img src="AAPADS/res/graphics/LargeLogoNoBackground.png" width="800">
 </p>
 
-<p align="center">
-  <h1 align="center">🛡️ AAPADS 🛡️</h1>
-</p>
+
 
 <p align="center">
-  <strong>Advanced Access Point Anomaly Detection System</strong>
+  <strong>🛡️ Advanced Access Point Anomaly Detection System 🛡️</strong>
 </p>
 
 ## 📌 Introduction
