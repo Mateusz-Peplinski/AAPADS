@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liveCharts="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:local="clr-namespace:AAPADS"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -595,14 +596,17 @@
                                                                         Text="GRAPH" />
                                                                 </StackPanel>
                                                             </TabItem.Header>
-                                                            <TextBlock>
-                                                                <Run Text="THIS IS WHERE THE GRAPHS WILL GO " />
-                                                                <LineBreak />
-                                                                <LineBreak />
-                                                                <Run FontStyle="Italic">
-                                                                    MAKE 2 TABS one for 5GHz and 2.4GHz
-                                                                </Run>
-                                                            </TextBlock>
+                                                            <liveCharts:CartesianChart
+                                                                Name="chart"
+                                                                LegendLocation="Bottom"
+                                                                Series="{Binding SeriesCollection}">
+                                                                <liveCharts:CartesianChart.AxisX>
+                                                                    <liveCharts:Axis LabelFormatter="{Binding DateTimeFormatter}" />
+                                                                </liveCharts:CartesianChart.AxisX>
+
+                                                            </liveCharts:CartesianChart>
+
+
                                                         </TabItem>
                                                     </TabControl>
                                                 </materialDesign:Card>
