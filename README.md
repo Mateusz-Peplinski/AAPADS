@@ -14,7 +14,7 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 
 * Primary Language: C#
 * Platform: x64 (64-bit) Windows operating system.
-* User Interface: Developed using Microsoft's WPF (Windows Presentation Foundation) to ensure an interactive and engaging frontend experience.
+* User Interface: Developed using Microsoft's WPF (Windows Presentation Foundation) to ensure an interactive front-end experience.
 
 ### 📐 Architecture
 ![Figure 1 – Basic architecture of AAPADS](AAPADS/res/graphics/ARCH_AAPADS.png)
@@ -24,7 +24,7 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 
 ### 1️⃣ Data Ingest Engine 
 * **Function**: Collects data about the wireless environment in which AAPADS operates.
-* **Data Type**: Electromagnetic wave transmissions in the 2.4GHz and 5GHz range.
+* **Data Type**: Electromagnetic wave transmissions in the 2.4GHz and 5GHz range (+6GHz if your WLAN adapter supports Wi-Fi 6).
 * **Operation**: Continuously passes data to the next stage for processing.
 
 ### 2️⃣ Normalization Engine 
