@@ -33,799 +33,888 @@
             <Setter Property="BorderBrush" Value="Transparent" />
 
         </Style>
+        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#555555" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            CaptionHeight="10"
+            CornerRadius="8"
+            GlassFrameThickness="0"
+            ResizeBorderThickness="0"
+            UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
 
-    <materialDesign:Card Background="#303030">
-        <TabControl
-            HorizontalContentAlignment="Left"
-            materialDesign:ColorZoneAssist.Background="#424242"
-            materialDesign:ColorZoneAssist.Foreground="#D72323"
-            materialDesign:ColorZoneAssist.Mode="Custom">
-            <TabItem Name="overviewTab">
-                <TabItem.Header>
-                    <StackPanel MouseLeftButtonDown="overviewTab_Click" Orientation="Horizontal">
-                        <materialDesign:PackIcon
-                            Margin="0,0,5,0"
-                            Foreground="#D72323"
-                            Kind="RouterNetworkWireless" />
-                        <TextBlock Text="OVERVIEW" />
-                    </StackPanel>
-                </TabItem.Header>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20px" />
-                        <!--  MENU  -->
+        <!--  Custom title bar  -->
+        <Grid Background="#333">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-                        <RowDefinition Height="*" />
-                        <!--  MAIN DISPLAY  -->
+            <StackPanel
+                Grid.Column="0"
+                Margin="10,0"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <!--  Icon  -->
+                <Image
+                    Width="20"
+                    Height="20"
+                    Margin="0,1,10,0"
+                    Source="..\..\res\icons\icon.png" />
 
-                        <RowDefinition Height="5" />
-                        <!--  LOAD BAR  -->
+                <!--  Title  -->
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Foreground="White"
+                    Text="AAPADS - Advanced Access Point Anomaly Detection System" />
+            </StackPanel>
 
-                        <RowDefinition Height="*" />
-                        <!--  SUMMARY  -->
+            <!--  Minimize Button  -->
+            <Button
+                Name="MinimizeButton"
+                Grid.Column="2"
+                Style="{StaticResource TitleBarButtonStyle}">
+                <TextBlock
+                    VerticalAlignment="Top"
+                    FontSize="16"
+                    Text="_" />
+            </Button>
 
-                        <RowDefinition Height="Auto" />
+            <!--  Maximize Button  -->
+            <Button
+                Name="MaximizeButton"
+                Grid.Column="3"
+                Style="{StaticResource TitleBarButtonStyle}">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="□" />
+            </Button>
 
-                    </Grid.RowDefinitions>
+            <!--  Close Button  -->
+            <Button
+                Name="CloseButton"
+                Grid.Column="4"
+                Background="Red"
+                Style="{StaticResource TitleBarButtonStyle}">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="x" />
+            </Button>
+        </Grid>
+        <Grid Grid.Row="1" Margin="0,10,0,0">
+            <materialDesign:Card Background="#303030">
+                <TabControl
+                    HorizontalContentAlignment="Left"
+                    materialDesign:ColorZoneAssist.Background="#424242"
+                    materialDesign:ColorZoneAssist.Foreground="#D72323"
+                    materialDesign:ColorZoneAssist.Mode="Custom">
+                    <TabItem Name="overviewTab">
+                        <TabItem.Header>
+                            <StackPanel MouseLeftButtonDown="overviewTab_Click" Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Margin="0,0,5,0"
+                                    Foreground="#D72323"
+                                    Kind="RouterNetworkWireless" />
+                                <TextBlock Text="OVERVIEW" />
+                            </StackPanel>
+                        </TabItem.Header>
 
-                    <materialDesign:Card Grid.Row="0" Background="{DynamicResource MaterialDesignDarkBackground}">
-                        <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type materialDesign:Card}}, Path=ActualHeight}" Background="{DynamicResource MaterialDesignDarkBackground}">
-                            <Menu.Resources>
-                                <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="Foreground" Value="AntiqueWhite" />
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="{DynamicResource MaterialDesignDarkBackground}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Menu.Resources>
-                            <MenuItem Header="File">
-                                <MenuItem Header="Import Whitelist" />
-                                <MenuItem Header="Import Blacklist" />
-                                <MenuItem Header="Settings" />
-                                <MenuItem
-                                    Click="EXIT_Click"
-                                    Foreground="Red"
-                                    Header="Exit" />
-                            </MenuItem>
-                            <MenuItem Header="Edit">
-                                <MenuItem Header="Item 1" />
-                                <MenuItem Header="Item 2" />
-                                <MenuItem Header="Item 3" />
-                            </MenuItem>
-                            <MenuItem Click="About_Click" Header="About" />
-                        </Menu>
-                    </materialDesign:Card>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20px" />
+                                <!--  MENU  -->
 
-                    <ScrollViewer Grid.Row="1">
-                        <DockPanel LastChildFill="True">
+                                <RowDefinition Height="*" />
+                                <!--  MAIN DISPLAY  -->
 
+                                <RowDefinition Height="5" />
+                                <!--  LOAD BAR  -->
+
+                                <RowDefinition Height="Auto" />
+                                <!--  SUMMARY  -->
+
+                                <RowDefinition Height="Auto" />
+
+                            </Grid.RowDefinitions>
+
+                            <materialDesign:Card Grid.Row="0" Background="{DynamicResource MaterialDesignDarkBackground}">
+                                <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type materialDesign:Card}}, Path=ActualHeight}" Background="{DynamicResource MaterialDesignDarkBackground}">
+                                    <Menu.Resources>
+                                        <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
+                                            <Setter Property="FontSize" Value="12" />
+                                            <Setter Property="Foreground" Value="AntiqueWhite" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignDarkBackground}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Menu.Resources>
+                                    <MenuItem Header="File">
+                                        <MenuItem Header="Import Whitelist" />
+                                        <MenuItem Header="Import Blacklist" />
+                                        <MenuItem Header="Settings" />
+                                        <MenuItem
+                                            Click="EXIT_Click"
+                                            Foreground="Red"
+                                            Header="Exit" />
+                                    </MenuItem>
+                                    <MenuItem Header="Edit">
+                                        <MenuItem Header="Item 1" />
+                                        <MenuItem Header="Item 2" />
+                                        <MenuItem Header="Item 3" />
+                                    </MenuItem>
+                                    <MenuItem Click="About_Click" Header="About" />
+                                </Menu>
+                            </materialDesign:Card>
+
+                            <ScrollViewer Grid.Row="1">
+                                <DockPanel LastChildFill="True">
+
+                                    <DataGrid
+                                        x:Name="MAIN_OVERVIEW_TABLE"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Top"
+                                        materialDesign:DataGridAssist.CellPadding="16 8"
+                                        materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
+                                        AutoGenerateColumns="False"
+                                        BorderBrush="Transparent"
+                                        CanUserAddRows="False"
+                                        CanUserSortColumns="True"
+                                        CellStyle="{StaticResource DataGridCellStyle}"
+                                        DockPanel.Dock="Top"
+                                        Foreground="Transparent"
+                                        ItemsSource="{Binding AccessPoints}">
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow">
+                                                <Setter Property="Background" Value="#424242" />
+                                                <Style.Resources>
+                                                    <Storyboard x:Key="MouseOverAnimation">
+                                                        <ColorAnimation
+                                                            Storyboard.TargetProperty="Background.Color"
+                                                            To="#767676"
+                                                            Duration="0:0:0.3" />
+                                                    </Storyboard>
+                                                    <Storyboard x:Key="MouseOutAnimation">
+                                                        <ColorAnimation
+                                                            Storyboard.TargetProperty="Background.Color"
+                                                            To="#424242"
+                                                            Duration="0:0:0.3" />
+                                                    </Storyboard>
+                                                </Style.Resources>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Trigger.EnterActions>
+                                                            <BeginStoryboard Storyboard="{StaticResource MouseOverAnimation}" />
+                                                        </Trigger.EnterActions>
+                                                        <Trigger.ExitActions>
+                                                            <BeginStoryboard Storyboard="{StaticResource MouseOutAnimation}" />
+                                                        </Trigger.ExitActions>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+
+                                        <DataGrid.Columns>
+
+                                            <DataGridTemplateColumn
+                                                Width="100"
+                                                Header="STRENGTH"
+                                                SortMemberPath="RSSI">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                            <materialDesign:PackIcon Foreground="{Binding RSSI, Converter={StaticResource RSSIColorConverter}}" Kind="{Binding RSSI, Converter={StaticResource RSSIIconConverter}}" />
+                                                            <TextBlock
+                                                                FontWeight="Bold"
+                                                                Foreground="AntiqueWhite"
+                                                                Text="{Binding RSSI, StringFormat={}{0}%}"
+                                                                TextAlignment="Left" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="BSSID"
+                                                SortMemberPath="BSSID">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                            <TextBlock
+                                                                Foreground="AntiqueWhite"
+                                                                Text="{Binding BSSID}"
+                                                                TextAlignment="Left" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="SSID"
+                                                SortMemberPath="SSID">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                            <TextBlock
+                                                                Foreground="AntiqueWhite"
+                                                                Text="{Binding SSID}"
+                                                                TextAlignment="Left" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="STANDARD"
+                                                SortMemberPath="WLAN_STANDARD">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                            <TextBlock
+                                                                Foreground="AntiqueWhite"
+                                                                Text="{Binding WLAN_STANDARD}"
+                                                                TextAlignment="Center" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="CH"
+                                                SortMemberPath="WIFI_CHANNEL">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            FontWeight="Bold"
+                                                            Foreground="{Binding WIFI_CHANNEL, Converter={StaticResource ChannelColorConverter}}"
+                                                            Text="{Binding WIFI_CHANNEL}"
+                                                            TextAlignment="Center" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="BAND"
+                                                SortMemberPath="FREQ_BAND">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            FontWeight="Bold"
+                                                            Foreground="{Binding FREQ_BAND, Converter={StaticResource FrequencyBandColorConverter}}"
+                                                            Text="{Binding FREQ_BAND}"
+                                                            TextAlignment="Center" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="FREQ"
+                                                SortMemberPath="FREQUENCY">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            FontWeight="Bold"
+                                                            Foreground="{Binding FREQUENCY, Converter={StaticResource FrequencyColorConverter}}"
+                                                            Text="{Binding FREQUENCY}"
+                                                            TextAlignment="Center" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="ENC"
+                                                SortMemberPath="ENCRYPTION_USED">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                                            <TextBlock
+                                                                Foreground="AntiqueWhite"
+                                                                Text="{Binding ENCRYPTION_USED}"
+                                                                TextAlignment="Center" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Width="*"
+                                                Header="AUTH"
+                                                SortMemberPath="AUTHENTICATION">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                                            <TextBlock
+                                                                Foreground="AntiqueWhite"
+                                                                Text="{Binding AUTHENTICATION}"
+                                                                TextAlignment="Center" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                        </DataGrid.Columns>
+
+                                    </DataGrid>
+                                    <materialDesign:Card
+                                        Padding="4"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="#D72323"
+                                        UniformCornerRadius="14"
+                                        Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}">
+                                        <ProgressBar
+                                            IsIndeterminate="True"
+                                            Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                            Value="50">
+                                            <ProgressBar.Resources>
+                                                <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#D72323" />
+                                            </ProgressBar.Resources>
+                                        </ProgressBar>
+                                    </materialDesign:Card>
+
+
+                                </DockPanel>
+                            </ScrollViewer>
+                            <ProgressBar Grid.Row="2" IsIndeterminate="True">
+                                <ProgressBar.Style>
+                                    <Style BasedOn="{StaticResource {x:Type ProgressBar}}" TargetType="ProgressBar">
+                                        <Setter Property="Foreground" Value="#D72323" />
+                                        <Setter Property="Background" Value="#D72323" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                    </Style>
+                                </ProgressBar.Style>
+                            </ProgressBar>
+
+                            <ScrollViewer Grid.Row="3" DockPanel.Dock="Bottom">
+                                <StackPanel>
+                                    <Border Background="{DynamicResource MaterialDesignDarkBackground}">
+                                        <GroupBox
+                                            materialDesign:ColorZoneAssist.Background="#D72323"
+                                            materialDesign:ColorZoneAssist.Foreground="Black"
+                                            materialDesign:ColorZoneAssist.Mode="Custom"
+                                            DockPanel.Dock="Bottom"
+                                            Header="Custom Header">
+
+                                            <GroupBox.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock
+                                                        HorizontalAlignment="Center"
+                                                        FontWeight="Bold"
+                                                        Text="SUMMARY" />
+                                                </DataTemplate>
+                                            </GroupBox.HeaderTemplate>
+                                            <Grid>
+                                                <materialDesign:Card>
+                                                    <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
+                                                        <TabItem>
+                                                            <TabItem.Header>
+                                                                <StackPanel Width="auto" Height="auto">
+                                                                    <materialDesign:PackIcon
+                                                                        Width="24"
+                                                                        Height="24"
+                                                                        HorizontalAlignment="Center"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Kind="NoteSearchOutline" />
+                                                                    <TextBlock
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="12"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Text="SUMMARY" />
+                                                                </StackPanel>
+                                                            </TabItem.Header>
+
+                                                            <DockPanel LastChildFill="True">
+                                                                <StackPanel DockPanel.Dock="Left">
+                                                                    <Border
+                                                                        Margin="2"
+                                                                        Padding="2"
+                                                                        Background="#424242"
+                                                                        CornerRadius="5">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*" />
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <TextBlock
+                                                                                Grid.Column="0"
+                                                                                VerticalAlignment="Center"
+                                                                                FontWeight="Bold"
+                                                                                Foreground="Beige"
+                                                                                Text="ACCESS POINTS DETECTED:" />
+                                                                            <Border
+                                                                                Grid.Column="1"
+                                                                                Margin="5,0,0,0"
+                                                                                Padding="5"
+                                                                                Background="OrangeRed"
+                                                                                CornerRadius="5">
+                                                                                <TextBlock
+                                                                                    VerticalAlignment="Center"
+                                                                                    Foreground="White"
+                                                                                    Text="{Binding TOTAL_DETECTED_AP}" />
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="2"
+                                                                        Padding="2"
+                                                                        Background="#424242"
+                                                                        CornerRadius="5">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*" />
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <TextBlock
+                                                                                Grid.Column="0"
+                                                                                VerticalAlignment="Center"
+                                                                                FontWeight="Bold"
+                                                                                Foreground="Beige"
+                                                                                Text="SECURE ACCESS POINTS:" />
+                                                                            <Border
+                                                                                Grid.Column="1"
+                                                                                Margin="5,0,0,0"
+                                                                                Padding="5"
+                                                                                Background="OrangeRed"
+                                                                                CornerRadius="5">
+                                                                                <TextBlock
+                                                                                    VerticalAlignment="Center"
+                                                                                    Foreground="White"
+                                                                                    Text="{Binding TOTAL_SECURE_AP}" />
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="2"
+                                                                        Padding="2"
+                                                                        Background="#424242"
+                                                                        CornerRadius="5">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*" />
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <TextBlock
+                                                                                Grid.Column="0"
+                                                                                VerticalAlignment="Center"
+                                                                                FontWeight="Bold"
+                                                                                Foreground="Beige"
+                                                                                Text="2.4 GHz NETWORKS:" />
+                                                                            <Border
+                                                                                Grid.Column="1"
+                                                                                Margin="5,0,0,0"
+                                                                                Padding="5"
+                                                                                Background="OrangeRed"
+                                                                                CornerRadius="5">
+                                                                                <TextBlock
+                                                                                    VerticalAlignment="Center"
+                                                                                    Foreground="White"
+                                                                                    Text="{Binding TOTAL_2_4_GHz_AP}" />
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="2"
+                                                                        Padding="2"
+                                                                        Background="#424242"
+                                                                        CornerRadius="5">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*" />
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <TextBlock
+                                                                                Grid.Column="0"
+                                                                                VerticalAlignment="Center"
+                                                                                FontWeight="Bold"
+                                                                                Foreground="Beige"
+                                                                                Text="5 GHz NETWORKS:" />
+                                                                            <Border
+                                                                                Grid.Column="1"
+                                                                                Margin="5,0,0,0"
+                                                                                Padding="5"
+                                                                                Background="OrangeRed"
+                                                                                CornerRadius="5">
+                                                                                <TextBlock
+                                                                                    VerticalAlignment="Center"
+                                                                                    Foreground="White"
+                                                                                    Text="{Binding TOTAL_5_GHz_AP}" />
+                                                                            </Border>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                                <GroupBox
+                                                                    Width="750"
+                                                                    materialDesign:ColorZoneAssist.Background="OrangeRed"
+                                                                    materialDesign:ColorZoneAssist.Foreground="Black"
+                                                                    materialDesign:ColorZoneAssist.Mode="Custom"
+                                                                    DockPanel.Dock="Right"
+                                                                    Header="LIVE CONSOLE">
+                                                                    <GroupBox.HeaderTemplate>
+                                                                        <DataTemplate>
+                                                                            <TextBlock
+                                                                                FontWeight="Bold"
+                                                                                Text="LIVE CONSOLE"
+                                                                                TextAlignment="Center" />
+                                                                        </DataTemplate>
+                                                                    </GroupBox.HeaderTemplate>
+                                                                    <TextBox
+                                                                        Background="#424242"
+                                                                        Foreground="Beige"
+                                                                        IsHitTestVisible="False"
+                                                                        IsReadOnly="True"
+                                                                        Text="{Binding LiveLog, Mode=OneWay}"
+                                                                        TextWrapping="Wrap" />
+                                                                </GroupBox>
+                                                            </DockPanel>
+                                                        </TabItem>
+
+                                                        <TabItem>
+                                                            <TabItem.Header>
+                                                                <StackPanel Width="auto" Height="auto">
+                                                                    <materialDesign:PackIcon
+                                                                        Width="24"
+                                                                        Height="24"
+                                                                        HorizontalAlignment="Center"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Kind="ChartBellCurve" />
+                                                                    <TextBlock
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="12"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Text="GRAPH" />
+                                                                </StackPanel>
+                                                            </TabItem.Header>
+                                                            <TextBlock>
+                                                                <Run Text="THIS IS WHERE THE GRAPHS WILL GO " />
+                                                                <LineBreak />
+                                                                <LineBreak />
+                                                                <Run FontStyle="Italic">
+                                                                    MAKE 2 TABS one for 5GHz and 2.4GHz
+                                                                </Run>
+                                                            </TextBlock>
+                                                        </TabItem>
+                                                    </TabControl>
+                                                </materialDesign:Card>
+                                            </Grid>
+                                        </GroupBox>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+
+                        </Grid>
+
+                    </TabItem>
+                    <TabItem Name="DetectionsTab">
+                        <TabItem.Header>
+                            <StackPanel MouseLeftButtonDown="detectionsTab_Click" Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Margin="0,0,5,0"
+                                    Foreground="#D72323"
+                                    Kind="WifiStrength4Alert" />
+                                <TextBlock Text="DETECTIONS" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <ScrollViewer Grid.Row="1">
+
+                            <ListView
+                                x:Name="DETECTION_TABLE"
+                                Foreground="#D72323"
+                                ItemsSource="{Binding DETECTIONS}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander>
+                                            <Expander.Header>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border
+                                                        Margin="2"
+                                                        Background="#424242"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Border
+                                                                Grid.Column="0"
+                                                                Margin="5"
+                                                                Background="{Binding DETECTION_STATUS, Converter={StaticResource DetectionStatusToColorConverter}}"
+                                                                CornerRadius="3">
+                                                                <TextBlock
+                                                                    Width="85"
+                                                                    Margin="0,0,0,0"
+                                                                    VerticalAlignment="Center"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="Black"
+                                                                    Text="{Binding DETECTION_STATUS}"
+                                                                    TextAlignment="Center" />
+                                                            </Border>
+                                                            <Border
+                                                                Grid.Column="1"
+                                                                MaxWidth="100"
+                                                                Margin="5"
+                                                                Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
+                                                                CornerRadius="3">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock
+                                                                        Grid.Column="0"
+                                                                        Width="65"
+                                                                        Margin="0,0,0,0"
+                                                                        VerticalAlignment="Center"
+                                                                        FontWeight="Bold"
+                                                                        Foreground="Black"
+                                                                        Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}"
+                                                                        TextAlignment="Center" />
+                                                                    <Border
+                                                                        Grid.Column="1"
+                                                                        Margin="2"
+                                                                        Background="Black"
+                                                                        CornerRadius="12">
+                                                                        <TextBlock
+                                                                            Width="20"
+                                                                            VerticalAlignment="Center"
+                                                                            Background="Black"
+                                                                            FontWeight="Bold"
+                                                                            Foreground="AntiqueWhite"
+                                                                            Text="{Binding RISK_LEVEL}"
+                                                                            TextAlignment="Center" />
+                                                                    </Border>
+                                                                </Grid>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+
+                                                    <Border
+                                                        Grid.Column="3"
+                                                        Margin="2"
+                                                        Background="#424242"
+                                                        CornerRadius="6">
+                                                        <Grid VerticalAlignment="Center">
+                                                            <TextBlock
+                                                                Margin="8,0,0,0"
+                                                                Text="Detection: Possible DeAuth Attack"
+                                                                TextWrapping="NoWrap" />
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border
+                                                        Grid.Column="4"
+                                                        Background="#424242"
+                                                        CornerRadius="6">
+                                                        <Grid VerticalAlignment="Center">
+                                                            <TextBlock
+                                                                Margin="8,0,0,0"
+                                                                Text="Time of Detection: 13:30:12 [Date: 13th July 2023]"
+                                                                TextWrapping="NoWrap" />
+                                                        </Grid>
+                                                    </Border>
+
+                                                </Grid>
+                                            </Expander.Header>
+                                            <StackPanel>
+                                                <materialDesign:Card Margin="20">
+                                                    <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
+                                                        <TabItem>
+                                                            <TabItem.Header>
+                                                                <StackPanel Width="auto" Height="auto">
+                                                                    <materialDesign:PackIcon
+                                                                        Width="24"
+                                                                        Height="24"
+                                                                        HorizontalAlignment="Center"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Kind="ShieldAlert" />
+                                                                    <TextBlock
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="12"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Text="INFO" />
+                                                                </StackPanel>
+                                                            </TabItem.Header>
+                                                            <materialDesign:Card>
+                                                                <TabControl
+                                                                    HorizontalContentAlignment="Left"
+                                                                    materialDesign:ColorZoneAssist.Background="#424242"
+                                                                    materialDesign:ColorZoneAssist.Foreground="#D72323"
+                                                                    materialDesign:ColorZoneAssist.Mode="Custom">
+                                                                    <TabItem Header="INCIDENT OVERVIEW">
+                                                                        <TextBlock>
+                                                                            <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
+                                                                            <LineBreak />
+                                                                            <LineBreak />
+                                                                            <Run FontStyle="Italic">
+                                                                                Need to find out what information here is usefull
+                                                                            </Run>
+                                                                        </TextBlock>
+                                                                    </TabItem>
+                                                                    <TabItem Header="ACCESS POINT INFORMATION">
+                                                                        <TextBlock>
+                                                                            <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
+                                                                            <LineBreak />
+                                                                            <LineBreak />
+                                                                            <Run FontStyle="Italic">
+                                                                                Need to find out what information here is usefull
+                                                                            </Run>
+                                                                        </TextBlock>
+                                                                    </TabItem>
+                                                                    <TabItem Header="PACKET/FRAME DATA">
+                                                                        <TextBlock>
+                                                                            <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
+                                                                            <LineBreak />
+                                                                            <LineBreak />
+                                                                            <Run FontStyle="Italic">
+                                                                                Need to find out what information here is usefull
+                                                                            </Run>
+                                                                        </TextBlock>
+                                                                    </TabItem>
+                                                                    <TabItem Header="EXTRA">
+                                                                        <TextBlock Margin="8" Text="EXTRA" />
+                                                                    </TabItem>
+                                                                </TabControl>
+                                                            </materialDesign:Card>
+
+                                                        </TabItem>
+
+                                                        <TabItem>
+                                                            <TabItem.Header>
+                                                                <StackPanel Width="auto" Height="auto">
+                                                                    <materialDesign:PackIcon
+                                                                        Width="24"
+                                                                        Height="24"
+                                                                        HorizontalAlignment="Center"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Kind="ShieldAccount" />
+                                                                    <TextBlock
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="12"
+                                                                        Foreground="AntiqueWhite"
+                                                                        Text="ACTIONS" />
+                                                                </StackPanel>
+                                                            </TabItem.Header>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                    <ColumnDefinition Width="*" />
+
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0">
+                                                                    <Run Text="THIS IS WHERE THE USER CAN PREFORM ACTIONS SUCH AS CHANGE STATUS... " />
+                                                                    <LineBreak />
+                                                                    <LineBreak />
+                                                                    <Run FontStyle="Italic">
+                                                                        Need to find out what information here is usefull
+                                                                    </Run>
+                                                                </TextBlock>
+
+                                                            </Grid>
+                                                        </TabItem>
+                                                    </TabControl>
+                                                </materialDesign:Card>
+                                            </StackPanel>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Background" Value="#424242" />
+                                        <Setter Property="Foreground" Value="AntiqueWhite" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Margin="0,0,5,0"
+                                    Foreground="#D72323"
+                                    Kind="Console" />
+                                <TextBlock Text="COMMAND &amp; CONTROL CENTER" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <TextBlock Margin="8" Text="Secondary example tab 3333" />
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel MouseLeftButtonDown="NetworkAdapter_Click" Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Margin="0,0,5,0"
+                                    Foreground="#D72323"
+                                    Kind="AccessPointNetwork" />
+                                <TextBlock Text="NETWORK ADAPTERS" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid>
                             <DataGrid
-                                x:Name="MAIN_OVERVIEW_TABLE"
+                                Margin="20"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Top"
                                 materialDesign:DataGridAssist.CellPadding="16 8"
                                 materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
                                 AutoGenerateColumns="False"
-                                BorderBrush="Transparent"
+                                BorderBrush="{DynamicResource PrimaryHueMidBrush}"
                                 CanUserAddRows="False"
-                                CanUserSortColumns="True"
-                                CellStyle="{StaticResource DataGridCellStyle}"
-                                DockPanel.Dock="Top"
-                                Foreground="Transparent"
-                                ItemsSource="{Binding AccessPoints}">
-                                <DataGrid.RowStyle>
-                                    <Style TargetType="DataGridRow">
-                                        <Setter Property="Background" Value="#424242" />
-
-                                        <!--  Define the Storyboards for the animations  -->
-                                        <Style.Resources>
-                                            <Storyboard x:Key="MouseOverAnimation">
-                                                <ColorAnimation
-                                                    Storyboard.TargetProperty="Background.Color"
-                                                    To="#767676"
-                                                    Duration="0:0:0.3" />
-                                            </Storyboard>
-                                            <Storyboard x:Key="MouseOutAnimation">
-                                                <ColorAnimation
-                                                    Storyboard.TargetProperty="Background.Color"
-                                                    To="#424242"
-                                                    Duration="0:0:0.3" />
-                                            </Storyboard>
-                                        </Style.Resources>
-
-                                        <!--  Apply the animations in the triggers  -->
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Trigger.EnterActions>
-                                                    <BeginStoryboard Storyboard="{StaticResource MouseOverAnimation}" />
-                                                </Trigger.EnterActions>
-                                                <Trigger.ExitActions>
-                                                    <BeginStoryboard Storyboard="{StaticResource MouseOutAnimation}" />
-                                                </Trigger.ExitActions>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGrid.RowStyle>
-
+                                IsReadOnly="True"
+                                ItemsSource="{Binding NETWORK_80211_ADAPTERS}"
+                                RowHeight="40">
                                 <DataGrid.Columns>
-
-                                    <DataGridTemplateColumn
+                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_NAME}" Header="NAME" />
+                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_ID}" Header="ID" />
+                                    <DataGridTextColumn
                                         Width="*"
-                                        Header="STRENGTH"
-                                        SortMemberPath="RSSI">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                    <materialDesign:PackIcon Foreground="{Binding RSSI, Converter={StaticResource RSSIColorConverter}}" Kind="{Binding RSSI, Converter={StaticResource RSSIIconConverter}}" />
-                                                    <TextBlock
-                                                        FontWeight="Bold"
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding RSSI, StringFormat={}{0}%}"
-                                                        TextAlignment="Center" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="BSSID"
-                                        SortMemberPath="BSSID">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding BSSID}"
-                                                        TextAlignment="Center" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="SSID"
-                                        SortMemberPath="SSID">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding SSID}"
-                                                        TextAlignment="Center" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="STANDARD"
-                                        SortMemberPath="WLAN_STANDARD">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding WLAN_STANDARD}"
-                                                        TextAlignment="Center" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="CH"
-                                        SortMemberPath="WIFI_CHANNEL">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock
-                                                    FontWeight="Bold"
-                                                    Foreground="{Binding WIFI_CHANNEL, Converter={StaticResource ChannelColorConverter}}"
-                                                    Text="{Binding WIFI_CHANNEL}"
-                                                    TextAlignment="Center" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="BAND"
-                                        SortMemberPath="FREQ_BAND">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock
-                                                    FontWeight="Bold"
-                                                    Foreground="{Binding FREQ_BAND, Converter={StaticResource FrequencyBandColorConverter}}"
-                                                    Text="{Binding FREQ_BAND}"
-                                                    TextAlignment="Center" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="FREQ"
-                                        SortMemberPath="FREQUENCY">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock
-                                                    FontWeight="Bold"
-                                                    Foreground="{Binding FREQUENCY, Converter={StaticResource FrequencyColorConverter}}"
-                                                    Text="{Binding FREQUENCY}"
-                                                    TextAlignment="Center" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="ENC"
-                                        SortMemberPath="ENCRYPTION_USED">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding ENCRYPTION_USED}"
-                                                        TextAlignment="Center" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="AUTH"
-                                        SortMemberPath="AUTHENTICATION">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Foreground="AntiqueWhite"
-                                                        Text="{Binding AUTHENTICATION}"
-                                                        TextAlignment="Center" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
+                                        Binding="{Binding NETWORK_ADAPTER_DESCRIPTION}"
+                                        Header="DESCRIPTION" />
+                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_STATUS}" Header="STATUS" />
+                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_SPEED_BYTES}" Header="SPEED" />
+                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_MAC_ADDRESS}" Header="MAC ADDRESS" />
                                 </DataGrid.Columns>
-
                             </DataGrid>
-                            <materialDesign:Card
-                                Padding="4"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="#D72323"
-                                UniformCornerRadius="14"
-                                Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}">
-                                <ProgressBar
-                                    IsIndeterminate="True"
-                                    Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                    Value="50">
-                                    <!--  Override the default brush color for the ProgressBar  -->
-                                    <ProgressBar.Resources>
-                                        <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#D72323" />
-                                    </ProgressBar.Resources>
-                                </ProgressBar>
-                            </materialDesign:Card>
-
-
-                        </DockPanel>
-                    </ScrollViewer>
-                    <ProgressBar Grid.Row="2" IsIndeterminate="True">
-                        <ProgressBar.Style>
-                            <Style BasedOn="{StaticResource {x:Type ProgressBar}}" TargetType="ProgressBar">
-                                <Setter Property="Foreground" Value="#D72323" />
-                                <Setter Property="Background" Value="#D72323" />
-                                <Setter Property="BorderBrush" Value="Transparent" />
-                            </Style>
-                        </ProgressBar.Style>
-                    </ProgressBar>
-
-                    <ScrollViewer Grid.Row="3" DockPanel.Dock="Bottom">
-                        <StackPanel>
-                            <Border Background="{DynamicResource MaterialDesignDarkBackground}">
-                                <GroupBox
-                                    materialDesign:ColorZoneAssist.Background="#D72323"
-                                    materialDesign:ColorZoneAssist.Foreground="Black"
-                                    materialDesign:ColorZoneAssist.Mode="Custom"
-                                    DockPanel.Dock="Bottom"
-                                    Header="Custom Header">
-
-                                    <GroupBox.HeaderTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                FontWeight="Bold"
-                                                Text="SUMMARY" />
-                                        </DataTemplate>
-                                    </GroupBox.HeaderTemplate>
-                                    <Grid>
-                                        <materialDesign:Card>
-                                            <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
-                                                <TabItem>
-                                                    <TabItem.Header>
-                                                        <StackPanel Width="auto" Height="auto">
-                                                            <materialDesign:PackIcon
-                                                                Width="24"
-                                                                Height="24"
-                                                                HorizontalAlignment="Center"
-                                                                Foreground="AntiqueWhite"
-                                                                Kind="NoteSearchOutline" />
-                                                            <TextBlock
-                                                                HorizontalAlignment="Center"
-                                                                FontSize="12"
-                                                                Foreground="AntiqueWhite"
-                                                                Text="SUMMARY" />
-                                                        </StackPanel>
-                                                    </TabItem.Header>
-
-                                                    <DockPanel LastChildFill="True">
-                                                        <StackPanel DockPanel.Dock="Left">
-                                                            <Border
-                                                                Margin="2"
-                                                                Padding="2"
-                                                                Background="#424242"
-                                                                CornerRadius="5">
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="*" />
-                                                                        <ColumnDefinition Width="Auto" />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <TextBlock
-                                                                        Grid.Column="0"
-                                                                        VerticalAlignment="Center"
-                                                                        FontWeight="Bold"
-                                                                        Foreground="Beige"
-                                                                        Text="ACCESS POINTS DETECTED:" />
-                                                                    <Border
-                                                                        Grid.Column="1"
-                                                                        Margin="5,0,0,0"
-                                                                        Padding="5"
-                                                                        Background="OrangeRed"
-                                                                        CornerRadius="5">
-                                                                        <TextBlock
-                                                                            VerticalAlignment="Center"
-                                                                            Foreground="White"
-                                                                            Text="{Binding TOTAL_DETECTED_AP}" />
-                                                                    </Border>
-                                                                </Grid>
-                                                            </Border>
-                                                            <Border
-                                                                Margin="2"
-                                                                Padding="2"
-                                                                Background="#424242"
-                                                                CornerRadius="5">
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="*" />
-                                                                        <ColumnDefinition Width="Auto" />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <TextBlock
-                                                                        Grid.Column="0"
-                                                                        VerticalAlignment="Center"
-                                                                        FontWeight="Bold"
-                                                                        Foreground="Beige"
-                                                                        Text="SECURE ACCESS POINTS:" />
-                                                                    <Border
-                                                                        Grid.Column="1"
-                                                                        Margin="5,0,0,0"
-                                                                        Padding="5"
-                                                                        Background="OrangeRed"
-                                                                        CornerRadius="5">
-                                                                        <TextBlock
-                                                                            VerticalAlignment="Center"
-                                                                            Foreground="White"
-                                                                            Text="{Binding TOTAL_SECURE_AP}" />
-                                                                    </Border>
-                                                                </Grid>
-                                                            </Border>
-                                                            <Border
-                                                                Margin="2"
-                                                                Padding="2"
-                                                                Background="#424242"
-                                                                CornerRadius="5">
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="*" />
-                                                                        <ColumnDefinition Width="Auto" />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <TextBlock
-                                                                        Grid.Column="0"
-                                                                        VerticalAlignment="Center"
-                                                                        FontWeight="Bold"
-                                                                        Foreground="Beige"
-                                                                        Text="2.4 GHz NETWORKS:" />
-                                                                    <Border
-                                                                        Grid.Column="1"
-                                                                        Margin="5,0,0,0"
-                                                                        Padding="5"
-                                                                        Background="OrangeRed"
-                                                                        CornerRadius="5">
-                                                                        <TextBlock
-                                                                            VerticalAlignment="Center"
-                                                                            Foreground="White"
-                                                                            Text="{Binding TOTAL_2_4_GHz_AP}" />
-                                                                    </Border>
-                                                                </Grid>
-                                                            </Border>
-                                                            <Border
-                                                                Margin="2"
-                                                                Padding="2"
-                                                                Background="#424242"
-                                                                CornerRadius="5">
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="*" />
-                                                                        <ColumnDefinition Width="Auto" />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <TextBlock
-                                                                        Grid.Column="0"
-                                                                        VerticalAlignment="Center"
-                                                                        FontWeight="Bold"
-                                                                        Foreground="Beige"
-                                                                        Text="5 GHz NETWORKS:" />
-                                                                    <Border
-                                                                        Grid.Column="1"
-                                                                        Margin="5,0,0,0"
-                                                                        Padding="5"
-                                                                        Background="OrangeRed"
-                                                                        CornerRadius="5">
-                                                                        <TextBlock
-                                                                            VerticalAlignment="Center"
-                                                                            Foreground="White"
-                                                                            Text="{Binding TOTAL_5_GHz_AP}" />
-                                                                    </Border>
-                                                                </Grid>
-                                                            </Border>
-                                                        </StackPanel>
-                                                        <GroupBox
-                                                            Width="750"
-                                                            materialDesign:ColorZoneAssist.Background="OrangeRed"
-                                                            materialDesign:ColorZoneAssist.Foreground="Black"
-                                                            materialDesign:ColorZoneAssist.Mode="Custom"
-                                                            Header="LIVE CONSOLE">
-                                                            <GroupBox.HeaderTemplate>
-                                                                <DataTemplate>
-                                                                    <TextBlock
-                                                                        FontWeight="Bold"
-                                                                        Text="LIVE CONSOLE"
-                                                                        TextAlignment="Center" />
-                                                                </DataTemplate>
-                                                            </GroupBox.HeaderTemplate>
-                                                            <TextBox
-                                                                Background="#424242"
-                                                                Foreground="Beige"
-                                                                IsHitTestVisible="False"
-                                                                IsReadOnly="True"
-                                                                Text="{Binding LiveLog, Mode=OneWay}"
-                                                                TextWrapping="Wrap" />
-                                                        </GroupBox>
-                                                    </DockPanel>
-                                                </TabItem>
-
-                                                <TabItem>
-                                                    <TabItem.Header>
-                                                        <StackPanel Width="auto" Height="auto">
-                                                            <materialDesign:PackIcon
-                                                                Width="24"
-                                                                Height="24"
-                                                                HorizontalAlignment="Center"
-                                                                Foreground="AntiqueWhite"
-                                                                Kind="ChartBellCurve" />
-                                                            <TextBlock
-                                                                HorizontalAlignment="Center"
-                                                                FontSize="12"
-                                                                Foreground="AntiqueWhite"
-                                                                Text="GRAPH" />
-                                                        </StackPanel>
-                                                    </TabItem.Header>
-                                                    <TextBlock>
-                                                        <Run Text="THIS IS WHERE THE GRAPHS WILL GO " />
-                                                        <LineBreak />
-                                                        <LineBreak />
-                                                        <Run FontStyle="Italic">
-                                                            MAKE 2 TABS one for 5GHz and 2.4GHz
-                                                        </Run>
-                                                    </TextBlock>
-                                                </TabItem>
-                                            </TabControl>
-                                        </materialDesign:Card>
-                                    </Grid>
-                                </GroupBox>
-                            </Border>
-                        </StackPanel>
-                    </ScrollViewer>
-
-                </Grid>
-
-            </TabItem>
-            <TabItem Name="DetectionsTab">
-                <TabItem.Header>
-                    <StackPanel MouseLeftButtonDown="detectionsTab_Click" Orientation="Horizontal">
-                        <materialDesign:PackIcon
-                            Margin="0,0,5,0"
-                            Foreground="#D72323"
-                            Kind="WifiStrength4Alert" />
-                        <TextBlock Text="DETECTIONS" />
-                    </StackPanel>
-                </TabItem.Header>
-                <ScrollViewer Grid.Row="1">
-
-                    <ListView
-                        x:Name="DETECTION_TABLE"
-                        Foreground="#D72323"
-                        ItemsSource="{Binding DETECTIONS}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Expander>
-                                    <Expander.Header>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border
-                                                Margin="2"
-                                                Background="#424242"
-                                                CornerRadius="5">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Border
-                                                        Grid.Column="0"
-                                                        Margin="5"
-                                                        Background="{Binding DETECTION_STATUS, Converter={StaticResource DetectionStatusToColorConverter}}"
-                                                        CornerRadius="3">
-                                                        <TextBlock
-                                                            Width="85"
-                                                            Margin="0,0,0,0"
-                                                            VerticalAlignment="Center"
-                                                            FontWeight="Bold"
-                                                            Foreground="Black"
-                                                            Text="{Binding DETECTION_STATUS}"
-                                                            TextAlignment="Center" />
-                                                    </Border>
-                                                    <Border
-                                                        Grid.Column="1"
-                                                        MaxWidth="100"
-                                                        Margin="5"
-                                                        Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
-                                                        CornerRadius="3">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <TextBlock
-                                                                Grid.Column="0"
-                                                                Width="65"
-                                                                Margin="0,0,0,0"
-                                                                VerticalAlignment="Center"
-                                                                FontWeight="Bold"
-                                                                Foreground="Black"
-                                                                Text="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityTextConverter}}"
-                                                                TextAlignment="Center" />
-                                                            <Border
-                                                                Grid.Column="1"
-                                                                Margin="2"
-                                                                Background="Black"
-                                                                CornerRadius="12">
-                                                                <TextBlock
-                                                                    Width="20"
-                                                                    VerticalAlignment="Center"
-                                                                    Background="Black"
-                                                                    FontWeight="Bold"
-                                                                    Foreground="AntiqueWhite"
-                                                                    Text="{Binding RISK_LEVEL}"
-                                                                    TextAlignment="Center" />
-                                                            </Border>
-                                                        </Grid>
-                                                    </Border>
-                                                </Grid>
-                                            </Border>
-
-                                            <Border
-                                                Grid.Column="3"
-                                                Margin="2"
-                                                Background="#424242"
-                                                CornerRadius="6">
-                                                <Grid VerticalAlignment="Center">
-                                                    <TextBlock
-                                                        Margin="8,0,0,0"
-                                                        Text="Detection: Possible DeAuth Attack"
-                                                        TextWrapping="NoWrap" />
-                                                </Grid>
-                                            </Border>
-                                            <Border
-                                                Grid.Column="4"
-                                                Background="#424242"
-                                                CornerRadius="6">
-                                                <Grid VerticalAlignment="Center">
-                                                    <TextBlock
-                                                        Margin="8,0,0,0"
-                                                        Text="Time of Detection: 13:30:12 [Date: 13th July 2023]"
-                                                        TextWrapping="NoWrap" />
-                                                </Grid>
-                                            </Border>
-
-                                        </Grid>
-                                    </Expander.Header>
-                                    <StackPanel>
-                                        <materialDesign:Card Margin="20">
-                                            <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
-                                                <TabItem>
-                                                    <TabItem.Header>
-                                                        <StackPanel Width="auto" Height="auto">
-                                                            <materialDesign:PackIcon
-                                                                Width="24"
-                                                                Height="24"
-                                                                HorizontalAlignment="Center"
-                                                                Foreground="AntiqueWhite"
-                                                                Kind="ShieldAlert" />
-                                                            <TextBlock
-                                                                HorizontalAlignment="Center"
-                                                                FontSize="12"
-                                                                Foreground="AntiqueWhite"
-                                                                Text="INFO" />
-                                                        </StackPanel>
-                                                    </TabItem.Header>
-                                                    <materialDesign:Card>
-                                                        <TabControl
-                                                            HorizontalContentAlignment="Left"
-                                                            materialDesign:ColorZoneAssist.Background="#424242"
-                                                            materialDesign:ColorZoneAssist.Foreground="#D72323"
-                                                            materialDesign:ColorZoneAssist.Mode="Custom">
-                                                            <TabItem Header="INCIDENT OVERVIEW">
-                                                                <TextBlock>
-                                                                    <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
-                                                                    <LineBreak />
-                                                                    <LineBreak />
-                                                                    <Run FontStyle="Italic">
-                                                                        Need to find out what information here is usefull
-                                                                    </Run>
-                                                                </TextBlock>
-                                                            </TabItem>
-                                                            <TabItem Header="ACCESS POINT INFORMATION">
-                                                                <TextBlock>
-                                                                    <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
-                                                                    <LineBreak />
-                                                                    <LineBreak />
-                                                                    <Run FontStyle="Italic">
-                                                                        Need to find out what information here is usefull
-                                                                    </Run>
-                                                                </TextBlock>
-                                                            </TabItem>
-                                                            <TabItem Header="PACKET/FRAME DATA">
-                                                                <TextBlock>
-                                                                    <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
-                                                                    <LineBreak />
-                                                                    <LineBreak />
-                                                                    <Run FontStyle="Italic">
-                                                                        Need to find out what information here is usefull
-                                                                    </Run>
-                                                                </TextBlock>
-                                                            </TabItem>
-                                                            <TabItem Header="EXTRA">
-                                                                <TextBlock Margin="8" Text="EXTRA" />
-                                                            </TabItem>
-                                                        </TabControl>
-                                                    </materialDesign:Card>
-
-                                                </TabItem>
-
-                                                <TabItem>
-                                                    <TabItem.Header>
-                                                        <StackPanel Width="auto" Height="auto">
-                                                            <materialDesign:PackIcon
-                                                                Width="24"
-                                                                Height="24"
-                                                                HorizontalAlignment="Center"
-                                                                Foreground="AntiqueWhite"
-                                                                Kind="ShieldAccount" />
-                                                            <TextBlock
-                                                                HorizontalAlignment="Center"
-                                                                FontSize="12"
-                                                                Foreground="AntiqueWhite"
-                                                                Text="ACTIONS" />
-                                                        </StackPanel>
-                                                    </TabItem.Header>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto" />
-                                                            <ColumnDefinition Width="*" />
-
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Grid.Column="0">
-                                                            <Run Text="THIS IS WHERE THE USER CAN PREFORM ACTIONS SUCH AS CHANGE STATUS... " />
-                                                            <LineBreak />
-                                                            <LineBreak />
-                                                            <Run FontStyle="Italic">
-                                                                Need to find out what information here is usefull
-                                                            </Run>
-                                                        </TextBlock>
-
-                                                    </Grid>
-                                                </TabItem>
-                                            </TabControl>
-                                        </materialDesign:Card>
-                                    </StackPanel>
-                                </Expander>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Background" Value="#424242" />
-                                <Setter Property="Foreground" Value="AntiqueWhite" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>
-                </ScrollViewer>
-            </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon
-                            Margin="0,0,5,0"
-                            Foreground="#D72323"
-                            Kind="Console" />
-                        <TextBlock Text="COMMAND &amp; CONTROL CENTER" />
-                    </StackPanel>
-                </TabItem.Header>
-                <TextBlock Margin="8" Text="Secondary example tab 3333" />
-            </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel MouseLeftButtonDown="NetworkAdapter_Click" Orientation="Horizontal">
-                        <materialDesign:PackIcon
-                            Margin="0,0,5,0"
-                            Foreground="#D72323"
-                            Kind="AccessPointNetwork" />
-                        <TextBlock Text="NETWORK ADAPTERS" />
-                    </StackPanel>
-                </TabItem.Header>
-                <Grid>
-                    <DataGrid
-                        Margin="20"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        materialDesign:DataGridAssist.CellPadding="16 8"
-                        materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
-                        AutoGenerateColumns="False"
-                        BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-                        CanUserAddRows="False"
-                        IsReadOnly="True"
-                        ItemsSource="{Binding NETWORK_80211_ADAPTERS}"
-                        RowHeight="40">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_NAME}" Header="NAME" />
-                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_ID}" Header="ID" />
-                            <DataGridTextColumn
-                                Width="*"
-                                Binding="{Binding NETWORK_ADAPTER_DESCRIPTION}"
-                                Header="DESCRIPTION" />
-                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_STATUS}" Header="STATUS" />
-                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_SPEED_BYTES}" Header="SPEED" />
-                            <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_MAC_ADDRESS}" Header="MAC ADDRESS" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
-        </TabControl>
-    </materialDesign:Card>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
 </Window>
