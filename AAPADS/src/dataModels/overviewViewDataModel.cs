@@ -1,10 +1,33 @@
 using AAPADS;
+using LiveCharts;
+using LiveCharts.Wpf;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Media;
+
+
 
 public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 {
     public ObservableCollection<dataModelStructure> AccessPoints { get; }
+
+    public SeriesCollection SeriesCollection { get; set; } = new SeriesCollection
+{
+    new LineSeries
+    {
+        Title = "2.4GHz",
+        Values = new ChartValues<double>()
+    },
+    new LineSeries
+    {
+        Title = "5GHz",
+        Values = new ChartValues<double>()
+    }
+};
+
+    public Func<double, string> DateTimeFormatter { get; set; }
 
     private int _totalDetectedAP;
     private int _totalSecureAP;
@@ -87,7 +110,39 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
+
+        SeriesCollection = new SeriesCollection
+        {
+           
+            new LineSeries
+            {
+                Title = "2.4GHz",
+                Values = new ChartValues<double>(),
+                PointGeometrySize = 18,
+                Stroke = Brushes.YellowGreen,
+                Fill = new SolidColorBrush(Color.FromArgb(128, 124,252,0)),
+                PointForeground = Brushes.YellowGreen,
+                StrokeThickness = 0
+            },
+            
+            new LineSeries
+            {
+                Title = "5GHz",
+                Values = new ChartValues<double>(),
+                PointGeometrySize = 18,
+                Stroke = Brushes.SkyBlue,
+                Fill = new SolidColorBrush(Color.FromArgb(128, 30,144,255)), 
+                PointForeground = Brushes.SkyBlue,
+                StrokeThickness = 0
+            }
+
+        };
+
+
+        DateTimeFormatter = value => DateTime.Now.ToString("hh:mm:ss");
+
     }
+
 
     public event PropertyChangedEventHandler PropertyChanged;
     protected virtual void OnPropertyChanged(string propertyName)
@@ -120,6 +175,9 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         TOTAL_2_4_GHz_AP = calculateTotal24GHzAccessPoints(dataIngestEngine);
         TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);
         IS_LOADING = dataIngestEngine.isLoading;
+        if (IS_LOADING == false) { UpdateGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP); }
+
+
     }
 
     private int calculateTotalSecureAccessPoints(DataIngestEngine dataIngestEngine)
@@ -131,7 +189,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         {
             if (acessPointEncMethod == "None")
             {
-                
+
             }
             else
             {
@@ -179,7 +237,39 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         {
             LiveLog += "\n" + message;
         }
-        
+
     }
+    public void RunOnUIThread(Action action)
+    {
+        if (Application.Current.Dispatcher.CheckAccess())
+        {
+            action.Invoke();
+        }
+        else
+        {
+            Application.Current.Dispatcher.Invoke(action);
+        }
+    }
+
+    private void UpdateGraph(double value24GHz, double value5GHz)
+    {
+        var series24GHz = SeriesCollection[0];
+        var series5GHz = SeriesCollection[1];
+
+        RunOnUIThread(() =>
+        {
+            series24GHz.Values.Add(value24GHz);
+            series5GHz.Values.Add(value5GHz);
+
+            int maxPoints = 30; // Assuming 5 minutes/10 seconds = 30 points
+            if (series24GHz.Values.Count > maxPoints)
+                series24GHz.Values.RemoveAt(0);
+
+            if (series5GHz.Values.Count > maxPoints)
+                series5GHz.Values.RemoveAt(0);
+        });
+    }
+
+
 }
 
