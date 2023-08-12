@@ -259,130 +259,109 @@
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding BSSID}"
+                                                Foreground="AntiqueWhite"
                                                 Header="BSSID"
                                                 SortMemberPath="BSSID">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                            <TextBlock
-                                                                Foreground="AntiqueWhite"
-                                                                Text="{Binding BSSID}"
-                                                                TextAlignment="Left" />
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding SSID}"
+                                                Foreground="AntiqueWhite"
                                                 Header="SSID"
                                                 SortMemberPath="SSID">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                            <TextBlock
-                                                                Foreground="AntiqueWhite"
-                                                                Text="{Binding SSID}"
-                                                                TextAlignment="Left" />
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding WLAN_STANDARD}"
+                                                Foreground="AntiqueWhite"
                                                 Header="STANDARD"
                                                 SortMemberPath="WLAN_STANDARD">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                            <TextBlock
-                                                                Foreground="AntiqueWhite"
-                                                                Text="{Binding WLAN_STANDARD}"
-                                                                TextAlignment="Center" />
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding WIFI_CHANNEL}"
                                                 Header="CH"
-                                                SortMemberPath="WIFI_CHANNEL">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock
-                                                            FontWeight="Bold"
-                                                            Foreground="{Binding WIFI_CHANNEL, Converter={StaticResource ChannelColorConverter}}"
-                                                            Text="{Binding WIFI_CHANNEL}"
-                                                            TextAlignment="Center" />
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                SortMemberPath="WLAN_STANDARD">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                        <Setter Property="Foreground" Value="{Binding WIFI_CHANNEL, Converter={StaticResource ChannelColorConverter}}" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding FREQ_BAND}"
                                                 Header="BAND"
                                                 SortMemberPath="FREQ_BAND">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock
-                                                            FontWeight="Bold"
-                                                            Foreground="{Binding FREQ_BAND, Converter={StaticResource FrequencyBandColorConverter}}"
-                                                            Text="{Binding FREQ_BAND}"
-                                                            TextAlignment="Center" />
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                        <Setter Property="Foreground" Value="{Binding FREQ_BAND, Converter={StaticResource FrequencyBandColorConverter}}" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding FREQUENCY}"
                                                 Header="FREQ"
                                                 SortMemberPath="FREQUENCY">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock
-                                                            FontWeight="Bold"
-                                                            Foreground="{Binding FREQUENCY, Converter={StaticResource FrequencyColorConverter}}"
-                                                            Text="{Binding FREQUENCY}"
-                                                            TextAlignment="Center" />
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                        <Setter Property="Foreground" Value="{Binding FREQUENCY, Converter={StaticResource FrequencyColorConverter}}" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding ENCRYPTION_USED}"
+                                                Foreground="AntiqueWhite"
                                                 Header="ENC"
                                                 SortMemberPath="ENCRYPTION_USED">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                                                            <TextBlock
-                                                                Foreground="AntiqueWhite"
-                                                                Text="{Binding ENCRYPTION_USED}"
-                                                                TextAlignment="Center" />
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
-                                            <DataGridTemplateColumn
+                                            <DataGridTextColumn
                                                 Width="*"
+                                                Binding="{Binding AUTHENTICATION}"
+                                                Foreground="AntiqueWhite"
                                                 Header="AUTH"
                                                 SortMemberPath="AUTHENTICATION">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                                                            <TextBlock
-                                                                Foreground="AntiqueWhite"
-                                                                Text="{Binding AUTHENTICATION}"
-                                                                TextAlignment="Center" />
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
 
                                         </DataGrid.Columns>
 
