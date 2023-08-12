@@ -36,10 +36,10 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 * **Function**: Analyzes the wireless environment profile.
 * **Operation**: Identifies data surpassing threshold values, assigning a risk score to detected anomalies.
 * **Scoring System**: Anomalies are graded with a score value (max 100), and categorized as:
-* 🟢 **LOW** (0-30)
-* 🟡 **MEDIUM** (31-60)
-* 🟠 **HIGH** (61-79)
-* 🔴 **CRITICAL** (80-100)
+    * 🟢 **LOW** (0-30)
+    * 🟡 **MEDIUM** (31-60)
+    * 🟠 **HIGH** (61-79)
+    * 🔴 **CRITICAL** (80-100)
 
 
 Upon detection of an anomaly, the system flags it as a cyber incident. Users are notified and can directly take action through the application.
