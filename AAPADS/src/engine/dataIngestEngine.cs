@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -84,6 +85,8 @@ namespace AAPADS
         private string currentFrequency = null;
 
         //private overviewViewDataModel liveLogDataModelConsole;
+        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PerformWifiScan();
 
 
         public void Start()
@@ -115,7 +118,7 @@ namespace AAPADS
                 }
                 try
                 {
-                    WifiScanner.PerformWifiScan();
+                    PerformWifiScan();
                 }
                 catch (Exception ex)
                 {
