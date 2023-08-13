@@ -107,6 +107,18 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
+    private double _summarySectionHeight = 200; // Default value
+    public double SummarySectionHeight
+    {
+        get { return _summarySectionHeight; }
+        set
+        {
+            _summarySectionHeight = value;
+            OnPropertyChanged(nameof(SummarySectionHeight));
+        }
+    }
+
+
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
@@ -118,7 +130,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             {
                 Title = "2.4GHz",
                 Values = new ChartValues<double>(),
-                PointGeometrySize = 18,
+                PointGeometrySize = 10,
                 Stroke = Brushes.YellowGreen,
                 Fill = new SolidColorBrush(Color.FromArgb(128, 124,252,0)),
                 PointForeground = Brushes.YellowGreen,
@@ -129,7 +141,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             {
                 Title = "5GHz",
                 Values = new ChartValues<double>(),
-                PointGeometrySize = 18,
+                PointGeometrySize = 10,
                 Stroke = Brushes.SkyBlue,
                 Fill = new SolidColorBrush(Color.FromArgb(128, 30,144,255)), 
                 PointForeground = Brushes.SkyBlue,
@@ -175,8 +187,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         TOTAL_2_4_GHz_AP = calculateTotal24GHzAccessPoints(dataIngestEngine);
         TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);
         IS_LOADING = dataIngestEngine.isLoading;
-        if (IS_LOADING == false) { UpdateGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP); }
 
+        if (IS_LOADING == false) { UpdateGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP); }
 
     }
 
@@ -261,7 +273,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             series24GHz.Values.Add(value24GHz);
             series5GHz.Values.Add(value5GHz);
 
-            int maxPoints = 30; // Assuming 5 minutes/10 seconds = 30 points
+            int maxPoints = 30; 
             if (series24GHz.Values.Count > maxPoints)
                 series24GHz.Values.RemoveAt(0);
 

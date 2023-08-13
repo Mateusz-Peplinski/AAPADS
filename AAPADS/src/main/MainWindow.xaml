@@ -401,12 +401,13 @@
                                 <StackPanel>
                                     <Border Background="{DynamicResource MaterialDesignDarkBackground}">
                                         <GroupBox
+                                            x:Name="SummarySection"
+                                            Height="{Binding SummarySectionHeight}"
                                             materialDesign:ColorZoneAssist.Background="#D72323"
                                             materialDesign:ColorZoneAssist.Foreground="Black"
                                             materialDesign:ColorZoneAssist.Mode="Custom"
                                             DockPanel.Dock="Bottom"
                                             Header="Custom Header">
-
                                             <GroupBox.HeaderTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -601,8 +602,12 @@
                                                                 LegendLocation="Bottom"
                                                                 Series="{Binding SeriesCollection}">
                                                                 <liveCharts:CartesianChart.AxisX>
-                                                                    <liveCharts:Axis LabelFormatter="{Binding DateTimeFormatter}" />
+                                                                    <liveCharts:Axis
+                                                                        LabelFormatter="{Binding DateTimeFormatter}"
+                                                                        MaxValue="{Binding AxisMax}"
+                                                                        MinValue="{Binding AxisMin}" />
                                                                 </liveCharts:CartesianChart.AxisX>
+
 
                                                             </liveCharts:CartesianChart>
 
