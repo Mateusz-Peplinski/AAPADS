@@ -85,6 +85,7 @@ namespace AAPADS
         private string currentFrequency = null;
 
         //private overviewViewDataModel liveLogDataModelConsole;
+
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PerformWifiScan();
 
