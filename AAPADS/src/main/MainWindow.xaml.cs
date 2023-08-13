@@ -1,5 +1,6 @@
 ﻿using AAPADS.src.engine;
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -7,7 +8,7 @@ using System.Windows.Interop;
 namespace AAPADS
 {
 
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         [DllImport("user32")]
         internal static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
@@ -37,40 +38,6 @@ namespace AAPADS
                 HwndSource.FromHwnd(handle).AddHook(new HwndSourceHook(WindowProc));
             };
 
-            MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
-
-            MaximizeButton.Click += (s, e) => {
-                if (!_wasMaximized) 
-                {
-                    
-                    _originalWidth = Width;
-                    _originalHeight = Height;
-                    _originalLeft = Left;
-                    _originalTop = Top;
-
-                    
-                    WindowState = WindowState.Normal;
-                    Left = 0;
-                    Top = 0;
-                    Width = SystemParameters.WorkArea.Width;
-                    Height = SystemParameters.WorkArea.Height;
-
-                    _wasMaximized = true;
-                }
-                else 
-                {
-                    
-                    Width = _originalWidth;
-                    Height = _originalHeight;
-                    Left = _originalLeft;
-                    Top = _originalTop;
-
-                    _wasMaximized = false;
-                }
-            };
-
-            CloseButton.Click += (s, e) => Application.Current.Shutdown();
-
             DATA_INGESTION_ENGINE_OBJECT = new DataIngestEngine();
             OVERVIEW_VIEW_MODEL_OBJECT = new overviewViewDataModel();
             DATA_INGESTION_ENGINE_OBJECT.SSIDDataCollected += UpdateOverviewTabUI;
@@ -81,11 +48,46 @@ namespace AAPADS
             DETECTION_ENGINE_OBJECT.DetectionDiscovered += updateDetectionTabUI;
             DETECTION_ENGINE_OBJECT.startdetection();
 
-            DataContext = OVERVIEW_VIEW_MODEL_OBJECT;
-
             WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new networkAdapterInformationDataModel();
 
+            MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
+            
+            MaximizeButton.Click += (s, e) => {
+                if (!_wasMaximized) 
+                {
+                    
+                    _originalWidth = Width;
+                    _originalHeight = Height;
+                    _originalLeft = Left;
+                    _originalTop = Top;
 
+                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 500;
+                    WindowState = WindowState.Normal;
+                    Left = 0;
+                    Top = 0;
+                    Width = SystemParameters.WorkArea.Width;
+                    Height = SystemParameters.WorkArea.Height;
+                    
+                    _wasMaximized = true;
+                }
+                else 
+                {
+                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 200;
+                    Width = _originalWidth;
+                    Height = _originalHeight;
+                    Left = _originalLeft;
+                    Top = _originalTop;
+                    
+                    _wasMaximized = false;
+                }
+            };
+
+            CloseButton.Click += (s, e) => Application.Current.Shutdown();
+
+            DataContext = OVERVIEW_VIEW_MODEL_OBJECT;
+
+            
+            
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -234,6 +236,11 @@ namespace AAPADS
             public static bool operator !=(RECT rect1, RECT rect2) { return !(rect1 == rect2); }
         }
 
-       
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
     }
 }
