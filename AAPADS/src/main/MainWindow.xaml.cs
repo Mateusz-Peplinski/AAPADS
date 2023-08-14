@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 
 namespace AAPADS
@@ -21,7 +22,7 @@ namespace AAPADS
         private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL_OBJECT;
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL_OBJECT;
         private readonly networkAdapterInformationDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
-        private readonly AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+        private  AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
         
         private double _originalWidth;
         private double _originalHeight;
@@ -95,33 +96,39 @@ namespace AAPADS
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            //
+            about AboutPage = new about();
+            AboutPage.Show();
         }
 
         private void EXIT_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
-
-        private void overviewTab_Click(object sender, RoutedEventArgs e)
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DataContext = OVERVIEW_VIEW_MODEL_OBJECT;
-        }
+            if (e.AddedItems.Count == 0) return;
 
-        private void detectionsTab_Click(object sender, RoutedEventArgs e)
-        {
-            DataContext = DETECTION_VIEW_MODEL_OBJECT;
+            // Cast the first item in e.AddedItems to TabItem
+            var tab = e.AddedItems[0] as TabItem;
 
+            if (tab == null) return;
 
-        }
-        private void NetworkAdapter_Click(object sender, RoutedEventArgs e)
-        {
-            DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
-
-        }
-        private void AccessPointInvestigator_Click(object sender, RoutedEventArgs e)
-        {
-            DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+            if (tab == OverviewTab)
+            {
+                DataContext = OVERVIEW_VIEW_MODEL_OBJECT;
+            }
+            else if (tab == DetectionsTab)
+            {
+                DataContext = DETECTION_VIEW_MODEL_OBJECT;
+            }
+            else if (tab == NetworkAdapterTab)
+            {
+                DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
+            }
+            else if (tab == AccessPointInvestigateTab)
+            {
+                DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+            }
         }
         private void UpdateOverviewTabUI(object sender, EventArgs e)
         {

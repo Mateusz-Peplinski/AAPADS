@@ -133,10 +133,11 @@
                     HorizontalContentAlignment="Left"
                     materialDesign:ColorZoneAssist.Background="#424242"
                     materialDesign:ColorZoneAssist.Foreground="#D72323"
-                    materialDesign:ColorZoneAssist.Mode="Custom">
-                    <TabItem Name="overviewTab">
+                    materialDesign:ColorZoneAssist.Mode="Custom"
+                    SelectionChanged="TabControl_SelectionChanged">
+                    <TabItem Name="OverviewTab">
                         <TabItem.Header>
-                            <StackPanel MouseLeftButtonDown="overviewTab_Click" Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
                                     Foreground="#D72323"
@@ -627,7 +628,7 @@
                     </TabItem>
                     <TabItem Name="DetectionsTab">
                         <TabItem.Header>
-                            <StackPanel MouseLeftButtonDown="detectionsTab_Click" Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
                                     Foreground="#D72323"
@@ -853,9 +854,9 @@
                             </ListView>
                         </ScrollViewer>
                     </TabItem>
-                    <TabItem>
+                    <TabItem Name="AccessPointInvestigateTab">
                         <TabItem.Header>
-                            <StackPanel MouseLeftButtonDown="AccessPointInvestigator_Click" Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
                                     Foreground="#D72323"
@@ -885,33 +886,76 @@
                                 materialDesign:HintAssist.FontFamily="Verdana"
                                 materialDesign:HintAssist.Hint="Access Point"
                                 DisplayMemberPath="DisplaySSID"
+                                Foreground="AntiqueWhite"
                                 ItemsSource="{Binding SSIDs}"
                                 SelectedItem="{Binding SelectedSSIDItem}"
                                 Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
 
-                            <!--  Placeholder Graph 1  -->
-                            <liveCharts:CartesianChart Grid.Row="1" Grid.Column="0">
-                                <!--  Graph Configuration goes here  -->
-                            </liveCharts:CartesianChart>
+                            <!--  Graph 1  -->
+                            <Grid Grid.Row="1" Grid.Column="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-                            <!--  Placeholder Graph 2  -->
-                            <liveCharts:CartesianChart Grid.Row="1" Grid.Column="1">
-                                <!--  Graph Configuration goes here  -->
-                            </liveCharts:CartesianChart>
+                                <liveCharts:CartesianChart Grid.Row="0">
+                                    <!--  Graph Configuration goes here  -->
+                                </liveCharts:CartesianChart>
 
-                            <!--  Placeholder Graph 3  -->
-                            <liveCharts:CartesianChart
-                                Grid.Row="2"
-                                Grid.ColumnSpan="2"
-                                Series="{Binding RSSIDataForGraph3}">
-                                <!--  Graph Configuration goes here  -->
-                            </liveCharts:CartesianChart>
+                                <TextBlock
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    FontSize="12"
+                                    FontWeight="Bold"
+                                    Foreground="AntiqueWhite"
+                                    Text="Graph 1" />
+                            </Grid>
+
+                            <!--  Graph 2  -->
+                            <Grid Grid.Row="1" Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <liveCharts:CartesianChart Grid.Row="0">
+                                    <!--  Graph Configuration goes here  -->
+                                </liveCharts:CartesianChart>
+
+                                <TextBlock
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    FontSize="12"
+                                    FontWeight="Bold"
+                                    Foreground="AntiqueWhite"
+                                    Text="Graph 2" />
+                            </Grid>
+
+                            <!--  Graph 3  -->
+                            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Center"
+                                    FontSize="12"
+                                    FontWeight="Bold"
+                                    Foreground="AntiqueWhite"
+                                    Text="RSSI (dBm)" />
+
+                                <liveCharts:CartesianChart Grid.Row="1" Series="{Binding RSSIDataForGraph3}">
+                                    <!--  Graph Configuration goes here  -->
+                                </liveCharts:CartesianChart>
+                            </Grid>
 
                         </Grid>
                     </TabItem>
-                    <TabItem>
+                    <TabItem Name="NetworkAdapterTab">
                         <TabItem.Header>
-                            <StackPanel MouseLeftButtonDown="NetworkAdapter_Click" Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
                                     Foreground="#D72323"
