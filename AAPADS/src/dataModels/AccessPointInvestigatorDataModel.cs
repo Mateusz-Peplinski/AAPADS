@@ -40,7 +40,8 @@ namespace AAPADS
         [DllImport("WLANLibrary.dll", CharSet = CharSet.Ansi)]
         public static extern int GetRSSIForSSID(string ssid);
 
-
+        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PerformWifiScan();
 
         public IEnumerable<SSIDItem> GetSSIDItemsFromCharArray(char[] charArray, int count)
         {
@@ -57,7 +58,7 @@ namespace AAPADS
                 };
             }
         }
-
+        
         public AccessPointInvestigatorDataModel()
         {
             ssidList.ssids = new char[3200];
@@ -94,26 +95,27 @@ namespace AAPADS
             }
         }
 
-
-
         private SeriesCollection _rssiDataForGraph3 = new SeriesCollection
         {
             new LineSeries
             {
                 Values = new ChartValues<int>(),
                 Title = "RSSI Value",
+                PointGeometrySize = 0,
+                StrokeThickness = 0,
+                Stroke = Brushes.SkyBlue,
                 Fill = new LinearGradientBrush
                 {
                     StartPoint = new Point(0, 1),
                     EndPoint = new Point(0, 0),
                     GradientStops = new GradientStopCollection
                     {
-                        new GradientStop(Color.FromRgb(255, 0, 0), 0),       // Red 
-                        new GradientStop(Color.FromRgb(255, 69, 0), 0.25),   
-                        new GradientStop(Color.FromRgb(255, 165, 0), 0.4),   
-                        new GradientStop(Color.FromRgb(255, 255, 0), 0.6),   
-                        new GradientStop(Color.FromRgb(173, 255, 47), 0.8),  
-                        new GradientStop(Color.FromRgb(0, 128, 0), 1)        // Green 
+                        new GradientStop(Color.FromRgb(255, 0, 0), 1),       // Red 
+                        new GradientStop(Color.FromRgb(255, 69, 0), 0.8),
+                        new GradientStop(Color.FromRgb(255, 165, 0), 0.6),
+                        new GradientStop(Color.FromRgb(255, 255, 0), 0.4),
+                        new GradientStop(Color.FromRgb(173, 255, 47), 0.25),
+                        new GradientStop(Color.FromRgb(0, 128, 0), 0)        // Green 
 
                     }
                 }
@@ -138,30 +140,69 @@ namespace AAPADS
                 SSIDs.Add(ssidItem);
             }
         }
+        public void RefreshSSIDs()
+        {
+            GetAvailableSSIDs(ref ssidList);
+            var currentSSIDs = GetSSIDItemsFromCharArray(ssidList.ssids, ssidList.count).ToList();
 
+            // Add new SSIDs
+            foreach (var ssid in currentSSIDs)
+            {
+                if (!SSIDs.Any(s => s.OriginalSSID == ssid.OriginalSSID))
+                {
+                    SSIDs.Add(ssid);
+                }
+            }
+
+            // Remove SSIDs that are no longer available
+            for (int i = SSIDs.Count - 1; i >= 0; i--)
+            {
+                if (!currentSSIDs.Any(s => s.OriginalSSID == SSIDs[i].OriginalSSID))
+                {
+                    SSIDs.RemoveAt(i);
+                }
+            }
+        }
 
         private void LoadRSSIDataForSSID(string ssid)
         {
             StartRSSIPolling();
         }
+
         private async void StartRSSIPolling()
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
 
+            int refreshInterval = 10;  
+            int counter = 0;
+
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
-                var rssi = GetRSSIForSSID(SelectedSSIDItem.OriginalSSID);
+                var rssi = ConvertSignalQualityToRssi(GetRSSIForSSID(SelectedSSIDItem?.OriginalSSID ?? string.Empty));
 
                 RSSIDataForGraph3[0].Values.Add(rssi);
-                if (RSSIDataForGraph3[0].Values.Count > 100) 
+                if (RSSIDataForGraph3[0].Values.Count > 100)
                 {
                     RSSIDataForGraph3[0].Values.RemoveAt(0);
                 }
 
+                PerformWifiScan();
+
+                counter++;
+                if (counter >= refreshInterval)
+                {
+                    RefreshSSIDs();
+                    counter = 0; 
+                }
 
                 await Task.Delay(TimeSpan.FromSeconds(2));
             }
+        }
+
+        private int ConvertSignalQualityToRssi(int signalQuality)
+        {
+            return (signalQuality / 2) - 100;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

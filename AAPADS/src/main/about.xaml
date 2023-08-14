@@ -9,7 +9,6 @@
     Width="800"
     Height="450"
     Background="#303030"
-    Icon="/res/icons/RIPIDS_icon.png"
     mc:Ignorable="d">
 
     <Grid>
@@ -20,24 +19,16 @@
             VerticalAlignment="Top"
             FontSize="36"
             FontWeight="Bold"
-            Foreground="#ffc107"
+            Foreground="#D72323"
             Text="ABOUT"
             TextWrapping="Wrap" />
         <Image
-            Width="704"
-            Height="200"
-            Margin="77,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Source="/res/graphics/RAPIDS_banner.png" />
-
-        <TextBlock
-            Margin="0,254,0,0"
+            Margin="0,25,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            FontSize="12"
-            Foreground="#ffc107"           
-            Text="RAPIDS is a Rogue Access Point intrusion detection system, that is tasked with detecting " Height="21" />
-            
+            Source="/res/graphics/LargeLogoNoBackground.png" />
+
+
+
     </Grid>
 </Window>
