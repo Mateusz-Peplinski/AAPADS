@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Data.SQLite;
 
 namespace AAPADS
 {
@@ -68,9 +66,9 @@ namespace AAPADS
             { 161, "5.805 GHz" },
             { 165, "5.825 GHz" }
         };
-        
-        public bool isLoading = false;  
-        
+
+        public bool isLoading = false;
+
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
         private bool isRunning = true;
@@ -148,7 +146,7 @@ namespace AAPADS
                 }
 
                 RunNetshCommand();
-                
+
                 SSIDDataCollected?.Invoke(this, EventArgs.Empty);
                 isLoading = false;
 
@@ -163,7 +161,7 @@ namespace AAPADS
 
         private void RunNetshCommand()
         {
-           //liveLogDataModelConsole.AppendToLog("init netsh");
+            //liveLogDataModelConsole.AppendToLog("init netsh");
 
             ProcessStartInfo processInfo = new ProcessStartInfo
             {
@@ -192,7 +190,7 @@ namespace AAPADS
                 ParseNetworkInformation(e.Data);
             }
         }
-        
+
 
         private void ParseNetworkInformation(string output)
         {
@@ -295,6 +293,12 @@ namespace AAPADS
 
         private void InsertDataToDatabase()
         {
+            string LAST_TIME_FRAME_ID = _dbAccess.GetLastTimeFrameId();
+            var idGenerator = new TimeFrameIdGenerator(LAST_TIME_FRAME_ID);
+
+           
+            string CURRENT_TIME_FRAME_ID = idGenerator.GenerateNextId();
+
             for (int i = 0; i < SSID_LIST.Count; i++)
             {
                 _dbAccess.InsertWifiData(
@@ -305,12 +309,14 @@ namespace AAPADS
                     BAND_LIST[i],
                     CHANNEL_LIST[i],
                     FREQUENCY_LIST[i],
-                    AUTH_LIST[i]
+                    AUTH_LIST[i],
+                    CURRENT_TIME_FRAME_ID  
                 );
             }
         }
 
+
     }
-    
+
 
 }

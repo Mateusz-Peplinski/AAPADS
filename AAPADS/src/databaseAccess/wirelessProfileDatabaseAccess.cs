@@ -39,6 +39,7 @@ namespace AAPADS
             ""CHANNEL"" INTEGER,
             ""FREQUENCY"" TEXT,
             ""AUTHENTICATION""	TEXT,
+            ""TIME_FRAME_ID"" TEXT,
             PRIMARY KEY(""ID"" AUTOINCREMENT)
             );", connection);
 
@@ -46,10 +47,11 @@ namespace AAPADS
         }
 
         public void InsertWifiData(string ssid, string bssid, int signalStrength,
-                                   string wifiStandard, string band, int channel, string frequency, string auth)
+                                   string wifiStandard, string band, int channel, string frequency, string auth, string timeFrameID)
         {
             var wifiData = new
             {
+                TIME_FRAME_ID = timeFrameID,
                 Time = DateTime.Now.ToString("HH:mm:ss dd:MM:yyyy"),
                 SSID = ssid,
                 BSSID = bssid,
@@ -61,9 +63,13 @@ namespace AAPADS
                 AUTHENTICATION = auth
             };
 
-            connection.Execute("INSERT INTO WirelessProfile (Time, SSID, BSSID, SIGNAL_STRENGTH, WIFI_STANDARD, BAND, CHANNEL, FREQUENCY, AUTHENTICATION) VALUES (@Time, @SSID, @BSSID, @SIGNAL_STRENGTH, @WIFI_STANDARD, @BAND, @CHANNEL, @FREQUENCY, @AUTHENTICATION)", wifiData);
+            connection.Execute("INSERT INTO WirelessProfile (TIME_FRAME_ID, Time, SSID, BSSID, SIGNAL_STRENGTH, WIFI_STANDARD, BAND, CHANNEL, FREQUENCY, AUTHENTICATION) VALUES (@TIME_FRAME_ID, @Time, @SSID, @BSSID, @SIGNAL_STRENGTH, @WIFI_STANDARD, @BAND, @CHANNEL, @FREQUENCY, @AUTHENTICATION)", wifiData);
         }
-
+        public string GetLastTimeFrameId()
+        {
+            var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM WirelessProfile ORDER BY ID DESC LIMIT 1");
+            return result ?? "A0"; 
+        }
         public void Dispose()
         {
             connection?.Dispose();

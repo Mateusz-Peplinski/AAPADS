@@ -152,6 +152,7 @@
     <Compile Include="src\dataModels\dataModelStructure.cs" />
     <Compile Include="src\dataModels\baseDataModel.cs" />
     <Compile Include="src\WLANScanInvoker\WifiScanner.cs" />
+    <Compile Include="src\databaseAccess\TimeFrameIdGenerator.cs" />
     <Page Include="src\main\about.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
