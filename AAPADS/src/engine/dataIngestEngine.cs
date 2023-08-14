@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +20,7 @@ namespace AAPADS
         public List<string> BAND_LIST = new List<string>();
         public List<int> CHANNEL_LIST = new List<int>();
         public List<string> FREQUENCY_LIST = new List<string>();
+        public List<string> AUTH_LIST = new List<string>();
         public Dictionary<int, string> channelToFrequencies = new Dictionary<int, string>()
 {
             // 2.4 GHz Band
@@ -66,9 +66,9 @@ namespace AAPADS
             { 161, "5.805 GHz" },
             { 165, "5.825 GHz" }
         };
-        public List<string> AUTH_LIST = new List<string>();
-        public bool isLoading = false;  
-        
+
+        public bool isLoading = false;
+
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
         private bool isRunning = true;
@@ -85,6 +85,8 @@ namespace AAPADS
         private string currentFrequency = null;
 
         //private overviewViewDataModel liveLogDataModelConsole;
+
+        private wirelessProfileDatabaseAccess _dbAccess;
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PerformWifiScan();
@@ -103,6 +105,8 @@ namespace AAPADS
             CHANNEL_LIST = new List<int>();
             FREQUENCY_LIST = new List<string>();
             AUTH_LIST = new List<string>();
+
+            _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
 
             Task.Run(RunNetworkScanning);
         }
@@ -142,9 +146,12 @@ namespace AAPADS
                 }
 
                 RunNetshCommand();
-                
+
                 SSIDDataCollected?.Invoke(this, EventArgs.Empty);
                 isLoading = false;
+
+                InsertDataToDatabase();
+
                 semaphore.Release();
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
@@ -154,7 +161,7 @@ namespace AAPADS
 
         private void RunNetshCommand()
         {
-           //liveLogDataModelConsole.AppendToLog("init netsh");
+            //liveLogDataModelConsole.AppendToLog("init netsh");
 
             ProcessStartInfo processInfo = new ProcessStartInfo
             {
@@ -183,7 +190,7 @@ namespace AAPADS
                 ParseNetworkInformation(e.Data);
             }
         }
-        
+
 
         private void ParseNetworkInformation(string output)
         {
@@ -282,8 +289,34 @@ namespace AAPADS
             currentChannel = 0;
             currentFrequency = null;
         }
-       
+        //connection.Execute("INSERT INTO WirelessProfile (Time, SSID, BSSID, SIGNAL_STRENGTH, WIFI_STANDARD, BAND, CHANNEL, FREQUENCY, AUTHENTICATION) VALUES (@Time, @SSID, @BSSID, @SIGNAL_STRENGTH, @WIFI_STANDARD, @BAND, @CHANNEL, @FREQUENCY, @AUTHENTICATION)", wifiData);
+
+        private void InsertDataToDatabase()
+        {
+            string LAST_TIME_FRAME_ID = _dbAccess.GetLastTimeFrameId();
+            var idGenerator = new TimeFrameIdGenerator(LAST_TIME_FRAME_ID);
+
+           
+            string CURRENT_TIME_FRAME_ID = idGenerator.GenerateNextId();
+
+            for (int i = 0; i < SSID_LIST.Count; i++)
+            {
+                _dbAccess.InsertWifiData(
+                    SSID_LIST[i],
+                    BSSID_LIST[i],
+                    SIGNAL_STRENGTH_LIST[i],
+                    WIFI_STANDARD_LIST[i],
+                    BAND_LIST[i],
+                    CHANNEL_LIST[i],
+                    FREQUENCY_LIST[i],
+                    AUTH_LIST[i],
+                    CURRENT_TIME_FRAME_ID  
+                );
+            }
+        }
+
+
     }
-    
+
 
 }
