@@ -21,6 +21,7 @@ namespace AAPADS
         private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL_OBJECT;
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL_OBJECT;
         private readonly networkAdapterInformationDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
+        private readonly AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
         
         private double _originalWidth;
         private double _originalHeight;
@@ -49,6 +50,8 @@ namespace AAPADS
             DETECTION_ENGINE_OBJECT.startdetection();
 
             WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new networkAdapterInformationDataModel();
+
+            ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
             
@@ -116,7 +119,10 @@ namespace AAPADS
             DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
 
         }
-
+        private void AccessPointInvestigator_Click(object sender, RoutedEventArgs e)
+        {
+            DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+        }
         private void UpdateOverviewTabUI(object sender, EventArgs e)
         {
             this.Dispatcher.Invoke(() =>

@@ -57,6 +57,7 @@
             UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
 
+    <!--  The Window  -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
@@ -854,15 +855,59 @@
                     </TabItem>
                     <TabItem>
                         <TabItem.Header>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel MouseLeftButtonDown="AccessPointInvestigator_Click" Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
                                     Foreground="#D72323"
-                                    Kind="Console" />
-                                <TextBlock Text="COMMAND &amp; CONTROL CENTER" />
+                                    Kind="ShieldSearch" />
+                                <TextBlock Text="ACCESS POINT INVESTIGATOR" />
                             </StackPanel>
                         </TabItem.Header>
-                        <TextBlock Margin="8" Text="Secondary example tab 3333" />
+                        <Grid>
+                            <!--  Define rows  -->
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="2*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Define columns  -->
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  Access Point Selector  -->
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.ColumnSpan="2"
+                                MinWidth="72"
+                                materialDesign:HintAssist.FontFamily="Verdana"
+                                materialDesign:HintAssist.Hint="Access Point"
+                                DisplayMemberPath="DisplaySSID"
+                                ItemsSource="{Binding SSIDs}"
+                                SelectedItem="{Binding SelectedSSIDItem}"
+                                Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+
+                            <!--  Placeholder Graph 1  -->
+                            <liveCharts:CartesianChart Grid.Row="1" Grid.Column="0">
+                                <!--  Graph Configuration goes here  -->
+                            </liveCharts:CartesianChart>
+
+                            <!--  Placeholder Graph 2  -->
+                            <liveCharts:CartesianChart Grid.Row="1" Grid.Column="1">
+                                <!--  Graph Configuration goes here  -->
+                            </liveCharts:CartesianChart>
+
+                            <!--  Placeholder Graph 3  -->
+                            <liveCharts:CartesianChart
+                                Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                Series="{Binding RSSIDataForGraph3}">
+                                <!--  Graph Configuration goes here  -->
+                            </liveCharts:CartesianChart>
+
+                        </Grid>
                     </TabItem>
                     <TabItem>
                         <TabItem.Header>

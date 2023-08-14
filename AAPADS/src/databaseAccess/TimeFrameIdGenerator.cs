@@ -29,7 +29,7 @@ public class TimeFrameIdGenerator
         var lastCharIndex = letter_ID.Length - 1;
         var lastChar = letter_ID[lastCharIndex];
 
-        // If it's not 'Z', just increment the letter.
+        
         if (lastChar != 'Z')
         {
             char nextChar = (char)(lastChar + 1);
@@ -37,7 +37,7 @@ public class TimeFrameIdGenerator
         }
         else
         {
-            // Find the position of the first non-'Z' from the end.
+            
             int nonZPosition = letter_ID.TakeWhile(ch => ch == 'Z').Count();
             if (nonZPosition == letter_ID.Length) // all characters are 'Z'.
             {
