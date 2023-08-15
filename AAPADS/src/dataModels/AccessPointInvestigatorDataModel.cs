@@ -102,21 +102,23 @@ namespace AAPADS
                 Values = new ChartValues<int>(),
                 Title = "RSSI Value",
                 PointGeometrySize = 0,
-                StrokeThickness = 0,
-                Stroke = Brushes.SkyBlue,
+                StrokeThickness = 2,
+                Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
                 Fill = new LinearGradientBrush
                 {
                     StartPoint = new Point(0, 1),
                     EndPoint = new Point(0, 0),
                     GradientStops = new GradientStopCollection
                     {
-                        new GradientStop(Color.FromRgb(255, 0, 0), 1),       // Red 
-                        new GradientStop(Color.FromRgb(255, 69, 0), 0.8),
-                        new GradientStop(Color.FromRgb(255, 165, 0), 0.6),
-                        new GradientStop(Color.FromRgb(255, 255, 0), 0.4),
-                        new GradientStop(Color.FromRgb(173, 255, 47), 0.25),
-                        new GradientStop(Color.FromRgb(0, 128, 0), 0)        // Green 
+                        //new GradientStop(Color.FromRgb(255, 0, 0), 1),       // Red 
+                        //new GradientStop(Color.FromRgb(255, 69, 0), 0.8),
+                        //new GradientStop(Color.FromRgb(255, 165, 0), 0.6),
+                        //new GradientStop(Color.FromRgb(255, 255, 0), 0.4),
+                        //new GradientStop(Color.FromRgb(173, 255, 47), 0.25),
+                        //new GradientStop(Color.FromRgb(0, 128, 0), 0)        // Green 
 
+                        new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+                        new GradientStop(Color.FromRgb(110, 204, 37), 0)        // Green 
                     }
                 }
             }

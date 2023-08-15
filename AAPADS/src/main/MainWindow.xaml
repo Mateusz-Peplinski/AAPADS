@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:AAPADS"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="AAPADS - Advanced Access Point Anomaly Detection System"
     Width="1100"
     Height="600"
@@ -557,28 +558,37 @@
                                                                         </Grid>
                                                                     </Border>
                                                                 </StackPanel>
-                                                                <GroupBox
-                                                                    Width="750"
-                                                                    materialDesign:ColorZoneAssist.Background="OrangeRed"
-                                                                    materialDesign:ColorZoneAssist.Foreground="Black"
-                                                                    materialDesign:ColorZoneAssist.Mode="Custom"
-                                                                    DockPanel.Dock="Right"
-                                                                    Header="LIVE CONSOLE">
-                                                                    <GroupBox.HeaderTemplate>
-                                                                        <DataTemplate>
-                                                                            <TextBlock
-                                                                                FontWeight="Bold"
-                                                                                Text="LIVE CONSOLE"
-                                                                                TextAlignment="Center" />
-                                                                        </DataTemplate>
-                                                                    </GroupBox.HeaderTemplate>
-                                                                    <TextBox
-                                                                        Background="#424242"
-                                                                        Foreground="Beige"
-                                                                        IsHitTestVisible="False"
-                                                                        IsReadOnly="True"
-                                                                        Text="{Binding LiveLog, Mode=OneWay}"
-                                                                        TextWrapping="Wrap" />
+                                                                <GroupBox>
+                                                                    <liveCharts:CartesianChart Name="channelAllocation" Series="{Binding ChannelAllocationSeries}">
+                                                                        <liveCharts:CartesianChart.AxisX>
+
+                                                                            <liveCharts:Axis
+                                                                                Title="Frequency (MHz)"
+                                                                                MaxValue="2497"
+                                                                                MinValue="2402">
+                                                                                <liveCharts:Axis.Separator>
+                                                                                    <liveCharts:Separator
+                                                                                        Step="5"
+                                                                                        Stroke="Gray"
+                                                                                        StrokeThickness="1" />
+
+                                                                                </liveCharts:Axis.Separator>
+                                                                            </liveCharts:Axis>
+                                                                        </liveCharts:CartesianChart.AxisX>
+                                                                        <liveCharts:CartesianChart.AxisY>
+                                                                            <liveCharts:Axis
+                                                                                Title="RSSI (dBm)"
+                                                                                MaxValue="0"
+                                                                                MinValue="-100">
+                                                                                <liveCharts:Axis.Separator>
+                                                                                    <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
+                                                                                </liveCharts:Axis.Separator>
+                                                                            </liveCharts:Axis>
+                                                                        </liveCharts:CartesianChart.AxisY>
+                                                                    </liveCharts:CartesianChart>
+
+
+
                                                                 </GroupBox>
                                                             </DockPanel>
                                                         </TabItem>
@@ -609,9 +619,11 @@
                                                                         MaxValue="{Binding AxisMax}"
                                                                         MinValue="{Binding AxisMin}" />
                                                                 </liveCharts:CartesianChart.AxisX>
-
-
+                                                                <liveCharts:CartesianChart.AxisY>
+                                                                    <liveCharts:Axis LabelFormatter="{Binding YAxisFormatter}" />
+                                                                </liveCharts:CartesianChart.AxisY>
                                                             </liveCharts:CartesianChart>
+
 
 
                                                         </TabItem>
