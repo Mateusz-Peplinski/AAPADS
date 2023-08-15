@@ -1,31 +1,39 @@
 using AAPADS;
 using LiveCharts;
+using LiveCharts.Defaults;
 using LiveCharts.Wpf;
+using LiveCharts.Wpf.Charts.Base;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
-
-
+using System.Windows.Threading;
 
 public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 {
     public ObservableCollection<dataModelStructure> AccessPoints { get; }
 
     public SeriesCollection SeriesCollection { get; set; } = new SeriesCollection
-{
-    new LineSeries
     {
-        Title = "2.4GHz",
-        Values = new ChartValues<double>()
-    },
-    new LineSeries
-    {
-        Title = "5GHz",
-        Values = new ChartValues<double>()
-    }
-};
+        new LineSeries
+        {
+            Title = "2.4GHz",
+            Values = new ChartValues<int>()
+        },
+        new LineSeries
+        {
+            Title = "5GHz",
+            Values = new ChartValues<int>()
+        }
+    };
+    public SeriesCollection ChannelAllocationSeries { get; set; } = new SeriesCollection();
+    public Func<double, string> YAxisFormatter { get; set; }
+
+    
 
     public Func<double, string> DateTimeFormatter { get; set; }
 
@@ -34,6 +42,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     private int _total24GHzNetworks;
     private int _total5GHzNetworks;
     private bool _isLoading;
+    private string _liveLog;
+    private double _summarySectionHeight = 200; 
     public int TOTAL_DETECTED_AP
     {
         get { return _totalDetectedAP; }
@@ -94,7 +104,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
-    private string _liveLog;
     public string LiveLog
     {
         get { return _liveLog; }
@@ -107,7 +116,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
-    private double _summarySectionHeight = 200; // Default value
     public double SummarySectionHeight
     {
         get { return _summarySectionHeight; }
@@ -129,28 +137,47 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             new LineSeries
             {
                 Title = "2.4GHz",
-                Values = new ChartValues<double>(),
+                Values = new ChartValues<int>(),
                 PointGeometrySize = 10,
-                Stroke = Brushes.YellowGreen,
-                Fill = new SolidColorBrush(Color.FromArgb(128, 124,252,0)),
-                PointForeground = Brushes.YellowGreen,
-                StrokeThickness = 0
+                Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                PointForeground = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                StrokeThickness = 0,
+                Fill = new LinearGradientBrush
+                {
+                        StartPoint = new Point(0, 1),
+                        EndPoint = new Point(0, 0),
+                        GradientStops = new GradientStopCollection
+                        {
+
+                        new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+                        new GradientStop(Color.FromArgb(60,110, 204, 37), 0)        // Green 
+                        }
+                }
             },
             
             new LineSeries
             {
                 Title = "5GHz",
-                Values = new ChartValues<double>(),
+                Values = new ChartValues<int>(),
                 PointGeometrySize = 10,
-                Stroke = Brushes.SkyBlue,
-                Fill = new SolidColorBrush(Color.FromArgb(128, 30,144,255)), 
-                PointForeground = Brushes.SkyBlue,
-                StrokeThickness = 0
+                Stroke = new SolidColorBrush(Color.FromRgb(96, 217, 255)),
+                PointForeground = new SolidColorBrush(Color.FromRgb(96, 217, 255)),
+                StrokeThickness = 0,
+                Fill = new LinearGradientBrush
+                {
+                        StartPoint = new Point(0, 1),
+                        EndPoint = new Point(0, 0),
+                        GradientStops = new GradientStopCollection
+                        {
+
+                        new GradientStop(Color.FromRgb(96, 239, 255), 1),       // blue-bright
+                        new GradientStop(Color.FromArgb(60,0, 97, 255), 0)        // blue 
+                        }
+                }
             }
 
         };
-
-
+        YAxisFormatter = value => value.ToString("N0");
         DateTimeFormatter = value => DateTime.Now.ToString("hh:mm:ss");
 
     }
@@ -162,7 +189,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public void UpdateAccessPoints(DataIngestEngine dataIngestEngine)
+    public async Task UpdateAccessPoints(DataIngestEngine dataIngestEngine)
     {
         AccessPoints.Clear();
 
@@ -188,7 +215,11 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);
         IS_LOADING = dataIngestEngine.isLoading;
 
-        if (IS_LOADING == false) { UpdateGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP); }
+        if (IS_LOADING == false) { 
+            UpdateGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP);
+            await RefreshChannelAllocationChartAsync(PopulateSSIDInfoList(dataIngestEngine));
+            
+        }
 
     }
 
@@ -263,7 +294,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         }
     }
 
-    private void UpdateGraph(double value24GHz, double value5GHz)
+    private void UpdateGraph(int value24GHz, int value5GHz)
     {
         var series24GHz = SeriesCollection[0];
         var series5GHz = SeriesCollection[1];
@@ -281,7 +312,137 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 series5GHz.Values.RemoveAt(0);
         });
     }
+    public async Task RefreshChannelAllocationChartAsync(List<SSIDInfoForCHAllocation> data)
+    {
 
+        var channelCount = await Task.Run(() => ProcessData(data));
+
+        UpdateChannelAllocationChart(channelCount);
+    }
+
+    private Dictionary<int, List<double>> ProcessData(List<SSIDInfoForCHAllocation> data)
+    {
+        var channelData = new Dictionary<int, List<double>>();
+
+        foreach (var info in data)
+        {
+            if (!channelData.ContainsKey(info.Channel))
+            {
+                channelData[info.Channel] = new List<double>();
+            }
+
+            // Estimate RSSI value 
+            double rssi = (info.SignalStrength / 2) - 100;
+            channelData[info.Channel].Add(rssi);
+        }
+
+        return channelData;
+    }
+
+
+    private void UpdateChannelAllocationChart(Dictionary<int, List<double>> data)
+    {
+
+        if (!Application.Current.Dispatcher.CheckAccess())
+        {
+            Application.Current.Dispatcher.Invoke(() => UpdateChannelAllocationChart(data));
+            return;
+        }
+
+        ChannelAllocationSeries.Clear();
+
+        foreach (var entry in data)
+        {
+            var channel = entry.Key;
+            var signalStrengthsOnChannel = entry.Value;
+
+            foreach (var rssi in signalStrengthsOnChannel)
+            {
+                var lineSeries = new LineSeries
+                {
+                    Title = $"Channel {channel}",
+                    Values = new ChartValues<ObservablePoint>(),
+                    PointGeometrySize = 10,
+                    StrokeThickness = 2,
+                    Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                    Fill = new LinearGradientBrush
+                    {
+                        StartPoint = new Point(0, 1),
+                        EndPoint = new Point(0, 0),
+                        GradientStops = new GradientStopCollection
+                    {
+
+                        new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+                        new GradientStop(Color.FromArgb(60,110, 204, 37), 0)        // Green 
+                    }
+                    }
+                };
+                Dictionary<int, (int Start, int Peak, int End)> channelFrequencies = new Dictionary<int, (int Start, int Peak, int End)>
+                        {
+                            {1, (2402, 2412, 2422)},
+                            {2, (2407, 2417, 2427)},
+                            {3, (2412, 2422, 2432)},
+                            {4, (2417, 2427, 2437)},
+                            {5, (2422, 2432, 2442)},
+                            {6, (2427, 2437, 2447)},
+                            {7, (2432, 2442, 2452)},
+                            {8, (2437, 2447, 2457)},
+                            {9, (2442, 2452, 2462)},
+                            {10, (2447, 2457, 2467)},
+                            {11, (2452, 2462, 2472)},
+                            {12, (2457, 2467, 2477)},
+                            {13, (2462, 2472, 2482)},
+                            {14, (2473, 2484, 2495)}
+                        };
+                if (channelFrequencies.ContainsKey(channel))
+                {
+                    var freqRange = channelFrequencies[channel];
+
+                    // Start Frequency, y-value is -100
+                    lineSeries.Values.Add(new ObservablePoint(freqRange.Start, -100));
+
+                    // Peak Frequency, y-value is RSSI
+                    lineSeries.Values.Add(new ObservablePoint(freqRange.Peak, rssi));
+
+                    // End Frequency, y-value is -100
+                    lineSeries.Values.Add(new ObservablePoint(freqRange.End, -100));
+                }
+
+                ChannelAllocationSeries.Add(lineSeries);
+            }
+        }
+    }
+
+
+    private List<SSIDInfoForCHAllocation> PopulateSSIDInfoList(DataIngestEngine dataIngestEngine)
+    {
+        var ssidInfoList = new List<SSIDInfoForCHAllocation>();
+
+        for (int i = 0; i < dataIngestEngine.SSID_LIST.Count; i++)
+        {
+            if (dataIngestEngine.BAND_LIST[i] == "2.4 GHz")
+            {
+                ssidInfoList.Add(new SSIDInfoForCHAllocation
+                {
+                    SSID = dataIngestEngine.SSID_LIST[i],
+                    Channel = dataIngestEngine.CHANNEL_LIST[i],
+                    SignalStrength = dataIngestEngine.SIGNAL_STRENGTH_LIST[i]
+                });
+            }
+            
+        }
+
+        return ssidInfoList;
+    }
+
+
+
+    public class SSIDInfoForCHAllocation
+    {
+        public string SSID { get; set; }
+        public int Channel { get; set; }
+        public double SignalStrength { get; set; } 
+    }
 
 }
 
