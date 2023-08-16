@@ -13,6 +13,7 @@ namespace AAPADS
     {
         private SQLiteConnection connection;
         private readonly string dbPath;
+        public SQLiteConnection Connection => connection;
 
         public wirelessProfileDatabaseAccess(string dbFileName)
         {
