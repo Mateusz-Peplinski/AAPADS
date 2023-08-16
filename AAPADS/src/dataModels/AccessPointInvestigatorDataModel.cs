@@ -156,7 +156,7 @@ namespace AAPADS
                 }
             }
 
-            // Remove SSIDs that are no longer available
+            // Remove SSIDs 
             for (int i = SSIDs.Count - 1; i >= 0; i--)
             {
                 if (!currentSSIDs.Any(s => s.OriginalSSID == SSIDs[i].OriginalSSID))
