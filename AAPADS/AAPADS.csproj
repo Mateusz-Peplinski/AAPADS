@@ -131,6 +131,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\databaseAccess\normalizationEngineDatabaseAccess.cs" />
+    <Compile Include="src\engine\normalizationEngine.cs" />
     <Compile Include="src\dataModels\AccessPointInvestigatorDataModel.cs" />
     <Compile Include="src\databaseAccess\wirelessProfileDatabaseAccess.cs" />
     <Compile Include="src\dataModels\networkAdapterInformationDataModel.cs" />

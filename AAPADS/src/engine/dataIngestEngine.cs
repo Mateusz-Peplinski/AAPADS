@@ -87,6 +87,7 @@ namespace AAPADS
         //private overviewViewDataModel liveLogDataModelConsole;
 
         private wirelessProfileDatabaseAccess _dbAccess;
+        private NormalizationEngine _normalizationEngine;
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void PerformWifiScan();
@@ -107,7 +108,7 @@ namespace AAPADS
             AUTH_LIST = new List<string>();
 
             _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
-
+            _normalizationEngine = new NormalizationEngine();   
             Task.Run(RunNetworkScanning);
         }
 
@@ -123,6 +124,7 @@ namespace AAPADS
                 }
                 try
                 {
+                    Console.WriteLine("[ DATA INGEST ENGINE ] Updating wireless data");
                     PerformWifiScan();
                 }
                 catch (Exception ex)
@@ -145,13 +147,18 @@ namespace AAPADS
                     AUTH_LIST.Clear();
                 }
 
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("[ DATA INGEST ENGINE ] Collecting wireless data...");
+
                 RunNetshCommand();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"[ DATA INGEST ENGINE ] Collected {SSID_LIST.Count} access points data");
 
                 SSIDDataCollected?.Invoke(this, EventArgs.Empty);
                 isLoading = false;
 
                 InsertDataToDatabase();
-
                 semaphore.Release();
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
@@ -298,6 +305,9 @@ namespace AAPADS
 
            
             string CURRENT_TIME_FRAME_ID = idGenerator.GenerateNextId();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"[ DATA INGEST ENGINE ] SQL INSERT for {CURRENT_TIME_FRAME_ID}");
 
             for (int i = 0; i < SSID_LIST.Count; i++)
             {
