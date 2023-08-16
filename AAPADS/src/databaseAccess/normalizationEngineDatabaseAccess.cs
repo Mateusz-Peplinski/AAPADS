@@ -26,24 +26,24 @@ namespace AAPADS
                 @"CREATE TABLE IF NOT EXISTS ""NE_DB"" (
             ""ID"" INTEGER NOT NULL UNIQUE,
             ""TIME_FRAME_ID"" TEXT,
-            ""AVG_AP_COUNT"" TEXT,
-            ""AVG_2_4GHZ_AP_COUNT"" TEXT,
-            ""AVG_5_GHZ_AP_COUNT"" TEXT,
+            ""AP_COUNT"" TEXT,
+            ""AP2_4GHZ_AP_COUNT"" TEXT,
+            ""AP5_GHZ_AP_COUNT"" TEXT,
             PRIMARY KEY(""ID"" AUTOINCREMENT)
             );", connection);
 
             command.ExecuteNonQuery();
         }
-        public void InsertNormalizationEngineData(string timeFrameID, int averageAccessPointCount, int average24GHzCount, int average5GHzCount)
+        public void InsertNormalizationEngineData(string timeFrameID, int AccessPointCount, int AP24GHzCount, int AP5GHzCount)
         {
             var normalizedData = new
             {
                 TIME_FRAME_ID = timeFrameID,
-                AVG_AP_COUNT = averageAccessPointCount,
-                AVG_2_4GHZ_AP_COUNT = average24GHzCount,
-                AVG_5_GHZ_AP_COUNT = average5GHzCount,
+                AP_COUNT = AccessPointCount,
+                AP2_4GHZ_AP_COUNT = AP24GHzCount,
+                AP5_GHZ_AP_COUNT = AP5GHzCount,
             };
-            connection.Execute("INSERT INTO NE_DB (TIME_FRAME_ID, AVG_AP_COUNT, AVG_2_4GHZ_AP_COUNT, AVG_5_GHZ_AP_COUNT) VALUES (@TIME_FRAME_ID, @AVG_AP_COUNT, @AVG_2_4GHZ_AP_COUNT, @AVG_5_GHZ_AP_COUNT)", normalizedData);
+            connection.Execute("INSERT INTO NE_DB (TIME_FRAME_ID, AP_COUNT, AP2_4GHZ_AP_COUNT, AP5_GHZ_AP_COUNT) VALUES (@TIME_FRAME_ID, @AP_COUNT, @AP2_4GHZ_AP_COUNT, @AP5_GHZ_AP_COUNT)", normalizedData);
         }
 
 
