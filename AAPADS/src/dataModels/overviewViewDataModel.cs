@@ -125,8 +125,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             OnPropertyChanged(nameof(SummarySectionHeight));
         }
     }
-
-
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
@@ -182,13 +180,11 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
     }
 
-
     public event PropertyChangedEventHandler PropertyChanged;
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-
     public async Task UpdateAccessPoints(DataIngestEngine dataIngestEngine)
     {
         AccessPoints.Clear();
@@ -222,7 +218,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         }
 
     }
-
     private int calculateTotalSecureAccessPoints(DataIngestEngine dataIngestEngine)
     {
 
@@ -242,7 +237,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return secureAccessPointCount;
     }
-
     private int calculateTotal24GHzAccessPoints(DataIngestEngine dataIngestEngine)
     {
         int total24GHzAPs = 0;
@@ -293,7 +287,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             Application.Current.Dispatcher.Invoke(action);
         }
     }
-
     private void UpdateGraph(int value24GHz, int value5GHz)
     {
         var series24GHz = SeriesCollection[0];
@@ -339,7 +332,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         return channelData;
     }
 
-
     private void UpdateChannelAllocationChart(Dictionary<int, List<double>> data)
     {
 
@@ -360,7 +352,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             {
                 var lineSeries = new LineSeries
                 {
-                    Title = $"Channel {channel}",
+                    Title = $"2.4GHz Frequency Allocation Graph",
                     Values = new ChartValues<ObservablePoint>(),
                     PointGeometrySize = 10,
                     StrokeThickness = 2,
@@ -412,8 +404,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
-
-
     private List<SSIDInfoForCHAllocation> PopulateSSIDInfoList(DataIngestEngine dataIngestEngine)
     {
         var ssidInfoList = new List<SSIDInfoForCHAllocation>();
@@ -434,9 +424,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return ssidInfoList;
     }
-
-
-
     public class SSIDInfoForCHAllocation
     {
         public string SSID { get; set; }

@@ -559,33 +559,52 @@
                                                                     </Border>
                                                                 </StackPanel>
                                                                 <GroupBox>
-                                                                    <liveCharts:CartesianChart Name="channelAllocation" Series="{Binding ChannelAllocationSeries}">
-                                                                        <liveCharts:CartesianChart.AxisX>
+                                                                    <Grid>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="Auto" />
+                                                                            <RowDefinition Height="*" />
+                                                                        </Grid.RowDefinitions>
 
-                                                                            <liveCharts:Axis
-                                                                                Title="Frequency (MHz)"
-                                                                                MaxValue="2497"
-                                                                                MinValue="2402">
-                                                                                <liveCharts:Axis.Separator>
-                                                                                    <liveCharts:Separator
-                                                                                        Step="5"
-                                                                                        Stroke="Gray"
-                                                                                        StrokeThickness="1" />
+                                                                        <TextBlock
+                                                                            Grid.Row="0"
+                                                                            HorizontalAlignment="Center"
+                                                                            FontSize="12"
+                                                                            FontWeight="Bold"
+                                                                            Foreground="AntiqueWhite"
+                                                                            Text="2.4 GHz Frequency Allocation Graph" />
 
-                                                                                </liveCharts:Axis.Separator>
-                                                                            </liveCharts:Axis>
-                                                                        </liveCharts:CartesianChart.AxisX>
-                                                                        <liveCharts:CartesianChart.AxisY>
-                                                                            <liveCharts:Axis
-                                                                                Title="RSSI (dBm)"
-                                                                                MaxValue="0"
-                                                                                MinValue="-100">
-                                                                                <liveCharts:Axis.Separator>
-                                                                                    <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
-                                                                                </liveCharts:Axis.Separator>
-                                                                            </liveCharts:Axis>
-                                                                        </liveCharts:CartesianChart.AxisY>
-                                                                    </liveCharts:CartesianChart>
+                                                                        <liveCharts:CartesianChart
+                                                                            Name="channelAllocation"
+                                                                            Grid.Row="1"
+                                                                            Series="{Binding ChannelAllocationSeries}">
+                                                                            <liveCharts:CartesianChart.AxisX>
+
+                                                                                <liveCharts:Axis
+                                                                                    Title="Frequency (MHz)"
+                                                                                    MaxValue="2497"
+                                                                                    MinValue="2402">
+                                                                                    <liveCharts:Axis.Separator>
+                                                                                        <liveCharts:Separator
+                                                                                            Step="5"
+                                                                                            Stroke="Gray"
+                                                                                            StrokeThickness="1" />
+
+                                                                                    </liveCharts:Axis.Separator>
+                                                                                </liveCharts:Axis>
+                                                                            </liveCharts:CartesianChart.AxisX>
+                                                                            <liveCharts:CartesianChart.AxisY>
+                                                                                <liveCharts:Axis
+                                                                                    Title="RSSI (dBm)"
+                                                                                    MaxValue="0"
+                                                                                    MinValue="-100">
+                                                                                    <liveCharts:Axis.Separator>
+                                                                                        <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
+                                                                                    </liveCharts:Axis.Separator>
+                                                                                </liveCharts:Axis>
+                                                                            </liveCharts:CartesianChart.AxisY>
+                                                                        </liveCharts:CartesianChart>
+                                                                    </Grid>
+
 
 
 
