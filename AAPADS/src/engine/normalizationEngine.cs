@@ -34,21 +34,20 @@ namespace AAPADS
 
         private void StartNormalization()
         {
-            while (true) // This loop will keep the normalization engine running continuously
+            while (true) 
             {
                 var nextTimeFrameId = GetNextTimeFrameId(_lastProcessedTimeFrameId);
 
                 if (!string.IsNullOrEmpty(nextTimeFrameId))
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue; 
-                    Console.WriteLine($"[ NORMALIZATION ENGINE ] SQL SELECT data for TIME_FRAME_ID: {nextTimeFrameId}");
                     // Fetch the data for the nextTimeFrameId
                     var dataForTimeFrame = FetchDataForTimeFrame(nextTimeFrameId);
+
                     // Calculate averages or other statistical measures
-                    var averages = CalculateAverages(dataForTimeFrame);
+                    var counts = CalculateAverages(dataForTimeFrame);
 
                     // Insert the calculated values into the NE_DB table
-                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, averages.AvgAccessPointCount, averages.Avg24GHzCount, averages.Avg5GHzCount);
+                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, counts.AccessPointCount, counts.AP24GHzCount, counts.AP5GHzCount);
 
                     // Update the last processed TIME_FRAME_ID
                     _lastProcessedTimeFrameId = nextTimeFrameId;
@@ -100,7 +99,7 @@ namespace AAPADS
             var parameters = new { TIME_FRAME_ID = timeFrameId };
 
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"[ NORMALIZATION ENGINE ] SQL SELECT from {timeFrameId}");
+            Console.WriteLine($"[ NORMALIZATION ENGINE ] SQL READ from {timeFrameId}");
 
             var data = _dbAccess.Connection.Query<WirelessData>(query, parameters).ToList();
 
@@ -108,11 +107,19 @@ namespace AAPADS
         }
 
 
-        private (int AvgAccessPointCount, int Avg24GHzCount, int Avg5GHzCount) CalculateAverages(List<WirelessData> data)
+        private (int AccessPointCount, int AP24GHzCount, int AP5GHzCount) CalculateAverages(List<WirelessData> data)
         {
-            // Logic to calculate averages or other statistical measures
-            // For now, I'll return placeholder values
-            return (0, 0, 0); // Placeholder
+            //int total24GHzAPs = 0;
+
+            //foreach (var accessPoint in data.)
+            //{
+            //    if (accessPoint == "2.4 GHz")
+            //    {
+            //        total24GHzAPs++;
+            //    }
+            //}
+
+            return (0, 1, 2); // Placeholder
         }
     }
 

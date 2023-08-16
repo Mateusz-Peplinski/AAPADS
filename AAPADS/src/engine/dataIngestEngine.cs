@@ -124,6 +124,7 @@ namespace AAPADS
                 }
                 try
                 {
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("[ DATA INGEST ENGINE ] Updating wireless data");
                     PerformWifiScan();
                 }
@@ -307,7 +308,7 @@ namespace AAPADS
             string CURRENT_TIME_FRAME_ID = idGenerator.GenerateNextId();
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"[ DATA INGEST ENGINE ] SQL INSERT for {CURRENT_TIME_FRAME_ID}");
+            Console.WriteLine($"[ DATA INGEST ENGINE ] SQL WRIRE at {CURRENT_TIME_FRAME_ID}");
 
             for (int i = 0; i < SSID_LIST.Count; i++)
             {
