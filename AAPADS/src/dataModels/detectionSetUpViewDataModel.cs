@@ -5,15 +5,17 @@ using System.Net.NetworkInformation;
 
 namespace AAPADS
 {
-    public class networkAdapterInformationDataModel : baseDataModel, INotifyPropertyChanged
+    public class detectionSetUpViewDataModel : baseDataModel, INotifyPropertyChanged
     {
         public ObservableCollection<NETWORK_ADAPTER_INFO> NETWORK_80211_ADAPTERS { get; set; }
 
-        public networkAdapterInformationDataModel()
+        public detectionSetUpViewDataModel()
         {
             NETWORK_80211_ADAPTERS = new ObservableCollection<NETWORK_ADAPTER_INFO>();
+            NETWORK_ADAPTER_INFO.AdapterCollection = NETWORK_80211_ADAPTERS;
             LoadAdapters();
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
@@ -53,7 +55,7 @@ namespace AAPADS
             return adapterList;
         }
     }
-    public class NETWORK_ADAPTER_INFO
+    public class NETWORK_ADAPTER_INFO : INotifyPropertyChanged
     {
         public string NETWORK_ADAPTER_NAME { get; set; }
         public string NETWORK_ADAPTER_ID { get; set; }
@@ -61,5 +63,38 @@ namespace AAPADS
         public string NETWORK_ADAPTER_STATUS { get; set; }
         public long NETWORK_ADAPTER_SPEED_BYTES { get; set; }
         public string NETWORK_ADAPTER_MAC_ADDRESS { get; set; }
+
+        private bool _isAdapterActive;
+        public bool IsAdapterActive
+        {
+            get { return _isAdapterActive; }
+            set
+            {
+                if (_isAdapterActive != value)
+                {
+                    _isAdapterActive = value;
+                    OnPropertyChanged("IsAdapterActive");
+
+                    if (value && AdapterCollection != null)
+                    {
+                        foreach (var adapter in AdapterCollection)
+                        {
+                            if (adapter != this)
+                                adapter.IsAdapterActive = false;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        public static ObservableCollection<NETWORK_ADAPTER_INFO> AdapterCollection { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
+
 }
