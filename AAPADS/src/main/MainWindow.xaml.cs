@@ -21,7 +21,7 @@ namespace AAPADS
         private readonly DetectionEngine DETECTION_ENGINE_OBJECT;
         private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL_OBJECT;
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL_OBJECT;
-        private readonly networkAdapterInformationDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
+        private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
         private  AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
         
         private double _originalWidth;
@@ -50,7 +50,7 @@ namespace AAPADS
             DETECTION_ENGINE_OBJECT.DetectionDiscovered += updateDetectionTabUI;
             DETECTION_ENGINE_OBJECT.startdetection();
 
-            WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new networkAdapterInformationDataModel();
+            WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new detectionSetUpViewDataModel();
 
             ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
 
@@ -120,14 +120,14 @@ namespace AAPADS
             else if (tab == DetectionsTab)
             {
                 DataContext = DETECTION_VIEW_MODEL_OBJECT;
-            }
-            else if (tab == NetworkAdapterTab)
-            {
-                DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
-            }
+            }      
             else if (tab == AccessPointInvestigateTab)
             {
                 DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+            }
+            else if (tab == DetectionSetupTab)
+            {
+                DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
             }
         }
         private void UpdateOverviewTabUI(object sender, EventArgs e)

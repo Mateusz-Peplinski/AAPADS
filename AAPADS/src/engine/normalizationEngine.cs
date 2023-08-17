@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using Dapper;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace AAPADS
 {
@@ -44,10 +45,10 @@ namespace AAPADS
                     var dataForTimeFrame = FetchDataForTimeFrame(nextTimeFrameId);
 
                     // Calculate averages or other statistical measures
-                    var counts = CalculateAverages(dataForTimeFrame);
+                    var NormalizedData = Normalize(dataForTimeFrame);
 
                     // Insert the calculated values into the NE_DB table
-                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, counts.AccessPointCount, counts.AP24GHzCount, counts.AP5GHzCount);
+                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount, NormalizedData.knownSSIDs);
 
                     // Update the last processed TIME_FRAME_ID
                     _lastProcessedTimeFrameId = nextTimeFrameId;
@@ -107,19 +108,36 @@ namespace AAPADS
         }
 
 
-        private (int AccessPointCount, int AP24GHzCount, int AP5GHzCount) CalculateAverages(List<WirelessData> data)
+        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount, string knownSSIDs) Normalize(List<WirelessData> data)
         {
-            //int total24GHzAPs = 0;
+            int totalAPs = 0;
+            int total24GHzAPs = 0;
+            int total5GHzAPs = 0;
+            string time = "NULL";
+            List<string> knownSSIDsList = new List<string>();
+            string commaSeparatedKnownSSIDS = "";  
 
-            //foreach (var accessPoint in data.)
-            //{
-            //    if (accessPoint == "2.4 GHz")
-            //    {
-            //        total24GHzAPs++;
-            //    }
-            //}
+            foreach (var accessPoint in data)
+            {
+                if (((accessPoint.SignalStrength/2)-100) < 60) //Only care about SSID that have approx RSSI value of 60 or less
+                {
+                    if (accessPoint.Band == "2.4 GHz")
+                    {
+                        total24GHzAPs++;
+                    }
+                    if (accessPoint.Band == "5 GHz")
+                    {
+                        total5GHzAPs++;
+                    }
 
-            return (0, 1, 2); // Placeholder
+                    totalAPs++;
+                    time = accessPoint.Time;
+                    knownSSIDsList.Add(accessPoint.SSID);
+                }
+                
+            }
+            commaSeparatedKnownSSIDS = string.Join(",", knownSSIDsList);
+            return (totalAPs, time, total24GHzAPs, total5GHzAPs, commaSeparatedKnownSSIDS); 
         }
     }
 
