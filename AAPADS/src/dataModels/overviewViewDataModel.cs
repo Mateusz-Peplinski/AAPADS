@@ -2,29 +2,29 @@ using AAPADS;
 using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
-using LiveCharts.Wpf.Charts.Base;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 {
     public ObservableCollection<dataModelStructure> AccessPoints { get; }
 
-    public SeriesCollection SeriesCollection { get; set; } = new SeriesCollection
+    public SeriesCollection FrequencySeriesCollection { get; set; } = new SeriesCollection
     {
-        new LineSeries
+        new LiveCharts.Wpf.LineSeries
         {
             Title = "2.4GHz",
             Values = new ChartValues<int>()
         },
-        new LineSeries
+        new LiveCharts.Wpf.LineSeries
         {
             Title = "5GHz",
             Values = new ChartValues<int>()
@@ -32,8 +32,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     };
     public SeriesCollection ChannelAllocationSeries { get; set; } = new SeriesCollection();
     public Func<double, string> YAxisFormatter { get; set; }
-
-    
 
     public Func<double, string> DateTimeFormatter { get; set; }
 
@@ -43,7 +41,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     private int _total5GHzNetworks;
     private bool _isLoading;
     private string _liveLog;
-    private double _summarySectionHeight = 200; 
+    private double _summarySectionHeight = 300;
     public int TOTAL_DETECTED_AP
     {
         get { return _totalDetectedAP; }
@@ -125,14 +123,16 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             OnPropertyChanged(nameof(SummarySectionHeight));
         }
     }
+    
+
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
 
-        SeriesCollection = new SeriesCollection
+        FrequencySeriesCollection = new SeriesCollection
         {
-           
-            new LineSeries
+
+            new LiveCharts.Wpf.LineSeries
             {
                 Title = "2.4GHz",
                 Values = new ChartValues<int>(),
@@ -152,8 +152,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                         }
                 }
             },
-            
-            new LineSeries
+
+            new LiveCharts.Wpf.LineSeries
             {
                 Title = "5GHz",
                 Values = new ChartValues<int>(),
@@ -178,6 +178,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         YAxisFormatter = value => value.ToString("N0");
         DateTimeFormatter = value => DateTime.Now.ToString("hh:mm:ss");
 
+        
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -211,12 +212,11 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);
         IS_LOADING = dataIngestEngine.isLoading;
 
-        if (IS_LOADING == false) { 
-            UpdateGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP);
+        if (IS_LOADING == false)
+        {
+            UpdateFrequencyGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP);
             await RefreshChannelAllocationChartAsync(PopulateSSIDInfoList(dataIngestEngine));
-            
         }
-
     }
     private int calculateTotalSecureAccessPoints(DataIngestEngine dataIngestEngine)
     {
@@ -264,18 +264,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return total5GHzAPs;
     }
-    public void AppendToLog(string message)
-    {
-        if (string.IsNullOrEmpty(LiveLog))
-        {
-            LiveLog = message;
-        }
-        else
-        {
-            LiveLog += "\n" + message;
-        }
-
-    }
     public void RunOnUIThread(Action action)
     {
         if (Application.Current.Dispatcher.CheckAccess())
@@ -287,33 +275,34 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             Application.Current.Dispatcher.Invoke(action);
         }
     }
-    private void UpdateGraph(int value24GHz, int value5GHz)
+    private void UpdateFrequencyGraph(int value24GHz, int value5GHz)
     {
-        var series24GHz = SeriesCollection[0];
-        var series5GHz = SeriesCollection[1];
+        var series24GHz = FrequencySeriesCollection[0];
+        var series5GHz = FrequencySeriesCollection[1];
 
         RunOnUIThread(() =>
         {
             series24GHz.Values.Add(value24GHz);
             series5GHz.Values.Add(value5GHz);
 
-            int maxPoints = 30; 
+            int maxPoints = 30;
             if (series24GHz.Values.Count > maxPoints)
                 series24GHz.Values.RemoveAt(0);
 
             if (series5GHz.Values.Count > maxPoints)
                 series5GHz.Values.RemoveAt(0);
         });
-    }
+    }  
+
     public async Task RefreshChannelAllocationChartAsync(List<SSIDInfoForCHAllocation> data)
     {
 
-        var channelCount = await Task.Run(() => ProcessData(data));
+        var channelCount = await Task.Run(() => ChannelAllocationProcessData(data));
 
         UpdateChannelAllocationChart(channelCount);
     }
 
-    private Dictionary<int, List<double>> ProcessData(List<SSIDInfoForCHAllocation> data)
+    private Dictionary<int, List<double>> ChannelAllocationProcessData(List<SSIDInfoForCHAllocation> data)
     {
         var channelData = new Dictionary<int, List<double>>();
 
@@ -331,7 +320,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return channelData;
     }
-
     private void UpdateChannelAllocationChart(Dictionary<int, List<double>> data)
     {
 
@@ -350,7 +338,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
             foreach (var rssi in signalStrengthsOnChannel)
             {
-                var lineSeries = new LineSeries
+                var lineSeries = new LiveCharts.Wpf.LineSeries
                 {
                     Title = $"2.4GHz Frequency Allocation Graph",
                     Values = new ChartValues<ObservablePoint>(),
@@ -419,16 +407,21 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     SignalStrength = dataIngestEngine.SIGNAL_STRENGTH_LIST[i]
                 });
             }
-            
+
         }
 
         return ssidInfoList;
     }
+    public void Dispose()
+    {
+      
+    }
+
     public class SSIDInfoForCHAllocation
     {
         public string SSID { get; set; }
         public int Channel { get; set; }
-        public double SignalStrength { get; set; } 
+        public double SignalStrength { get; set; }
     }
 
 }

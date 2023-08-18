@@ -7,10 +7,10 @@
     xmlns:local="clr-namespace:AAPADS"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:oxy="http://oxyplot.org/wpf"
     Title="AAPADS - Advanced Access Point Anomaly Detection System"
     Width="1100"
-    Height="600"
+    Height="650"
     Background="{DynamicResource MaterialDesignDarkBackground}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     TextElement.FontSize="13"
@@ -400,260 +400,238 @@
                                 </ProgressBar.Style>
                             </ProgressBar>
 
-                            <ScrollViewer Grid.Row="3" DockPanel.Dock="Bottom">
-                                <StackPanel>
-                                    <Border Background="{DynamicResource MaterialDesignDarkBackground}">
-                                        <GroupBox
-                                            x:Name="SummarySection"
-                                            Height="{Binding SummarySectionHeight}"
-                                            materialDesign:ColorZoneAssist.Background="#D72323"
-                                            materialDesign:ColorZoneAssist.Foreground="Black"
-                                            materialDesign:ColorZoneAssist.Mode="Custom"
-                                            DockPanel.Dock="Bottom"
-                                            Header="Custom Header">
-                                            <GroupBox.HeaderTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock
-                                                        HorizontalAlignment="Center"
-                                                        FontWeight="Bold"
-                                                        Text="SUMMARY" />
-                                                </DataTemplate>
-                                            </GroupBox.HeaderTemplate>
+
+                            <StackPanel Grid.Row="3" DockPanel.Dock="Bottom">
+                                <materialDesign:Card Background="#303030">
+                                    <TabControl
+                                        x:Name="SummarySection"
+                                        Height="{Binding SummarySectionHeight}"
+                                        HorizontalContentAlignment="Left"
+                                        materialDesign:ColorZoneAssist.Background="#424242"
+                                        materialDesign:ColorZoneAssist.Foreground="#D72323"
+                                        materialDesign:ColorZoneAssist.Mode="Custom">
+                                        <TabItem Header="SUMMARY">
+                                            <DockPanel LastChildFill="True">
+                                                <StackPanel Margin="5,5,0,0" DockPanel.Dock="Left">
+                                                    <Border
+                                                        Margin="2"
+                                                        Padding="2"
+                                                        Background="#424242"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                Grid.Column="0"
+                                                                VerticalAlignment="Center"
+                                                                FontWeight="Bold"
+                                                                Foreground="Beige"
+                                                                Text="ACCESS POINTS DETECTED:" />
+                                                            <Border
+                                                                Grid.Column="1"
+                                                                Margin="5,0,0,0"
+                                                                Padding="5"
+                                                                Background="OrangeRed"
+                                                                CornerRadius="5">
+                                                                <TextBlock
+                                                                    VerticalAlignment="Center"
+                                                                    Foreground="White"
+                                                                    Text="{Binding TOTAL_DETECTED_AP}" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border
+                                                        Margin="2"
+                                                        Padding="2"
+                                                        Background="#424242"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                Grid.Column="0"
+                                                                VerticalAlignment="Center"
+                                                                FontWeight="Bold"
+                                                                Foreground="Beige"
+                                                                Text="SECURE ACCESS POINTS:" />
+                                                            <Border
+                                                                Grid.Column="1"
+                                                                Margin="5,0,0,0"
+                                                                Padding="5"
+                                                                Background="OrangeRed"
+                                                                CornerRadius="5">
+                                                                <TextBlock
+                                                                    VerticalAlignment="Center"
+                                                                    Foreground="White"
+                                                                    Text="{Binding TOTAL_SECURE_AP}" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border
+                                                        Margin="2"
+                                                        Padding="2"
+                                                        Background="#424242"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                Grid.Column="0"
+                                                                VerticalAlignment="Center"
+                                                                FontWeight="Bold"
+                                                                Foreground="Beige"
+                                                                Text="2.4 GHz NETWORKS:" />
+                                                            <Border
+                                                                Grid.Column="1"
+                                                                Margin="5,0,0,0"
+                                                                Padding="5"
+                                                                Background="OrangeRed"
+                                                                CornerRadius="5">
+                                                                <TextBlock
+                                                                    VerticalAlignment="Center"
+                                                                    Foreground="White"
+                                                                    Text="{Binding TOTAL_2_4_GHz_AP}" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border
+                                                        Margin="2"
+                                                        Padding="2"
+                                                        Background="#424242"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                Grid.Column="0"
+                                                                VerticalAlignment="Center"
+                                                                FontWeight="Bold"
+                                                                Foreground="Beige"
+                                                                Text="5 GHz NETWORKS:" />
+                                                            <Border
+                                                                Grid.Column="1"
+                                                                Margin="5,0,0,0"
+                                                                Padding="5"
+                                                                Background="OrangeRed"
+                                                                CornerRadius="5">
+                                                                <TextBlock
+                                                                    VerticalAlignment="Center"
+                                                                    Foreground="White"
+                                                                    Text="{Binding TOTAL_5_GHz_AP}" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border
+                                                        Margin="2"
+                                                        Padding="2"
+                                                        Background="#424242"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Button
+                                                                materialDesign:RippleAssist.Feedback="#DD000000"
+                                                                Background="OrangeRed"
+                                                                BorderBrush="OrangeRed"
+                                                                Click="AccessPointRadar_Click"
+                                                                Content="ACCESS POINT RADAR"
+                                                                FontWeight="Bold"
+                                                                IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                                ToolTip="Resource name: MaterialDesignRaisedSecondaryButton" />
+                                                        </Grid>
+                                                    </Border>
+                                                </StackPanel>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="207*" />
+                                                        <ColumnDefinition Width="100*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+                                                    <liveCharts:CartesianChart
+                                                        Name="chart"
+                                                        Grid.RowSpan="2"
+                                                        Grid.ColumnSpan="2"
+                                                        Margin="0,0,0,10"
+                                                        LegendLocation="Bottom"
+                                                        Series="{Binding FrequencySeriesCollection}">
+                                                        <liveCharts:CartesianChart.AxisX>
+                                                            <liveCharts:Axis
+                                                                LabelFormatter="{Binding DateTimeFormatter}"
+                                                                MaxValue="{Binding AxisMax}"
+                                                                MinValue="{Binding AxisMin}" />
+                                                        </liveCharts:CartesianChart.AxisX>
+                                                        <liveCharts:CartesianChart.AxisY>
+                                                            <liveCharts:Axis LabelFormatter="{Binding YAxisFormatter}" />
+                                                        </liveCharts:CartesianChart.AxisY>
+                                                    </liveCharts:CartesianChart>
+                                                </Grid>
+
+                                            </DockPanel>
+                                        </TabItem>
+                                        <TabItem Header="2.4 GHz ALLOCATION CHART">
                                             <Grid>
-                                                <materialDesign:Card>
-                                                    <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}" TabStripPlacement="Right">
-                                                        <TabItem>
-                                                            <TabItem.Header>
-                                                                <StackPanel Width="auto" Height="auto">
-                                                                    <materialDesign:PackIcon
-                                                                        Width="24"
-                                                                        Height="24"
-                                                                        HorizontalAlignment="Center"
-                                                                        Foreground="AntiqueWhite"
-                                                                        Kind="NoteSearchOutline" />
-                                                                    <TextBlock
-                                                                        HorizontalAlignment="Center"
-                                                                        FontSize="12"
-                                                                        Foreground="AntiqueWhite"
-                                                                        Text="SUMMARY" />
-                                                                </StackPanel>
-                                                            </TabItem.Header>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="37*" />
+                                                    <ColumnDefinition Width="13*" />
+                                                </Grid.ColumnDefinitions>
+                                                <liveCharts:CartesianChart
+                                                    Name="channelAllocation"
+                                                    Grid.ColumnSpan="2"
+                                                    Series="{Binding ChannelAllocationSeries}">
+                                                    <liveCharts:CartesianChart.AxisX>
 
-                                                            <DockPanel LastChildFill="True">
-                                                                <StackPanel DockPanel.Dock="Left">
-                                                                    <Border
-                                                                        Margin="2"
-                                                                        Padding="2"
-                                                                        Background="#424242"
-                                                                        CornerRadius="5">
-                                                                        <Grid>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="*" />
-                                                                                <ColumnDefinition Width="Auto" />
-                                                                            </Grid.ColumnDefinitions>
-                                                                            <TextBlock
-                                                                                Grid.Column="0"
-                                                                                VerticalAlignment="Center"
-                                                                                FontWeight="Bold"
-                                                                                Foreground="Beige"
-                                                                                Text="ACCESS POINTS DETECTED:" />
-                                                                            <Border
-                                                                                Grid.Column="1"
-                                                                                Margin="5,0,0,0"
-                                                                                Padding="5"
-                                                                                Background="OrangeRed"
-                                                                                CornerRadius="5">
-                                                                                <TextBlock
-                                                                                    VerticalAlignment="Center"
-                                                                                    Foreground="White"
-                                                                                    Text="{Binding TOTAL_DETECTED_AP}" />
-                                                                            </Border>
-                                                                        </Grid>
-                                                                    </Border>
-                                                                    <Border
-                                                                        Margin="2"
-                                                                        Padding="2"
-                                                                        Background="#424242"
-                                                                        CornerRadius="5">
-                                                                        <Grid>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="*" />
-                                                                                <ColumnDefinition Width="Auto" />
-                                                                            </Grid.ColumnDefinitions>
-                                                                            <TextBlock
-                                                                                Grid.Column="0"
-                                                                                VerticalAlignment="Center"
-                                                                                FontWeight="Bold"
-                                                                                Foreground="Beige"
-                                                                                Text="SECURE ACCESS POINTS:" />
-                                                                            <Border
-                                                                                Grid.Column="1"
-                                                                                Margin="5,0,0,0"
-                                                                                Padding="5"
-                                                                                Background="OrangeRed"
-                                                                                CornerRadius="5">
-                                                                                <TextBlock
-                                                                                    VerticalAlignment="Center"
-                                                                                    Foreground="White"
-                                                                                    Text="{Binding TOTAL_SECURE_AP}" />
-                                                                            </Border>
-                                                                        </Grid>
-                                                                    </Border>
-                                                                    <Border
-                                                                        Margin="2"
-                                                                        Padding="2"
-                                                                        Background="#424242"
-                                                                        CornerRadius="5">
-                                                                        <Grid>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="*" />
-                                                                                <ColumnDefinition Width="Auto" />
-                                                                            </Grid.ColumnDefinitions>
-                                                                            <TextBlock
-                                                                                Grid.Column="0"
-                                                                                VerticalAlignment="Center"
-                                                                                FontWeight="Bold"
-                                                                                Foreground="Beige"
-                                                                                Text="2.4 GHz NETWORKS:" />
-                                                                            <Border
-                                                                                Grid.Column="1"
-                                                                                Margin="5,0,0,0"
-                                                                                Padding="5"
-                                                                                Background="OrangeRed"
-                                                                                CornerRadius="5">
-                                                                                <TextBlock
-                                                                                    VerticalAlignment="Center"
-                                                                                    Foreground="White"
-                                                                                    Text="{Binding TOTAL_2_4_GHz_AP}" />
-                                                                            </Border>
-                                                                        </Grid>
-                                                                    </Border>
-                                                                    <Border
-                                                                        Margin="2"
-                                                                        Padding="2"
-                                                                        Background="#424242"
-                                                                        CornerRadius="5">
-                                                                        <Grid>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="*" />
-                                                                                <ColumnDefinition Width="Auto" />
-                                                                            </Grid.ColumnDefinitions>
-                                                                            <TextBlock
-                                                                                Grid.Column="0"
-                                                                                VerticalAlignment="Center"
-                                                                                FontWeight="Bold"
-                                                                                Foreground="Beige"
-                                                                                Text="5 GHz NETWORKS:" />
-                                                                            <Border
-                                                                                Grid.Column="1"
-                                                                                Margin="5,0,0,0"
-                                                                                Padding="5"
-                                                                                Background="OrangeRed"
-                                                                                CornerRadius="5">
-                                                                                <TextBlock
-                                                                                    VerticalAlignment="Center"
-                                                                                    Foreground="White"
-                                                                                    Text="{Binding TOTAL_5_GHz_AP}" />
-                                                                            </Border>
-                                                                        </Grid>
-                                                                    </Border>
-                                                                </StackPanel>
-                                                                <GroupBox>
-                                                                    <Grid>
-                                                                        <Grid.RowDefinitions>
-                                                                            <RowDefinition Height="Auto" />
-                                                                            <RowDefinition Height="*" />
-                                                                        </Grid.RowDefinitions>
+                                                        <liveCharts:Axis
+                                                            Title="Frequency (MHz)"
+                                                            MaxValue="2497"
+                                                            MinValue="2402">
+                                                            <liveCharts:Axis.Separator>
+                                                                <liveCharts:Separator
+                                                                    Step="5"
+                                                                    Stroke="Gray"
+                                                                    StrokeThickness="1" />
 
-                                                                        <TextBlock
-                                                                            Grid.Row="0"
-                                                                            HorizontalAlignment="Center"
-                                                                            FontSize="12"
-                                                                            FontWeight="Bold"
-                                                                            Foreground="AntiqueWhite"
-                                                                            Text="2.4 GHz Frequency Allocation Graph" />
-
-                                                                        <liveCharts:CartesianChart
-                                                                            Name="channelAllocation"
-                                                                            Grid.Row="1"
-                                                                            Series="{Binding ChannelAllocationSeries}">
-                                                                            <liveCharts:CartesianChart.AxisX>
-
-                                                                                <liveCharts:Axis
-                                                                                    Title="Frequency (MHz)"
-                                                                                    MaxValue="2497"
-                                                                                    MinValue="2402">
-                                                                                    <liveCharts:Axis.Separator>
-                                                                                        <liveCharts:Separator
-                                                                                            Step="5"
-                                                                                            Stroke="Gray"
-                                                                                            StrokeThickness="1" />
-
-                                                                                    </liveCharts:Axis.Separator>
-                                                                                </liveCharts:Axis>
-                                                                            </liveCharts:CartesianChart.AxisX>
-                                                                            <liveCharts:CartesianChart.AxisY>
-                                                                                <liveCharts:Axis
-                                                                                    Title="RSSI (dBm)"
-                                                                                    MaxValue="0"
-                                                                                    MinValue="-100">
-                                                                                    <liveCharts:Axis.Separator>
-                                                                                        <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
-                                                                                    </liveCharts:Axis.Separator>
-                                                                                </liveCharts:Axis>
-                                                                            </liveCharts:CartesianChart.AxisY>
-                                                                        </liveCharts:CartesianChart>
-                                                                    </Grid>
-
-
-
-
-                                                                </GroupBox>
-                                                            </DockPanel>
-                                                        </TabItem>
-
-                                                        <TabItem>
-                                                            <TabItem.Header>
-                                                                <StackPanel Width="auto" Height="auto">
-                                                                    <materialDesign:PackIcon
-                                                                        Width="24"
-                                                                        Height="24"
-                                                                        HorizontalAlignment="Center"
-                                                                        Foreground="AntiqueWhite"
-                                                                        Kind="ChartBellCurve" />
-                                                                    <TextBlock
-                                                                        HorizontalAlignment="Center"
-                                                                        FontSize="12"
-                                                                        Foreground="AntiqueWhite"
-                                                                        Text="GRAPH" />
-                                                                </StackPanel>
-                                                            </TabItem.Header>
-                                                            <liveCharts:CartesianChart
-                                                                Name="chart"
-                                                                LegendLocation="Bottom"
-                                                                Series="{Binding SeriesCollection}">
-                                                                <liveCharts:CartesianChart.AxisX>
-                                                                    <liveCharts:Axis
-                                                                        LabelFormatter="{Binding DateTimeFormatter}"
-                                                                        MaxValue="{Binding AxisMax}"
-                                                                        MinValue="{Binding AxisMin}" />
-                                                                </liveCharts:CartesianChart.AxisX>
-                                                                <liveCharts:CartesianChart.AxisY>
-                                                                    <liveCharts:Axis LabelFormatter="{Binding YAxisFormatter}" />
-                                                                </liveCharts:CartesianChart.AxisY>
-                                                            </liveCharts:CartesianChart>
-
-
-
-                                                        </TabItem>
-                                                    </TabControl>
-                                                </materialDesign:Card>
+                                                            </liveCharts:Axis.Separator>
+                                                        </liveCharts:Axis>
+                                                    </liveCharts:CartesianChart.AxisX>
+                                                    <liveCharts:CartesianChart.AxisY>
+                                                        <liveCharts:Axis
+                                                            Title="RSSI (dBm)"
+                                                            MaxValue="0"
+                                                            MinValue="-100">
+                                                            <liveCharts:Axis.Separator>
+                                                                <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
+                                                            </liveCharts:Axis.Separator>
+                                                        </liveCharts:Axis>
+                                                    </liveCharts:CartesianChart.AxisY>
+                                                </liveCharts:CartesianChart>
                                             </Grid>
-                                        </GroupBox>
-                                    </Border>
-                                </StackPanel>
-                            </ScrollViewer>
-
+                                        </TabItem>
+                                        <TabItem Header="5 GHz ALLOCATION CHART">
+                                            <TextBlock>
+                                                <Run Text="5 GHz Channel Allocation " />
+                                            </TextBlock>
+                                        </TabItem>
+                                        <TabItem Header="6 GHz ALLOCATION CHART">
+                                            <TextBlock>
+                                                <Run Text="6 GHz Channel Allocation " />
+                                            </TextBlock>
+                                        </TabItem>
+                                    </TabControl>
+                                </materialDesign:Card>
+                            </StackPanel>
                         </Grid>
 
                     </TabItem>
