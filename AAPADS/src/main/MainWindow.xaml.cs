@@ -76,7 +76,7 @@ namespace AAPADS
                 }
                 else 
                 {
-                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 200;
+                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 300;
                     Width = _originalWidth;
                     Height = _originalHeight;
                     Left = _originalLeft;
@@ -99,7 +99,11 @@ namespace AAPADS
             about AboutPage = new about();
             AboutPage.Show();
         }
-
+        private void AccessPointRadar_Click(object sender, RoutedEventArgs e)
+        {
+            AccessPointRadarWindow accessPointRadarWindow = new AccessPointRadarWindow();
+            accessPointRadarWindow.Show();
+        }
         private void EXIT_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
@@ -108,7 +112,6 @@ namespace AAPADS
         {
             if (e.AddedItems.Count == 0) return;
 
-            // Cast the first item in e.AddedItems to TabItem
             var tab = e.AddedItems[0] as TabItem;
 
             if (tab == null) return;
@@ -254,6 +257,16 @@ namespace AAPADS
         protected void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
