@@ -120,57 +120,34 @@
         </Grid>
         <Grid Grid.Row="1" Background="#303030">
             <Grid>
-                <Canvas
-                    Width="400"
-                    Height="400"
-                    Margin="30,30,30,30">
+                <Grid>
+                    <Canvas
+                        x:Name="accessPointRadar"
+                        Width="400"
+                        Height="400"
+                        Margin="30,30,30,30"
+                        Canvas.ZIndex="0">
+                        <!--  Access Points  -->
+                        <ItemsControl Canvas.ZIndex="1" ItemsSource="{Binding AccessPoints}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
 
-                    <!--  Axes  -->
-                    <Line
-                        Stroke="Gray"
-                        X1="200"
-                        X2="200"
-                        Y1="0"
-                        Y2="400" />
-                    <Line
-                        Stroke="Gray"
-                        X1="0"
-                        X2="400"
-                        Y1="200"
-                        Y2="200" />
-
-                    <!--  Labels  -->
-                    <TextBlock
-                        Canvas.Left="210"
-                        Canvas.Top="5"
-                        Foreground="AntiqueWhite"
-                        Text="-100" />
-                    <TextBlock
-                        Canvas.Left="210"
-                        Canvas.Top="380"
-                        Foreground="AntiqueWhite"
-                        Text="-100" />
-                    <TextBlock
-                        Canvas.Left="5"
-                        Canvas.Top="190"
-                        Foreground="AntiqueWhite"
-                        Text="-100" />
-                    <TextBlock
-                        Canvas.Left="380"
-                        Canvas.Top="190"
-                        Foreground="AntiqueWhite"
-                        Text="-100" />
-
-                    <Canvas Width="400" Height="400">
                         <!--  Radar Trail  -->
-                        <Ellipse Width="400" Height="400">
+                        <Ellipse
+                            Width="400"
+                            Height="400"
+                            Canvas.ZIndex="0">
                             <Ellipse.Fill>
                                 <RadialGradientBrush>
-                                    <GradientStop Offset="0.0" Color="Transparent" />
-                                    <GradientStop Offset="0.4" Color="#6ecc25" />
-                                    <GradientStop Offset="0.6" Color="#3deb9a" />
-                                    <GradientStop Offset="0.8" Color="#42ffc0" />
-                                    <GradientStop Offset="1.0" Color="Transparent" />
+                                    <GradientStop Offset="0.0" Color="#fafa6e" />
+                                    <GradientStop Offset="0.3" Color="#c4ec74" />
+                                    <GradientStop Offset="0.6" Color="#92dc7e" />
+                                    <GradientStop Offset="0.9" Color="#64c987" />
+                                    <GradientStop Offset="1.0" Color="#39b48e" />
                                 </RadialGradientBrush>
                             </Ellipse.Fill>
                         </Ellipse>
@@ -178,7 +155,8 @@
                         <!--  Radar Line  -->
                         <Line
                             x:Name="RadarLine"
-                            Stroke="Black"
+                            Canvas.ZIndex="0"
+                            Stroke="#089f8f"
                             StrokeThickness="2"
                             X1="200"
                             X2="200"
@@ -189,17 +167,54 @@
                             </Line.RenderTransform>
                         </Line>
 
+                        <Canvas
+                            Width="400"
+                            Height="400"
+                            Canvas.ZIndex="0"
+                            RenderTransformOrigin="0.426,0.396">
+
+                            <!--  Axes  -->
+                            <Line
+                                Stroke="Black"
+                                X1="200"
+                                X2="200"
+                                Y1="0"
+                                Y2="400" />
+                            <Line
+                                Stroke="Black"
+                                X1="0"
+                                X2="400"
+                                Y1="200"
+                                Y2="200" />
+
+                            <!--  Labels  -->
+                            <TextBlock
+                                Canvas.Left="210"
+                                Canvas.Top="5"
+                                Foreground="Black"
+                                Text="-100" />
+                            <TextBlock
+                                Canvas.Left="168"
+                                Canvas.Top="384"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="Black"
+                                Text="-100" />
+                            <TextBlock
+                                Canvas.Top="184"
+                                Foreground="Black"
+                                Text="-100" />
+                            <TextBlock
+                                Canvas.Left="376"
+                                Canvas.Top="198"
+                                Foreground="Black"
+                                Text="-100" />
+                        </Canvas>
                     </Canvas>
+                </Grid>
 
 
-                    <Ellipse
-                        Canvas.Left="220"
-                        Canvas.Top="220"
-                        Width="5"
-                        Height="5"
-                        Fill="Red" />
-                    <!--  ... Add more ellipses for more points  -->
-                </Canvas>
+
 
             </Grid>
         </Grid>
