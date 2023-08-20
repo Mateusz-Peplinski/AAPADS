@@ -133,7 +133,7 @@
                 <TabControl
                     HorizontalContentAlignment="Left"
                     materialDesign:ColorZoneAssist.Background="#424242"
-                    materialDesign:ColorZoneAssist.Foreground="#D72323"
+                    materialDesign:ColorZoneAssist.Foreground="#ef3945"
                     materialDesign:ColorZoneAssist.Mode="Custom"
                     SelectionChanged="TabControl_SelectionChanged">
                     <TabItem Name="OverviewTab">
@@ -141,7 +141,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
-                                    Foreground="#D72323"
+                                    Foreground="#ef3945"
                                     Kind="RouterNetworkWireless" />
                                 <TextBlock Text="OVERVIEW" />
                             </StackPanel>
@@ -154,9 +154,6 @@
 
                                 <RowDefinition Height="*" />
                                 <!--  MAIN DISPLAY  -->
-
-                                <RowDefinition Height="5" />
-                                <!--  LOAD BAR  -->
 
                                 <RowDefinition Height="Auto" />
                                 <!--  SUMMARY  -->
@@ -196,9 +193,14 @@
                                 </Menu>
                             </materialDesign:Card>
 
-                            <ScrollViewer Grid.Row="1">
-                                <DockPanel LastChildFill="True">
 
+                            <DockPanel Grid.Row="1" LastChildFill="True">
+
+                                <Border
+                                    Margin="5"
+                                    Padding="2"
+                                    Background="#424242"
+                                    CornerRadius="5">
                                     <DataGrid
                                         x:Name="MAIN_OVERVIEW_TABLE"
                                         HorizontalAlignment="Stretch"
@@ -206,27 +208,68 @@
                                         materialDesign:DataGridAssist.CellPadding="16 8"
                                         materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
                                         AutoGenerateColumns="False"
+                                        Background="#424242"
                                         BorderBrush="Transparent"
                                         CanUserAddRows="False"
                                         CanUserSortColumns="True"
                                         CellStyle="{StaticResource DataGridCellStyle}"
                                         DockPanel.Dock="Top"
+                                        FontFamily="Consolas"
+                                        FontSize="14"
                                         Foreground="Transparent"
-                                        ItemsSource="{Binding AccessPoints}">
+                                        HorizontalScrollBarVisibility="Disabled"
+                                        IsReadOnly="True"
+                                        ItemsSource="{Binding AccessPoints}"
+                                        ScrollViewer.VerticalScrollBarVisibility="Auto">
                                         <DataGrid.RowStyle>
                                             <Style TargetType="DataGridRow">
-                                                <Setter Property="Background" Value="#424242" />
+                                                <Setter Property="Background" Value="#303030" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="DataGridRow">
+                                                            <Border
+                                                                Background="{TemplateBinding Background}"
+                                                                BorderBrush="Transparent"
+                                                                BorderThickness="1"
+                                                                CornerRadius="5">
+                                                                <SelectiveScrollingGrid>
+                                                                    <SelectiveScrollingGrid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="*" />
+                                                                    </SelectiveScrollingGrid.ColumnDefinitions>
+                                                                    <SelectiveScrollingGrid.RowDefinitions>
+                                                                        <RowDefinition Height="*" />
+                                                                        <RowDefinition Height="Auto" />
+                                                                    </SelectiveScrollingGrid.RowDefinitions>
+                                                                    <DataGridCellsPresenter
+                                                                        Grid.Column="1"
+                                                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                                    <DataGridDetailsPresenter
+                                                                        Grid.Row="1"
+                                                                        Grid.Column="1"
+                                                                        SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                                                        Visibility="{TemplateBinding DetailsVisibility}" />
+                                                                    <DataGridRowHeader
+                                                                        Grid.RowSpan="2"
+                                                                        SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical"
+                                                                        Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                                                                </SelectiveScrollingGrid>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
                                                 <Style.Resources>
                                                     <Storyboard x:Key="MouseOverAnimation">
                                                         <ColorAnimation
                                                             Storyboard.TargetProperty="Background.Color"
-                                                            To="#767676"
+                                                            To="#424242"
                                                             Duration="0:0:0.3" />
                                                     </Storyboard>
                                                     <Storyboard x:Key="MouseOutAnimation">
                                                         <ColorAnimation
                                                             Storyboard.TargetProperty="Background.Color"
-                                                            To="#424242"
+                                                            To="#303030"
                                                             Duration="0:0:0.3" />
                                                     </Storyboard>
                                                 </Style.Resources>
@@ -242,9 +285,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </DataGrid.RowStyle>
-
                                         <DataGrid.Columns>
-
                                             <DataGridTemplateColumn
                                                 Width="100"
                                                 Header="STRENGTH"
@@ -290,7 +331,7 @@
                                             </DataGridTextColumn>
 
                                             <DataGridTextColumn
-                                                Width="*"
+                                                Width="100"
                                                 Binding="{Binding WLAN_STANDARD}"
                                                 Foreground="AntiqueWhite"
                                                 Header="STANDARD"
@@ -303,7 +344,7 @@
                                             </DataGridTextColumn>
 
                                             <DataGridTextColumn
-                                                Width="*"
+                                                Width="50"
                                                 Binding="{Binding WIFI_CHANNEL}"
                                                 Header="CH"
                                                 SortMemberPath="WLAN_STANDARD">
@@ -316,7 +357,7 @@
                                             </DataGridTextColumn>
 
                                             <DataGridTextColumn
-                                                Width="*"
+                                                Width="100"
                                                 Binding="{Binding FREQ_BAND}"
                                                 Header="BAND"
                                                 SortMemberPath="FREQ_BAND">
@@ -329,7 +370,7 @@
                                             </DataGridTextColumn>
 
                                             <DataGridTextColumn
-                                                Width="*"
+                                                Width="100"
                                                 Binding="{Binding FREQUENCY}"
                                                 Header="FREQ"
                                                 SortMemberPath="FREQUENCY">
@@ -342,7 +383,7 @@
                                             </DataGridTextColumn>
 
                                             <DataGridTextColumn
-                                                Width="*"
+                                                Width="100"
                                                 Binding="{Binding ENCRYPTION_USED}"
                                                 Foreground="AntiqueWhite"
                                                 Header="ENC"
@@ -370,45 +411,33 @@
                                         </DataGrid.Columns>
 
                                     </DataGrid>
-                                    <materialDesign:Card
-                                        Padding="4"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Foreground="#D72323"
-                                        UniformCornerRadius="14"
-                                        Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}">
-                                        <ProgressBar
-                                            IsIndeterminate="True"
-                                            Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                            Value="50">
-                                            <ProgressBar.Resources>
-                                                <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#D72323" />
-                                            </ProgressBar.Resources>
-                                        </ProgressBar>
-                                    </materialDesign:Card>
+                                </Border>
+                                <materialDesign:Card
+                                    Padding="4"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#ef3945"
+                                    UniformCornerRadius="14"
+                                    Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}">
+                                    <ProgressBar
+                                        IsIndeterminate="True"
+                                        Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                        Value="50">
+                                        <ProgressBar.Resources>
+                                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#ef3945" />
+                                        </ProgressBar.Resources>
+                                    </ProgressBar>
+                                </materialDesign:Card>
+                            </DockPanel>
 
-
-                                </DockPanel>
-                            </ScrollViewer>
-                            <ProgressBar Grid.Row="2" IsIndeterminate="True">
-                                <ProgressBar.Style>
-                                    <Style BasedOn="{StaticResource {x:Type ProgressBar}}" TargetType="ProgressBar">
-                                        <Setter Property="Foreground" Value="#D72323" />
-                                        <Setter Property="Background" Value="#D72323" />
-                                        <Setter Property="BorderBrush" Value="Transparent" />
-                                    </Style>
-                                </ProgressBar.Style>
-                            </ProgressBar>
-
-
-                            <StackPanel Grid.Row="3" DockPanel.Dock="Bottom">
-                                <materialDesign:Card Background="#303030">
+                            <StackPanel Grid.Row="2" DockPanel.Dock="Bottom">
+                                <materialDesign:Card Margin="5" Background="#303030">
                                     <TabControl
                                         x:Name="SummarySection"
                                         Height="{Binding SummarySectionHeight}"
                                         HorizontalContentAlignment="Left"
                                         materialDesign:ColorZoneAssist.Background="#424242"
-                                        materialDesign:ColorZoneAssist.Foreground="#D72323"
+                                        materialDesign:ColorZoneAssist.Foreground="#ef3945"
                                         materialDesign:ColorZoneAssist.Mode="Custom">
                                         <TabItem Header="SUMMARY">
                                             <DockPanel LastChildFill="True">
@@ -425,6 +454,7 @@
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock
                                                                 Grid.Column="0"
+                                                                Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
                                                                 Foreground="Beige"
@@ -433,7 +463,7 @@
                                                                 Grid.Column="1"
                                                                 Margin="5,0,0,0"
                                                                 Padding="5"
-                                                                Background="OrangeRed"
+                                                                Background="#ef3945"
                                                                 CornerRadius="5">
                                                                 <TextBlock
                                                                     VerticalAlignment="Center"
@@ -454,6 +484,7 @@
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock
                                                                 Grid.Column="0"
+                                                                Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
                                                                 Foreground="Beige"
@@ -462,7 +493,7 @@
                                                                 Grid.Column="1"
                                                                 Margin="5,0,0,0"
                                                                 Padding="5"
-                                                                Background="OrangeRed"
+                                                                Background="#ef3945"
                                                                 CornerRadius="5">
                                                                 <TextBlock
                                                                     VerticalAlignment="Center"
@@ -483,6 +514,7 @@
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock
                                                                 Grid.Column="0"
+                                                                Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
                                                                 Foreground="Beige"
@@ -491,7 +523,7 @@
                                                                 Grid.Column="1"
                                                                 Margin="5,0,0,0"
                                                                 Padding="5"
-                                                                Background="OrangeRed"
+                                                                Background="#ef3945"
                                                                 CornerRadius="5">
                                                                 <TextBlock
                                                                     VerticalAlignment="Center"
@@ -512,6 +544,7 @@
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock
                                                                 Grid.Column="0"
+                                                                Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
                                                                 Foreground="Beige"
@@ -520,7 +553,7 @@
                                                                 Grid.Column="1"
                                                                 Margin="5,0,0,0"
                                                                 Padding="5"
-                                                                Background="OrangeRed"
+                                                                Background="#ef3945"
                                                                 CornerRadius="5">
                                                                 <TextBlock
                                                                     VerticalAlignment="Center"
@@ -530,7 +563,7 @@
                                                         </Grid>
                                                     </Border>
                                                     <Border
-                                                        Margin="2"
+                                                        Margin="5,5,5,5"
                                                         Padding="2"
                                                         Background="#424242"
                                                         CornerRadius="5">
@@ -541,8 +574,8 @@
                                                             </Grid.ColumnDefinitions>
                                                             <Button
                                                                 materialDesign:RippleAssist.Feedback="#DD000000"
-                                                                Background="OrangeRed"
-                                                                BorderBrush="OrangeRed"
+                                                                Background="#ef3945"
+                                                                BorderBrush="#ef3945"
                                                                 Click="AccessPointRadar_Click"
                                                                 Content="ACCESS POINT RADAR"
                                                                 FontWeight="Bold"
@@ -551,34 +584,44 @@
                                                         </Grid>
                                                     </Border>
                                                 </StackPanel>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="207*" />
-                                                        <ColumnDefinition Width="100*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="*" />
-                                                    </Grid.RowDefinitions>
-                                                    <liveCharts:CartesianChart
-                                                        Name="chart"
-                                                        Grid.RowSpan="2"
-                                                        Grid.ColumnSpan="2"
-                                                        Margin="0,0,0,10"
-                                                        LegendLocation="Bottom"
-                                                        Series="{Binding FrequencySeriesCollection}">
-                                                        <liveCharts:CartesianChart.AxisX>
-                                                            <liveCharts:Axis
-                                                                LabelFormatter="{Binding DateTimeFormatter}"
-                                                                MaxValue="{Binding AxisMax}"
-                                                                MinValue="{Binding AxisMin}" />
-                                                        </liveCharts:CartesianChart.AxisX>
-                                                        <liveCharts:CartesianChart.AxisY>
-                                                            <liveCharts:Axis LabelFormatter="{Binding YAxisFormatter}" />
-                                                        </liveCharts:CartesianChart.AxisY>
-                                                    </liveCharts:CartesianChart>
-                                                </Grid>
+                                                <Border
+                                                    Margin="5"
+                                                    Padding="2"
+                                                    Background="#424242"
+                                                    CornerRadius="5">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="207*" />
+                                                            <ColumnDefinition Width="100*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+                                                        <liveCharts:CartesianChart
+                                                            Name="chart"
+                                                            Grid.RowSpan="2"
+                                                            Grid.ColumnSpan="2"
+                                                            Margin="0,0,0,10"
+                                                            LegendLocation="Bottom"
+                                                            Series="{Binding FrequencySeriesCollection}">
+                                                            <liveCharts:CartesianChart.AxisX>
+                                                                <liveCharts:Axis
+                                                                    LabelFormatter="{Binding DateTimeFormatter}"
+                                                                    MaxValue="{Binding AxisMax}"
+                                                                    MinValue="{Binding AxisMin}" />
+                                                            </liveCharts:CartesianChart.AxisX>
+                                                            <liveCharts:CartesianChart.AxisY>
+                                                                <liveCharts:Axis LabelFormatter="{Binding YAxisFormatter}">
+                                                                    <liveCharts:Axis.Separator>
+                                                                        <liveCharts:Separator Step="1" />
+                                                                    </liveCharts:Axis.Separator>
+                                                                </liveCharts:Axis>
+                                                            </liveCharts:CartesianChart.AxisY>
 
+                                                        </liveCharts:CartesianChart>
+                                                    </Grid>
+                                                </Border>
                                             </DockPanel>
                                         </TabItem>
                                         <TabItem Header="2.4 GHz ALLOCATION CHART">
@@ -640,7 +683,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
-                                    Foreground="#D72323"
+                                    Foreground="#ef3945"
                                     Kind="WifiStrength4Alert" />
                                 <TextBlock Text="DETECTIONS" />
                             </StackPanel>
@@ -649,7 +692,7 @@
 
                             <ListView
                                 x:Name="DETECTION_TABLE"
-                                Foreground="#D72323"
+                                Foreground="#ef3945"
                                 ItemsSource="{Binding DETECTIONS}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
@@ -774,7 +817,7 @@
                                                                 <TabControl
                                                                     HorizontalContentAlignment="Left"
                                                                     materialDesign:ColorZoneAssist.Background="#424242"
-                                                                    materialDesign:ColorZoneAssist.Foreground="#D72323"
+                                                                    materialDesign:ColorZoneAssist.Foreground="#ef3945"
                                                                     materialDesign:ColorZoneAssist.Mode="Custom">
                                                                     <TabItem Header="INCIDENT OVERVIEW">
                                                                         <TextBlock>
@@ -868,7 +911,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
-                                    Foreground="#D72323"
+                                    Foreground="#ef3945"
                                     Kind="ShieldSearch" />
                                 <TextBlock Text="ACCESS POINT INVESTIGATOR" />
                             </StackPanel>
@@ -967,7 +1010,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
-                                    Foreground="#D72323"
+                                    Foreground="#ef3945"
                                     Kind="WrenchCog" />
                                 <TextBlock Text="DETECTION SETUP" />
                             </StackPanel>

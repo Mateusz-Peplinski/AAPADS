@@ -18,12 +18,17 @@ namespace AAPADS
                 switch (band)
                 {
                     case "2.4 GHz":
-                        return Brushes.YellowGreen;  
+                        Color color24GHz = (Color)ColorConverter.ConvertFromString("#ef3945");
+                        return new SolidColorBrush(color24GHz);
+
                     case "5 GHz":
-                        return Brushes.LightSkyBlue; 
+                        Color color5GHz = (Color)ColorConverter.ConvertFromString("#167dff");
+                        return new SolidColorBrush(color5GHz);
+
                     default:
-                        return Brushes.AntiqueWhite; 
+                        return Brushes.AntiqueWhite;
                 }
+
             }
             return null;
         }

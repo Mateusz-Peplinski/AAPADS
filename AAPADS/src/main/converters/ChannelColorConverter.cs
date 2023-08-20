@@ -15,11 +15,13 @@ namespace AAPADS
         {
             if (value is int channel && twoGhzChannels.Contains(channel))
             {
-                return Brushes.YellowGreen;
+                Color color = (Color)ColorConverter.ConvertFromString("#ef3945"); 
+                return new SolidColorBrush(color);
             }
             else
             {
-                return Brushes.LightSkyBlue;
+                Color color = (Color)ColorConverter.ConvertFromString("#167dff"); 
+                return new SolidColorBrush(color);
             }
         }
 
