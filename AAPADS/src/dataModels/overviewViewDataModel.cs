@@ -1,17 +1,13 @@
 using AAPADS;
 using LiveCharts;
 using LiveCharts.Defaults;
-using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
 
 public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 {
@@ -40,7 +36,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     private int _total24GHzNetworks;
     private int _total5GHzNetworks;
     private bool _isLoading;
-    private string _liveLog;
     private double _summarySectionHeight = 300;
     public int TOTAL_DETECTED_AP
     {
@@ -102,18 +97,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
-    public string LiveLog
-    {
-        get { return _liveLog; }
-        set
-        {
-            if (_liveLog != value)
-            {
-                _liveLog = value;
-                OnPropertyChanged("LiveLog");
-            }
-        }
-    }
     public double SummarySectionHeight
     {
         get { return _summarySectionHeight; }
@@ -123,7 +106,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             OnPropertyChanged(nameof(SummarySectionHeight));
         }
     }
-    
+
 
     public overviewViewDataModel()
     {
@@ -137,9 +120,9 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 Title = "2.4GHz",
                 Values = new ChartValues<int>(),
                 PointGeometrySize = 10,
-                Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                PointForeground = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                StrokeThickness = 0,
+                Stroke = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
+                PointForeground = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
+                StrokeThickness = 2,
                 Fill = new LinearGradientBrush
                 {
                         StartPoint = new Point(0, 1),
@@ -147,8 +130,9 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                         GradientStops = new GradientStopCollection
                         {
 
-                        new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
-                        new GradientStop(Color.FromArgb(60,110, 204, 37), 0)        // Green 
+                        new GradientStop(Color.FromRgb(239, 57, 69), 1),
+                        new GradientStop(Color.FromArgb(0,239, 57, 69), 0.3),
+                        new GradientStop(Color.FromArgb(0,255, 255, 255), 0)
                         }
                 }
             },
@@ -158,9 +142,9 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 Title = "5GHz",
                 Values = new ChartValues<int>(),
                 PointGeometrySize = 10,
-                Stroke = new SolidColorBrush(Color.FromRgb(96, 217, 255)),
-                PointForeground = new SolidColorBrush(Color.FromRgb(96, 217, 255)),
-                StrokeThickness = 0,
+                Stroke = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
+                PointForeground = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
+                StrokeThickness = 2,
                 Fill = new LinearGradientBrush
                 {
                         StartPoint = new Point(0, 1),
@@ -168,8 +152,9 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                         GradientStops = new GradientStopCollection
                         {
 
-                        new GradientStop(Color.FromRgb(96, 239, 255), 1),       // blue-bright
-                        new GradientStop(Color.FromArgb(60,0, 97, 255), 0)        // blue 
+                        new GradientStop(Color.FromRgb(19, 120, 216), 1),       // blue-bright
+                        new GradientStop(Color.FromArgb(0, 19, 120, 216), 0.3),       // blue-bright
+                        new GradientStop(Color.FromArgb(0,255, 255, 255), 0)        // blue 
                         }
                 }
             }
@@ -178,7 +163,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         YAxisFormatter = value => value.ToString("N0");
         DateTimeFormatter = value => DateTime.Now.ToString("hh:mm:ss");
 
-        
+
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -292,7 +277,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             if (series5GHz.Values.Count > maxPoints)
                 series5GHz.Values.RemoveAt(0);
         });
-    }  
+    }
 
     public async Task RefreshChannelAllocationChartAsync(List<SSIDInfoForCHAllocation> data)
     {
@@ -414,7 +399,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     }
     public void Dispose()
     {
-      
+
     }
 
     public class SSIDInfoForCHAllocation

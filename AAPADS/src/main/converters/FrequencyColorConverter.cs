@@ -17,11 +17,13 @@ namespace AAPADS
             {
                 if (frequency.StartsWith("2"))
                 {
-                    return Brushes.YellowGreen;
+                    Color color = (Color)ColorConverter.ConvertFromString("#ef3945");
+                    return new SolidColorBrush(color);
                 }
                 else if (frequency.StartsWith("5"))
                 {
-                    return Brushes.LightSkyBlue;
+                    Color color5GHz = (Color)ColorConverter.ConvertFromString("#167dff");
+                    return new SolidColorBrush(color5GHz);
                 }
             }
             return Brushes.AntiqueWhite;
