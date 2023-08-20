@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace AAPADS
@@ -55,11 +56,12 @@ namespace AAPADS
             ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
-            
-            MaximizeButton.Click += (s, e) => {
-                if (!_wasMaximized) 
+
+            MaximizeButton.Click += (s, e) =>
+            {
+                if (!_wasMaximized)
                 {
-                    
+
                     _originalWidth = Width;
                     _originalHeight = Height;
                     _originalLeft = Left;
@@ -71,17 +73,17 @@ namespace AAPADS
                     Top = 0;
                     Width = SystemParameters.WorkArea.Width;
                     Height = SystemParameters.WorkArea.Height;
-                    
+
                     _wasMaximized = true;
                 }
-                else 
+                else
                 {
                     OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 300;
                     Width = _originalWidth;
                     Height = _originalHeight;
                     Left = _originalLeft;
                     Top = _originalTop;
-                    
+
                     _wasMaximized = false;
                 }
             };
@@ -93,6 +95,27 @@ namespace AAPADS
             
             
         }
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                if (WindowState == WindowState.Normal)
+                {
+                    WindowState = WindowState.Maximized;
+                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 500;
+                }
+                else
+                {
+                    WindowState = WindowState.Normal;
+                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 300;
+                }
+            }
+            else
+            {
+                DragMove();
+            }
+        }
+
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
