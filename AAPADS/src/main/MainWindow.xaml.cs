@@ -123,7 +123,7 @@ namespace AAPADS
             else if (tab == DetectionsTab)
             {
                 DataContext = DETECTION_VIEW_MODEL_OBJECT;
-            }      
+            }
             else if (tab == AccessPointInvestigateTab)
             {
                 DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;

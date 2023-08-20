@@ -162,7 +162,7 @@
 
                             </Grid.RowDefinitions>
 
-                            <materialDesign:Card Grid.Row="0" Background="{DynamicResource MaterialDesignDarkBackground}">
+                            <materialDesign:Card Grid.Row="0" Background="#424242">
                                 <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type materialDesign:Card}}, Path=ActualHeight}" Background="{DynamicResource MaterialDesignDarkBackground}">
                                     <Menu.Resources>
                                         <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
@@ -1242,11 +1242,11 @@
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     Margin="0,0,5,0"
-                                    Foreground="Orange"
+                                    Foreground="#167dff"
                                     Kind="Cog" />
                                 <TextBlock
                                     HorizontalAlignment="Right"
-                                    Foreground="Orange"
+                                    Foreground="#167dff"
                                     Text="SETTINGS" />
                             </StackPanel>
                         </TabItem.Header>
