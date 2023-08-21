@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.IO;
 
 namespace AAPADS
 {
@@ -208,8 +209,9 @@ namespace AAPADS
                 return;
 
             string value = output.Substring(index + 1).Trim();
+            
             string title = output.Substring(0, index).Split(' ')[0];
-
+            File.AppendAllText("LOGS.log", $"{title}  => {value} \n");
             switch (title)
             {
                 case "SSID":
