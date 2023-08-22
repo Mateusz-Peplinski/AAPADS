@@ -197,17 +197,27 @@ namespace AAPADS
             if (!string.IsNullOrEmpty(e.Data))
             {
                 ParseNetworkInformation(e.Data);
+                
             }
         }
 
 
         private void ParseNetworkInformation(string output)
         {
+            File.WriteAllText("EDATA.log", output);
             output = output.Trim();
             int index = output.IndexOf(":");
-            if (index < 0 || index >= output.Length - 1)
+            if (output.StartsWith("SSID") && (index == output.Length - 1 || string.IsNullOrWhiteSpace(output.Substring(index + 1))))
+            {
+                AddCurrentDataToGlobalLists();
+                ClearCurrentData();
+                currentSSID = "[HIDDEN NETWORK]";
                 return;
+            }
+            if (index < 0) return;
 
+            if (index >= output.Length - 1)
+                return;
             string value = output.Substring(index + 1).Trim();
             
             string title = output.Substring(0, index).Split(' ')[0];
