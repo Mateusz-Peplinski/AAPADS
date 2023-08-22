@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.IO;
 
 namespace AAPADS
 {
@@ -109,7 +108,7 @@ namespace AAPADS
             AUTH_LIST = new List<string>();
 
             _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
-            _normalizationEngine = new NormalizationEngine();   
+            _normalizationEngine = new NormalizationEngine();
             Task.Run(RunNetworkScanning);
         }
 
@@ -197,14 +196,13 @@ namespace AAPADS
             if (!string.IsNullOrEmpty(e.Data))
             {
                 ParseNetworkInformation(e.Data);
-                
+
             }
         }
 
 
         private void ParseNetworkInformation(string output)
         {
-            File.WriteAllText("EDATA.log", output);
             output = output.Trim();
             int index = output.IndexOf(":");
             if (output.StartsWith("SSID") && (index == output.Length - 1 || string.IsNullOrWhiteSpace(output.Substring(index + 1))))
@@ -218,10 +216,11 @@ namespace AAPADS
 
             if (index >= output.Length - 1)
                 return;
+
             string value = output.Substring(index + 1).Trim();
-            
+
             string title = output.Substring(0, index).Split(' ')[0];
-            File.AppendAllText("LOGS.log", $"{title}  => {value} \n");
+
             switch (title)
             {
                 case "SSID":
@@ -316,7 +315,7 @@ namespace AAPADS
             string LAST_TIME_FRAME_ID = _dbAccess.GetLastTimeFrameId();
             var idGenerator = new TimeFrameIdGenerator(LAST_TIME_FRAME_ID);
 
-           
+
             string CURRENT_TIME_FRAME_ID = idGenerator.GenerateNextId();
 
             Console.ForegroundColor = ConsoleColor.Green;
@@ -333,7 +332,7 @@ namespace AAPADS
                     CHANNEL_LIST[i],
                     FREQUENCY_LIST[i],
                     AUTH_LIST[i],
-                    CURRENT_TIME_FRAME_ID  
+                    CURRENT_TIME_FRAME_ID
                 );
             }
         }
