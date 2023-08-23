@@ -43,7 +43,7 @@ namespace AAPADS
             { 36, "5.180 GHz" },
             { 40, "5.200 GHz" },
             { 44, "5.220 GHz" },
-            { 48, "5.240 GHz" },
+            { 48, "5.240 GHz" },                                                                                                 
             { 52, "5.260 GHz" },
             { 56, "5.280 GHz" },
             { 60, "5.300 GHz" },
@@ -90,8 +90,7 @@ namespace AAPADS
         private NormalizationEngine _normalizationEngine;
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void PerformWifiScan();
-
+        public static extern bool PerformWifiScan();
 
         public void Start()
         {
@@ -117,54 +116,60 @@ namespace AAPADS
             while (isRunning)
             {
                 await semaphore.WaitAsync();
+
+                // Clear lists at the beginning of each iteration.
+                SSID_LIST.Clear();
+                ENCRYPTION_TYPE_LIST.Clear();
+                BSSID_LIST.Clear(); 
+                SIGNAL_STRENGTH_LIST.Clear();
+                WIFI_STANDARD_LIST.Clear();
+                BAND_LIST.Clear();
+                CHANNEL_LIST.Clear();
+                FREQUENCY_LIST.Clear();
+                AUTH_LIST.Clear();
+
                 if (programLoadCount == 0)
                 {
                     isLoading = true;
                     programLoadCount++;
                 }
+
                 try
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("[ DATA INGEST ENGINE ] Updating wireless data");
-                    PerformWifiScan();
+                    Console.WriteLine("[ DATA INGEST ENGINE ] Collecting wireless data...");
+
+                    if (PerformWifiScan())
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(5)); // Wait for 5 seconds. Adjust as needed.
+                        RunNetshCommand();
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"[ DATA INGEST ENGINE ] Collected {SSID_LIST.Count} access points data");
+
+                        SSIDDataCollected?.Invoke(this, EventArgs.Empty);
+                        InsertDataToDatabase();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("[ DATA INGEST ENGINE ] Failed to initiate Wi-Fi scan.");
+                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
-
-                if (SSID_LIST != null && ENCRYPTION_TYPE_LIST != null && BSSID_LIST != null &&
-                    SIGNAL_STRENGTH_LIST != null && WIFI_STANDARD_LIST != null && BAND_LIST != null &&
-                    CHANNEL_LIST != null && FREQUENCY_LIST != null && AUTH_LIST != null)
+                finally
                 {
-                    SSID_LIST.Clear();
-                    ENCRYPTION_TYPE_LIST.Clear();
-                    BSSID_LIST.Clear();
-                    SIGNAL_STRENGTH_LIST.Clear();
-                    WIFI_STANDARD_LIST.Clear();
-                    BAND_LIST.Clear();
-                    CHANNEL_LIST.Clear();
-                    FREQUENCY_LIST.Clear();
-                    AUTH_LIST.Clear();
+                    isLoading = false;
+                    semaphore.Release();
                 }
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("[ DATA INGEST ENGINE ] Collecting wireless data...");
-
-                RunNetshCommand();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"[ DATA INGEST ENGINE ] Collected {SSID_LIST.Count} access points data");
-
-                SSIDDataCollected?.Invoke(this, EventArgs.Empty);
-                isLoading = false;
-
-                InsertDataToDatabase();
-                semaphore.Release();
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
             }
         }
+
 
 
         private void RunNetshCommand()
