@@ -5,20 +5,44 @@
 #pragma comment(lib, "wlanapi.lib")
 
 
-__declspec(dllexport) void PerformWifiScan() {
+__declspec(dllexport) BOOL PerformWifiScan() {
     DWORD negotiatedVersion;
-    HANDLE clientHandle;
-    WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
+    HANDLE clientHandle = NULL;
+    WLAN_INTERFACE_INFO_LIST* pInterfaceList = NULL;
+    DWORD dwResult;
 
-    WLAN_INTERFACE_INFO_LIST* pInterfaceList;
-    WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
-
-    for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
-        WlanScan(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, NULL, NULL, NULL);
+   
+    dwResult = WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
+    if (dwResult != ERROR_SUCCESS) {
+        fprintf(stderr, "WlanOpenHandle failed with error: %u\n", dwResult);
+        return FALSE; 
     }
 
-    WlanFreeMemory(pInterfaceList);
-    WlanCloseHandle(clientHandle, NULL);
+    
+    dwResult = WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
+    if (dwResult != ERROR_SUCCESS) {
+        fprintf(stderr, "WlanEnumInterfaces failed with error: %u\n", dwResult);
+        WlanCloseHandle(clientHandle, NULL);
+        return FALSE;
+    }
+
+    
+    for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
+        dwResult = WlanScan(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, NULL, NULL, NULL);
+        if (dwResult != ERROR_SUCCESS) {
+            fprintf(stderr, "WlanScan on interface %u failed with error: %u\n", i, dwResult);
+        }
+    }
+
+    
+    if (pInterfaceList) {
+        WlanFreeMemory(pInterfaceList);
+    }
+    if (clientHandle) {
+        WlanCloseHandle(clientHandle, NULL);
+    }
+
+    return TRUE; 
 }
 
 typedef struct {
