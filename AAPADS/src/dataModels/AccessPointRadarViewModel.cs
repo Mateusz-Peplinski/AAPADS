@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml;
 
 namespace AAPADS
 {
@@ -17,6 +18,8 @@ namespace AAPADS
     {
         private double _rotationAngle;
         private CancellationTokenSource _cts;
+        private CancellationTokenSource _radarCts;
+
         public event PropertyChangedEventHandler PropertyChanged;
         public double RotationAngle
         {
@@ -68,14 +71,11 @@ namespace AAPADS
         }
 
 
-        public void RemoveAccessPoint(string accessPointId)
+        public void RemoveAccessPoint()
         {
             // Assuming you have a way to identify which ellipse corresponds to which access point
             // For this example, I'm just removing the first ellipse
-            if (AccessPoints.Count > 0)
-            {
-                AccessPoints.RemoveAt(0);
-            }
+            AccessPoints.Clear();
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -85,15 +85,30 @@ namespace AAPADS
         public AccessPointRadarViewModel()
         {
             StartRadarRotation();
-            AddAccessPoint("SSID 1", -50);
-            AddAccessPoint("SSID 2", -100);
-            AddAccessPoint("SSID 3", -80);
-            AddAccessPoint("SSID 4", -30);
-            AddAccessPoint("SSID 4", -10);
-            AddAccessPoint("SSID 4", -20);
-            AddAccessPoint("SSID 4", -30);
-            AddAccessPoint("SSID 4", -40);
+            
         }
+
+        public async Task PopulateRadar(DataIngestEngine dataIngestEngine)
+        {
+            _radarCts = new CancellationTokenSource();
+            while (!_radarCts.Token.IsCancellationRequested)
+            {
+                var ssidListCopy = dataIngestEngine.SSID_LIST.ToList();
+
+                for (int i = 0; i < ssidListCopy.Count; i++)
+                {
+                    AddAccessPoint(ssidListCopy[i], (dataIngestEngine.SIGNAL_STRENGTH_LIST[i] / 2) - 100);
+                }
+
+                RemoveAccessPoint();
+                await Task.Delay(1000); // Delay for 1 second or adjust as needed
+            }
+        }
+        public void StopRadarPopulation()
+        {
+            _radarCts?.Cancel();
+        }
+
         public void StartRadarRotation()
         {
             _cts = new CancellationTokenSource();

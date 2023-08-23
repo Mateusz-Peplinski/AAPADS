@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("APPADS")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Razer")]
+[assembly: AssemblyCompany("Mateusz Peplinski")]
 [assembly: AssemblyProduct("APPADS")]
-[assembly: AssemblyCopyright("Copyright © Razer 2023")]
+[assembly: AssemblyCopyright("Copyright © Mateusz Peplinski 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
