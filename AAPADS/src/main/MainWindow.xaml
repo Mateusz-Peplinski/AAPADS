@@ -10,7 +10,7 @@
     xmlns:oxy="http://oxyplot.org/wpf"
     Title="AAPADS - Advanced Access Point Anomaly Detection System"
     Width="1100"
-    Height="650"
+    Height="800"
     Background="{DynamicResource MaterialDesignDarkBackground}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     TextElement.FontSize="13"
@@ -35,7 +35,9 @@
             <Setter Property="BorderBrush" Value="Transparent" />
 
         </Style>
-
+        <DataTemplate x:Key="CustomLabelTemplate">
+            <TextBlock Foreground="AntiqueWhite" Text="{Binding}" />
+        </DataTemplate>
     </Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" />
@@ -506,6 +508,60 @@
                                                         </Grid>
                                                     </Border>
                                                     <Border
+                                                        Height="120"
+                                                        Margin="2,5,2,5"
+                                                        Padding="3"
+                                                        Background="#424242"
+                                                        CornerRadius="5">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <!--  Row for the title  -->
+                                                                <RowDefinition Height="*" />
+                                                                <!--  Row for the gauge  -->
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock
+                                                                Grid.Row="0"
+                                                                HorizontalAlignment="Center"
+                                                                FontWeight="Bold"
+                                                                Foreground="AntiqueWhite"
+                                                                Text="Average Signal Strength" />
+                                                            <liveCharts:AngularGauge
+                                                                Grid.Row="1"
+                                                                Margin="5"
+                                                                FontSize="10"
+                                                                FontWeight="Bold"
+                                                                Foreground="AntiqueWhite"
+                                                                FromValue="0"
+                                                                LabelsStep="10"
+                                                                SectionsInnerRadius=".5"
+                                                                TicksForeground="AntiqueWhite"
+                                                                TicksStep="10"
+                                                                ToValue="100"
+                                                                Wedge="300"
+                                                                Value="{Binding AVG_SIGNAL_STRENGTH}">
+                                                                <liveCharts:AngularGauge.Sections>
+                                                                    <liveCharts:AngularSection
+                                                                        Fill="#ff002a"
+                                                                        FromValue="0"
+                                                                        ToValue="30" />
+                                                                    <liveCharts:AngularSection
+                                                                        Fill="#ff9c00"
+                                                                        FromValue="30"
+                                                                        ToValue="60" />
+                                                                    <liveCharts:AngularSection
+                                                                        Fill="#ffe000"
+                                                                        FromValue="60"
+                                                                        ToValue="80" />
+                                                                    <liveCharts:AngularSection
+                                                                        Fill="#00ee6c"
+                                                                        FromValue="80"
+                                                                        ToValue="100" />
+                                                                </liveCharts:AngularGauge.Sections>
+                                                            </liveCharts:AngularGauge>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border
                                                         Margin="5,5,5,5"
                                                         Padding="2"
                                                         Background="#424242"
@@ -574,11 +630,11 @@
                                                     <ColumnDefinition Width="13*" />
                                                 </Grid.ColumnDefinitions>
                                                 <liveCharts:CartesianChart
-                                                    Name="channelAllocation"
+                                                    Name="channelAllocation24GHz"
                                                     Grid.ColumnSpan="2"
-                                                    Series="{Binding ChannelAllocationSeries}">
-                                                    <liveCharts:CartesianChart.AxisX>
+                                                    Series="{Binding ChannelAllocationSeries24GHz}">
 
+                                                    <liveCharts:CartesianChart.AxisX>
                                                         <liveCharts:Axis
                                                             Title="Frequency (MHz)"
                                                             MaxValue="2497"
@@ -586,6 +642,49 @@
                                                             <liveCharts:Axis.Separator>
                                                                 <liveCharts:Separator
                                                                     Step="5"
+                                                                    Stroke="Gray"
+                                                                    StrokeThickness="1" />
+                                                            </liveCharts:Axis.Separator>
+                                                        </liveCharts:Axis>
+                                                    </liveCharts:CartesianChart.AxisX>
+                                                    <liveCharts:CartesianChart.AxisY>
+                                                        <liveCharts:Axis
+                                                            Title="RSSI (dBm)"
+                                                            MaxValue="0"
+                                                            MinValue="-100">
+                                                            <liveCharts:Axis.Separator>
+                                                                <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
+                                                            </liveCharts:Axis.Separator>
+                                                        </liveCharts:Axis>
+                                                    </liveCharts:CartesianChart.AxisY>
+
+                                                </liveCharts:CartesianChart>
+                                            </Grid>
+                                        </TabItem>
+                                        <TabItem Header="5 GHz ALLOCATION CHART">
+                                            <Grid>
+                                                <Grid.Resources>
+                                                    <DataTemplate x:Key="CustomLabelTemplate">
+                                                        <TextBlock Foreground="Red" Text="{Binding}" />
+                                                    </DataTemplate>
+                                                </Grid.Resources>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="37*" />
+                                                    <ColumnDefinition Width="13*" />
+                                                </Grid.ColumnDefinitions>
+                                                <liveCharts:CartesianChart
+                                                    Name="channelAllocation5GHz"
+                                                    Grid.ColumnSpan="2"
+                                                    Series="{Binding ChannelAllocationSeries5GHz}">
+
+                                                    <liveCharts:CartesianChart.AxisX>
+                                                        <liveCharts:Axis
+                                                            Title="Frequency (MHz)"
+                                                            MaxValue="5835"
+                                                            MinValue="5170">
+                                                            <liveCharts:Axis.Separator>
+                                                                <liveCharts:Separator
+                                                                    Step="20"
                                                                     Stroke="Gray"
                                                                     StrokeThickness="1" />
 
@@ -603,12 +702,8 @@
                                                         </liveCharts:Axis>
                                                     </liveCharts:CartesianChart.AxisY>
                                                 </liveCharts:CartesianChart>
+
                                             </Grid>
-                                        </TabItem>
-                                        <TabItem Header="5 GHz ALLOCATION CHART">
-                                            <TextBlock>
-                                                <Run Text="5 GHz Channel Allocation " />
-                                            </TextBlock>
                                         </TabItem>
                                         <TabItem Header="6 GHz ALLOCATION CHART">
                                             <TextBlock>
