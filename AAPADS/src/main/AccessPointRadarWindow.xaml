@@ -148,11 +148,10 @@
                                 Canvas.ZIndex="0">
                                 <Ellipse.Fill>
                                     <RadialGradientBrush>
-                                        <GradientStop Offset="0.0" Color="#fafa6e" />
-                                        <GradientStop Offset="0.3" Color="#c4ec74" />
-                                        <GradientStop Offset="0.6" Color="#92dc7e" />
-                                        <GradientStop Offset="0.9" Color="#64c987" />
-                                        <GradientStop Offset="1.0" Color="#39b48e" />
+                                        <GradientStop Offset="0.0" Color="#00ee6c" />
+                                        <GradientStop Offset="0.6" Color="#ffe000" />
+                                        <GradientStop Offset="0.8" Color="#ff9c00" />
+                                        <GradientStop Offset="1.0" Color="#ff002a" />
                                     </RadialGradientBrush>
                                 </Ellipse.Fill>
                             </Ellipse>
@@ -161,7 +160,7 @@
                             <Line
                                 x:Name="RadarLine"
                                 Canvas.ZIndex="0"
-                                Stroke="#089f8f"
+                                Stroke="#303030"
                                 StrokeThickness="2"
                                 X1="200"
                                 X2="200"
@@ -180,13 +179,13 @@
 
                                 <!--  Axes  -->
                                 <Line
-                                    Stroke="Black"
+                                    Stroke="#303030"
                                     X1="200"
                                     X2="200"
                                     Y1="0"
                                     Y2="400" />
                                 <Line
-                                    Stroke="Black"
+                                    Stroke="#303030"
                                     X1="0"
                                     X2="400"
                                     Y1="200"
@@ -196,23 +195,23 @@
                                 <TextBlock
                                     Canvas.Left="210"
                                     Canvas.Top="5"
-                                    Foreground="Black"
+                                    Foreground="#303030"
                                     Text="-100" />
                                 <TextBlock
                                     Canvas.Left="168"
                                     Canvas.Top="384"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="Black"
+                                    Foreground="#303030"
                                     Text="-100" />
                                 <TextBlock
                                     Canvas.Top="184"
-                                    Foreground="Black"
+                                    Foreground="#303030"
                                     Text="-100" />
                                 <TextBlock
                                     Canvas.Left="376"
                                     Canvas.Top="198"
-                                    Foreground="Black"
+                                    Foreground="#303030"
                                     Text="-100" />
                             </Canvas>
                         </Canvas>

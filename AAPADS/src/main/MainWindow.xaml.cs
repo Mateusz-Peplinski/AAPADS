@@ -124,7 +124,7 @@ namespace AAPADS
         }
         private void AccessPointRadar_Click(object sender, RoutedEventArgs e)
         {
-            AccessPointRadarWindow accessPointRadarWindow = new AccessPointRadarWindow();
+            AccessPointRadarWindow accessPointRadarWindow = new AccessPointRadarWindow(DATA_INGESTION_ENGINE_OBJECT);
             accessPointRadarWindow.Show();
         }
         private void EXIT_Click(object sender, RoutedEventArgs e)

@@ -25,7 +25,7 @@ namespace AAPADS
         private double _originalTop;
         private bool _wasMaximized = false;
         private AccessPointRadarViewModel radarViewModel;
-        public AccessPointRadarWindow()
+        public AccessPointRadarWindow(DataIngestEngine dataIngestEngine)
         {
             InitializeComponent();
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
@@ -59,18 +59,21 @@ namespace AAPADS
                 }
             };
 
-            CloseButton.Click += (s, e) => { 
+            CloseButton.Click += (s, e) => {
+                radarViewModel.StopRadarPopulation();
                 radarViewModel.StopRadarRotation();
                 this.Close();   
             };
 
-            LoadRadar();
+            LoadRadar(dataIngestEngine);
         }
 
-        private void LoadRadar()
+        private void LoadRadar(DataIngestEngine dataIngestEngine)
         {
             radarViewModel = new AccessPointRadarViewModel();
+            Task.Run(() => radarViewModel.PopulateRadar(dataIngestEngine));
             DataContext = radarViewModel;
+
 
         }
 
