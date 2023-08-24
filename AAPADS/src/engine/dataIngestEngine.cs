@@ -116,7 +116,7 @@ namespace AAPADS
             while (isRunning)
             {
                 await semaphore.WaitAsync();
-
+                
                 // Clear lists at the beginning of each iteration.
                 SSID_LIST.Clear();
                 ENCRYPTION_TYPE_LIST.Clear();
@@ -166,7 +166,7 @@ namespace AAPADS
                     semaphore.Release();
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                await Task.Delay(TimeSpan.FromSeconds(5));
             }
         }
 

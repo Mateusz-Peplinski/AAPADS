@@ -133,16 +133,17 @@
                                 <RowDefinition Height="*" />
                                 <!--  MAIN DISPLAY  -->
 
-                                <RowDefinition Height="Auto" />
-                                <!--  SUMMARY  -->
+                                <RowDefinition Height="5" />
+                                <!--  LOADING  -->
 
                                 <RowDefinition Height="Auto" />
+                                <!--  SUMMARY  -->
 
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
 
                                 <Border
-                                    Margin="5"
+                                    Margin="5,5,5,0"
                                     Padding="2"
                                     Background="#424242"
                                     CornerRadius="5">
@@ -356,27 +357,28 @@
                                         </DataGrid.Columns>
 
                                     </DataGrid>
-                                </Border>
-                                <materialDesign:Card
-                                    Padding="4"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Foreground="#ef3945"
-                                    UniformCornerRadius="14"
-                                    Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}">
-                                    <ProgressBar
-                                        IsIndeterminate="True"
-                                        Style="{StaticResource MaterialDesignCircularProgressBar}"
-                                        Value="50">
-                                        <ProgressBar.Resources>
-                                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#ef3945" />
-                                        </ProgressBar.Resources>
-                                    </ProgressBar>
-                                </materialDesign:Card>
-                            </Grid>
 
-                            <StackPanel Grid.Row="1" DockPanel.Dock="Bottom">
-                                <materialDesign:Card Margin="5" Background="#303030">
+                                </Border>
+
+                            </Grid>
+                            <Grid Grid.Row="1" Panel.ZIndex="1">
+                                <ProgressBar
+                                    Margin="5,0,5,0"
+                                    IsIndeterminate="True"
+                                    Visibility="{Binding IS_LOADING, Converter={StaticResource BoolToVisConverter}}"
+                                    Value="50">
+                                    <ProgressBar.Style>
+                                        <Style BasedOn="{StaticResource {x:Type ProgressBar}}" TargetType="ProgressBar">
+                                            <Setter Property="Foreground" Value="#ef3945" />
+                                            <Setter Property="Background" Value="#ef3945" />
+                                            <Setter Property="BorderBrush" Value="Transparent" />
+                                        </Style>
+                                    </ProgressBar.Style>
+                                </ProgressBar>
+
+                            </Grid>
+                            <StackPanel Grid.Row="2" DockPanel.Dock="Bottom">
+                                <materialDesign:Card Margin="5,0,5,5" Background="#303030">
                                     <TabControl
                                         x:Name="SummarySection"
                                         Height="{Binding SummarySectionHeight}"

@@ -211,8 +211,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         TOTAL_SECURE_AP = calculateTotalSecureAccessPoints(dataIngestEngine);
         TOTAL_2_4_GHz_AP = calculateTotal24GHzAccessPoints(dataIngestEngine);
         TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);
+        AVG_SIGNAL_STRENGTH = CalculateAverageSignalStrength(dataIngestEngine);
         IS_LOADING = dataIngestEngine.isLoading;
-        AVG_SIGNAL_STRENGTH = CalculateAverageSignalStrength(dataIngestEngine); 
         if (IS_LOADING == false)
         {
             UpdateFrequencyGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP);
