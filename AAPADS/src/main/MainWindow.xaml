@@ -957,92 +957,373 @@
                             </StackPanel>
                         </TabItem.Header>
                         <Grid>
-                            <!--  Define rows  -->
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="2*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <!--  Define columns  -->
+                            <!--  Main Split: Left 50% and Right 50%  -->
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="0.5*" />
+                                <ColumnDefinition Width="0.5*" />
                             </Grid.ColumnDefinitions>
 
-                            <!--  Access Point Selector  -->
-                            <ComboBox
-                                Grid.Row="0"
-                                Grid.ColumnSpan="2"
-                                MinWidth="72"
-                                materialDesign:HintAssist.FontFamily="Verdana"
-                                materialDesign:HintAssist.Hint="Access Point"
-                                DisplayMemberPath="DisplaySSID"
-                                Foreground="AntiqueWhite"
-                                ItemsSource="{Binding SSIDs}"
-                                SelectedItem="{Binding SelectedSSIDItem}"
-                                Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
-
-                            <!--  Graph 1  -->
-                            <Grid Grid.Row="1" Grid.Column="0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <liveCharts:CartesianChart Grid.Row="0">
-                                    <!--  Graph Configuration goes here  -->
-                                </liveCharts:CartesianChart>
-
-                                <TextBlock
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    FontWeight="Bold"
-                                    Foreground="AntiqueWhite"
-                                    Text="Graph 1" />
-                            </Grid>
-
-                            <!--  Graph 2  -->
-                            <Grid Grid.Row="1" Grid.Column="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <liveCharts:CartesianChart Grid.Row="0">
-                                    <!--  Graph Configuration goes here  -->
-                                </liveCharts:CartesianChart>
-
-                                <TextBlock
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    FontWeight="Bold"
-                                    Foreground="AntiqueWhite"
-                                    Text="Graph 2" />
-                            </Grid>
-
-                            <!--  Graph 3  -->
-                            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                            <!--  Right Side  -->
+                            <Grid Grid.Column="0" Margin="5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
-                                <TextBlock
+                                <!--  Small Narrow Bar on Top  -->
+                                <Border
                                     Grid.Row="0"
-                                    HorizontalAlignment="Center"
-                                    FontSize="12"
-                                    FontWeight="Bold"
-                                    Foreground="AntiqueWhite"
-                                    Text="RSSI (dBm)" />
+                                    Height="50"
+                                    Margin="5"
+                                    Padding="5"
+                                    Background="#424242"
+                                    CornerRadius="5">
+                                    <ComboBox
+                                        MinWidth="72"
+                                        materialDesign:HintAssist.FontFamily="Verdana"
+                                        materialDesign:HintAssist.Hint="Select Access Point"
+                                        Foreground="AntiqueWhite"
+                                        ItemsSource="{Binding SSIDs}"
+                                        SelectedItem="{Binding SelectedSSID}"
+                                        Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
 
-                                <liveCharts:CartesianChart Grid.Row="1" Series="{Binding RSSIDataForGraph3}">
-                                    <!--  Graph Configuration goes here  -->
-                                </liveCharts:CartesianChart>
+                                </Border>
+
+                                <!--  Large Box Spanning the Height  -->
+                                <Border
+                                    Grid.Row="1"
+                                    Margin="5"
+                                    Background="#424242"
+                                    CornerRadius="5">
+                                    <Grid>
+                                        <!--  Define 6 rows  -->
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <!--  Row 1  -->
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1*" />
+                                                <ColumnDefinition Width="1*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Left Box  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="50"
+                                                Margin="10,5,0,55"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="Bold"
+                                                    Foreground="AntiqueWhite"
+                                                    Text="{Binding SelectedSSID, StringFormat='SSID: {0}'}" />
+                                            </Border>
+
+                                            <!--  Right Box  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Height="100"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  Your content here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 2  -->
+                                        <Border
+                                            Grid.Row="1"
+                                            Height="300"
+                                            Margin="5"
+                                            Background="#303030"
+                                            CornerRadius="5">
+                                            <DataGrid>
+                                                <!--  DataGrid configuration goes here  -->
+                                            </DataGrid>
+                                        </Border>
+
+                                        <!--  Row 3  -->
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="50"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  Your number here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Rest of the Rows (similar to Row 3)  -->
+                                        <!--  Row 4  -->
+                                        <Grid Grid.Row="3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="50"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  Your number here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 5  -->
+                                        <Grid Grid.Row="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="50"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  Your number here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 6  -->
+                                        <Grid Grid.Row="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="50"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  Your number here  -->
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+
                             </Grid>
 
+                            <!--  Left Side  -->
+                            <Grid Grid.Column="1" Margin="5">
+                                <!--  4 Rows: First one split into 30% and 70%  -->
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="100" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <!--  First Row with 2 Columns  -->
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.3*" />
+                                        <ColumnDefinition Width="0.7*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  First Column Rounded Rectangle  -->
+                                    <Border
+                                        Grid.Column="0"
+                                        Margin="5"
+                                        Background="#424242"
+                                        CornerRadius="5">
+                                        <liveCharts:AngularGauge
+                                            Grid.Row="1"
+                                            Margin="5"
+                                            FontSize="10"
+                                            FontWeight="Bold"
+                                            Foreground="AntiqueWhite"
+                                            FromValue="0"
+                                            LabelsStep="10"
+                                            SectionsInnerRadius=".5"
+                                            TicksForeground="AntiqueWhite"
+                                            TicksStep="10"
+                                            ToValue="100"
+                                            Wedge="300"
+                                            Value="{Binding SIGNAL_STRENGTH}">
+                                            <liveCharts:AngularGauge.Sections>
+                                                <!--  NOTE: FIX THESE VALUES FOR RSSI  -->
+                                                <liveCharts:AngularSection
+                                                    Fill="#ff002a"
+                                                    FromValue="0"
+                                                    ToValue="30" />
+                                                <liveCharts:AngularSection
+                                                    Fill="#ff9c00"
+                                                    FromValue="30"
+                                                    ToValue="60" />
+                                                <liveCharts:AngularSection
+                                                    Fill="#ffe000"
+                                                    FromValue="60"
+                                                    ToValue="80" />
+                                                <liveCharts:AngularSection
+                                                    Fill="#00ee6c"
+                                                    FromValue="80"
+                                                    ToValue="100" />
+                                            </liveCharts:AngularGauge.Sections>
+                                        </liveCharts:AngularGauge>
+                                    </Border>
+
+                                    <!--  Second Column Rounded Rectangle  -->
+                                    <Border
+                                        Grid.Column="1"
+                                        Margin="5"
+                                        Background="#424242"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                HorizontalAlignment="Center"
+                                                FontSize="12"
+                                                FontWeight="Bold"
+                                                Foreground="AntiqueWhite"
+                                                Text="RSSI (dBm)" />
+
+                                            <liveCharts:CartesianChart Grid.Row="1" Series="{Binding RSSIDataForGraphSignalStrengthOverTime}">
+                                                <!--  Graph Configuration goes here  -->
+                                            </liveCharts:CartesianChart>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+
+                                <!--  Three Full Width Rounded Rectangles  -->
+                                <Border
+                                    Grid.Row="1"
+                                    Margin="5"
+                                    Background="#424242"
+                                    CornerRadius="5">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <liveCharts:CartesianChart Grid.Row="0">
+                                            <!--  Graph Configuration goes here  -->
+                                        </liveCharts:CartesianChart>
+
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            HorizontalAlignment="Center"
+                                            FontSize="12"
+                                            FontWeight="Bold"
+                                            Foreground="AntiqueWhite"
+                                            Text="Graph 2" />
+                                    </Grid>
+                                </Border>
+                                <Border
+                                    Grid.Row="2"
+                                    Margin="5"
+                                    Background="#424242"
+                                    CornerRadius="5">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <liveCharts:CartesianChart Grid.Row="0">
+                                            <!--  Graph Configuration goes here  -->
+                                        </liveCharts:CartesianChart>
+
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            HorizontalAlignment="Center"
+                                            FontSize="12"
+                                            FontWeight="Bold"
+                                            Foreground="AntiqueWhite"
+                                            Text="Graph 2" />
+                                    </Grid>
+                                </Border>
+                                <Border
+                                    Grid.Row="3"
+                                    Margin="5"
+                                    Background="#424242"
+                                    CornerRadius="5">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <liveCharts:CartesianChart Grid.Row="0">
+                                            <!--  Graph Configuration goes here  -->
+                                        </liveCharts:CartesianChart>
+
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            HorizontalAlignment="Center"
+                                            FontSize="12"
+                                            FontWeight="Bold"
+                                            Foreground="AntiqueWhite"
+                                            Text="Graph 2" />
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Grid>
                     </TabItem>
                     <TabItem Name="DetectionSetupTab">
