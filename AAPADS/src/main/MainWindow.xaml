@@ -982,9 +982,10 @@
                                         MinWidth="72"
                                         materialDesign:HintAssist.FontFamily="Verdana"
                                         materialDesign:HintAssist.Hint="Select Access Point"
+                                        DisplayMemberPath="BSSID"
                                         Foreground="AntiqueWhite"
                                         ItemsSource="{Binding SSIDs}"
-                                        SelectedItem="{Binding SelectedSSID}"
+                                        SelectedItem="{Binding SELECTED_SSID_ITEM}"
                                         Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
 
                                 </Border>
@@ -1025,7 +1026,7 @@
                                                     VerticalAlignment="Center"
                                                     FontWeight="Bold"
                                                     Foreground="AntiqueWhite"
-                                                    Text="{Binding SelectedSSID, StringFormat='SSID: {0}'}" />
+                                                    Text="{Binding SELECTED_SSID_ITEM, StringFormat='SSID: {0}'}" />
                                             </Border>
 
                                             <!--  Right Box  -->
@@ -1046,9 +1047,34 @@
                                             Margin="5"
                                             Background="#303030"
                                             CornerRadius="5">
-                                            <DataGrid>
-                                                <!--  DataGrid configuration goes here  -->
+                                            <DataGrid
+                                                x:Name="BSSIDDataGrid"
+                                                AutoGenerateColumns="False"
+                                                CanUserAddRows="False"
+                                                CanUserDeleteRows="False"
+                                                IsReadOnly="True"
+                                                ItemsSource="{Binding BSSIDs}">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn
+                                                        Width="*"
+                                                        Binding="{Binding BSSID}"
+                                                        Header="BSSID" />
+                                                    <DataGridTextColumn
+                                                        Width="*"
+                                                        Binding="{Binding AuthMethod}"
+                                                        Header="Authentication Method" />
+                                                    <DataGridTextColumn
+                                                        Width="*"
+                                                        Binding="{Binding EncryptionType}"
+                                                        Header="Encryption Type" />
+                                                    <DataGridTextColumn
+                                                        Width="*"
+                                                        Binding="{Binding Channel}"
+                                                        Header="Channel" />
+                                                </DataGrid.Columns>
                                             </DataGrid>
+
+
                                         </Border>
 
                                         <!--  Row 3  -->
@@ -1168,7 +1194,7 @@
                             <Grid Grid.Column="1" Margin="5">
                                 <!--  4 Rows: First one split into 30% and 70%  -->
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="100" />
+                                    <RowDefinition Height="150" />
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*" />
@@ -1193,35 +1219,36 @@
                                             FontSize="10"
                                             FontWeight="Bold"
                                             Foreground="AntiqueWhite"
-                                            FromValue="0"
+                                            FromValue="-100"
                                             LabelsStep="10"
                                             SectionsInnerRadius=".5"
                                             TicksForeground="AntiqueWhite"
                                             TicksStep="10"
-                                            ToValue="100"
+                                            ToValue="0"
                                             Wedge="300"
-                                            Value="{Binding SIGNAL_STRENGTH}">
+                                            Value="{Binding RSSI_VALUE}">
                                             <liveCharts:AngularGauge.Sections>
-                                                <!--  NOTE: FIX THESE VALUES FOR RSSI  -->
                                                 <liveCharts:AngularSection
                                                     Fill="#ff002a"
-                                                    FromValue="0"
-                                                    ToValue="30" />
+                                                    FromValue="-100"
+                                                    ToValue="-90" />
                                                 <liveCharts:AngularSection
                                                     Fill="#ff9c00"
-                                                    FromValue="30"
-                                                    ToValue="60" />
+                                                    FromValue="-90"
+                                                    ToValue="-70" />
                                                 <liveCharts:AngularSection
                                                     Fill="#ffe000"
-                                                    FromValue="60"
-                                                    ToValue="80" />
+                                                    FromValue="-70"
+                                                    ToValue="-50" />
                                                 <liveCharts:AngularSection
                                                     Fill="#00ee6c"
-                                                    FromValue="80"
-                                                    ToValue="100" />
+                                                    FromValue="-50"
+                                                    ToValue="0" />
                                             </liveCharts:AngularGauge.Sections>
                                         </liveCharts:AngularGauge>
+
                                     </Border>
+
 
                                     <!--  Second Column Rounded Rectangle  -->
                                     <Border
