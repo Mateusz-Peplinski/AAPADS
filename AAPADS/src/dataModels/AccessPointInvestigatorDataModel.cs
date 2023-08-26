@@ -4,25 +4,34 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
 
 
 namespace AAPADS
 {
     public class SSIDItem
     {
-        public string DisplaySSID { get; set; } 
+        public string DisplaySSID { get; set; }
         public string OriginalSSID { get; set; }
+        public string AuthMethod { get; set; }
+        public string EncryptionType { get; set; }
+        public string BSSID { get; set; }
+        public int Channel { get; set; }
     }
+
 
 
     public class AccessPointInvestigatorDataModel : INotifyPropertyChanged
     {
+        const int MAX_SSID_LENGTH = 32;
+        const int MAX_BSSIDS_PER_SSID = 5;
+
         private CancellationTokenSource _cancellationTokenSource;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -34,6 +43,29 @@ namespace AAPADS
         }
         SSIDList ssidList = new SSIDList();
 
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        public struct NetworkInfo
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string ssid;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 18)]
+            public string bssid;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string authMethod;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string encryptionType;
+
+            public int channel;
+        }
+
+
+        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetVisibleNetworks([Out] NetworkInfo[] networks, int maxNetworks);
+
+
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetAvailableSSIDs(ref SSIDList ssidList);
 
@@ -41,30 +73,9 @@ namespace AAPADS
         public static extern int GetRSSIForSSID(string ssid);
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void PerformWifiScan();
+        public static extern bool PerformWifiScan();
+        public ObservableCollection<SSIDItem> BSSIDs { get; set; } = new ObservableCollection<SSIDItem>();
 
-        public IEnumerable<SSIDItem> GetSSIDItemsFromCharArray(char[] charArray, int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                var originalSSID = new string(charArray.Skip(i * 32).Take(32).ToArray()).TrimEnd('\0');
-
-                var displaySSID = new string(originalSSID.Where(c => c >= 32 && c <= 126).ToArray());
-
-                yield return new SSIDItem
-                {
-                    DisplaySSID = displaySSID,
-                    OriginalSSID = originalSSID
-                };
-            }
-        }
-        
-        public AccessPointInvestigatorDataModel()
-        {
-            ssidList.ssids = new char[3200];
-
-            LoadSSIDs();
-        }
 
         private ObservableCollection<SSIDItem> _ssids = new ObservableCollection<SSIDItem>();
         public ObservableCollection<SSIDItem> SSIDs
@@ -77,25 +88,39 @@ namespace AAPADS
             }
         }
 
+        private double _rssiValueForGuage;
+        public double RSSI_VALUE
+        {
+            get => _rssiValueForGuage;
+            set
+            {
+                _rssiValueForGuage = value;
+                OnPropertyChanged(nameof(RSSI_VALUE));
+            }
+        }
+
         private SSIDItem _selectedSSIDItem;
-        public SSIDItem SelectedSSIDItem
+        public SSIDItem SELECTED_SSID_ITEM
         {
             get => _selectedSSIDItem;
             set
             {
                 _selectedSSIDItem = value;
-                OnPropertyChanged(nameof(SelectedSSIDItem));
+                OnPropertyChanged(nameof(SELECTED_SSID_ITEM));
 
-                RSSIDataForGraph3[0].Values.Clear();
+                RSSIDataForGraphSignalStrengthOverTime[0].Values.Clear();
 
                 _cancellationTokenSource?.Cancel();
 
                 if (_selectedSSIDItem != null)
-                    LoadRSSIDataForSSID(_selectedSSIDItem.OriginalSSID);
+                {
+                    //LoadRSSIDataForSSID(_selectedSSIDItem.BSSID);
+                }
             }
         }
 
-        private SeriesCollection _rssiDataForGraph3 = new SeriesCollection
+
+        private SeriesCollection _rssiDataForGraph = new SeriesCollection
         {
             new LineSeries
             {
@@ -124,83 +149,144 @@ namespace AAPADS
             }
         };
 
-        public SeriesCollection RSSIDataForGraph3
+        public SeriesCollection RSSIDataForGraphSignalStrengthOverTime
         {
-            get => _rssiDataForGraph3;
+            get => _rssiDataForGraph;
             set
             {
-                _rssiDataForGraph3 = value;
-                OnPropertyChanged(nameof(RSSIDataForGraph3));
+                _rssiDataForGraph = value;
+                OnPropertyChanged(nameof(RSSIDataForGraphSignalStrengthOverTime));
             }
         }
 
-        public void LoadSSIDs()
+        public AccessPointInvestigatorDataModel()
         {
-            GetAvailableSSIDs(ref ssidList);
-            foreach (var ssidItem in GetSSIDItemsFromCharArray(ssidList.ssids, ssidList.count))
-            {
-                SSIDs.Add(ssidItem);
-            }
+            ssidList.ssids = new char[3200];
+            //PerformWifiScan();
+            //LoadWLANData();
         }
-        public void RefreshSSIDs()
-        {
-            GetAvailableSSIDs(ref ssidList);
-            var currentSSIDs = GetSSIDItemsFromCharArray(ssidList.ssids, ssidList.count).ToList();
+        //public void LoadWLANData()
+        //{
+        //    GetAvailableSSIDs_Extended(ref _extendedSsidList);
+        //    Console.WriteLine($"Number of SSIDs retrieved: {_extendedSsidList.count}");
+        //    foreach (var bssidItem in GetAllBSSIDItems())
+        //    {
+        //        Application.Current.Dispatcher.Invoke(() =>
+        //        {
+        //            Console.WriteLine($"BSSID: {bssidItem.BSSID}, SSID: {bssidItem.DisplaySSID}, Auth: {bssidItem.AuthMethod}, Encryption: {bssidItem.EncryptionType}, Channel: {bssidItem.Channel}");
+        //            SSIDs.Add(bssidItem);
+        //        });
 
-            // Add new SSIDs
-            foreach (var ssid in currentSSIDs)
-            {
-                if (!SSIDs.Any(s => s.OriginalSSID == ssid.OriginalSSID))
-                {
-                    SSIDs.Add(ssid);
-                }
-            }
+        //    }
+        //}
+        //public IEnumerable<SSIDItem> GetAllBSSIDItems()
+        //{
+        //    for (int i = 0; i < _extendedSsidList.count; i++)
+        //    {
+        //        for (int j = 0; j < MAX_BSSIDS_PER_SSID; j++)
+        //        {
+        //            string bssid = new string(_extendedSsidList.bssids.Skip((i * MAX_BSSIDS_PER_SSID + j) * 17).Take(17).ToArray()).TrimEnd('\0');
+        //            if (!string.IsNullOrEmpty(bssid))
+        //            {
+        //                string authMethod = new string(_extendedSsidList.authMethods.Skip(i * MAX_SSID_LENGTH).Take(MAX_SSID_LENGTH).ToArray()).TrimEnd('\0');
+        //                string encryptionType = new string(_extendedSsidList.encryptionTypes.Skip(i * MAX_SSID_LENGTH).Take(MAX_SSID_LENGTH).ToArray()).TrimEnd('\0');
+        //                int channel = _extendedSsidList.Channel[i * MAX_BSSIDS_PER_SSID + j];
+        //                string originalSSID = new string(_extendedSsidList.ssids.Skip(i * MAX_SSID_LENGTH).Take(MAX_SSID_LENGTH).ToArray()).TrimEnd('\0');
 
-            // Remove SSIDs 
-            for (int i = SSIDs.Count - 1; i >= 0; i--)
-            {
-                if (!currentSSIDs.Any(s => s.OriginalSSID == SSIDs[i].OriginalSSID))
-                {
-                    SSIDs.RemoveAt(i);
-                }
-            }
-        }
+        //                yield return new SSIDItem
+        //                {
+        //                    AuthMethod = authMethod,
+        //                    EncryptionType = encryptionType,
+        //                    BSSID = bssid,
+        //                    Channel = channel,
+        //                    OriginalSSID = originalSSID
+        //                };
+        //            }
+        //        }
+        //    }
+        //}
 
-        private void LoadRSSIDataForSSID(string ssid)
-        {
-            StartRSSIPolling();
-        }
 
-        private async void StartRSSIPolling()
-        {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource = new CancellationTokenSource();
+        //public IEnumerable<SSIDItem> GetSSIDItemsFromCharArray(char[] charArray, int count)
+        //{
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        var originalSSID = new string(charArray.Skip(i * 32).Take(32).ToArray()).TrimEnd('\0');
 
-            int refreshInterval = 10;  
-            int counter = 0;
+        //        var displaySSID = new string(originalSSID.Where(c => c >= 32 && c <= 126).ToArray());
+        //        if (string.IsNullOrWhiteSpace(displaySSID))
+        //        {
+        //            displaySSID = "[HIDDEN NETWORK]";
+        //        }
+        //        yield return new SSIDItem
+        //        {
+        //            DisplaySSID = displaySSID,
+        //            OriginalSSID = originalSSID
+        //        };
+        //    }
+        //}
+       
+        //public void RefreshSSIDs()
+        //{
+        //    GetAvailableSSIDs_Extended(ref _extendedSsidList);
+        //    var currentSSIDs = GetSSIDItemsFromCharArray(_extendedSsidList.ssids, _extendedSsidList.count).ToList();
+        //    Application.Current.Dispatcher.Invoke(() =>
+        //    {
+        //        // Add new SSIDs
+        //        foreach (var ssid in currentSSIDs)
+        //        {
+        //            if (!SSIDs.Any(s => s.OriginalSSID == ssid.OriginalSSID))
+        //            {
+        //                SSIDs.Add(ssid);
+        //            }
+        //        }
 
-            while (!_cancellationTokenSource.Token.IsCancellationRequested)
-            {
-                var rssi = ConvertSignalQualityToRssi(GetRSSIForSSID(SelectedSSIDItem?.OriginalSSID ?? string.Empty));
+        //        // Remove SSIDs 
+        //        for (int i = SSIDs.Count - 1; i >= 0; i--)
+        //        {
+        //            if (!currentSSIDs.Any(s => s.OriginalSSID == SSIDs[i].OriginalSSID))
+        //            {
+        //                SSIDs.RemoveAt(i);
+        //            }
+        //        }
+        //    });
+        //}
 
-                RSSIDataForGraph3[0].Values.Add(rssi);
-                if (RSSIDataForGraph3[0].Values.Count > 100)
-                {
-                    RSSIDataForGraph3[0].Values.RemoveAt(0);
-                }
+        //private void LoadRSSIDataForSSID(string ssid)
+        //{
+        //    PopulateRSSIValueDataInGaugeAndLineSeries();
+        //}
 
-                PerformWifiScan();
+        //private async void PopulateRSSIValueDataInGaugeAndLineSeries()
+        //{
+        //    _cancellationTokenSource?.Cancel();
+        //    _cancellationTokenSource = new CancellationTokenSource();
 
-                counter++;
-                if (counter >= refreshInterval)
-                {
-                    RefreshSSIDs();
-                    counter = 0; 
-                }
+        //    int refreshInterval = 10;
+        //    int counter = 0;
 
-                await Task.Delay(TimeSpan.FromSeconds(2));
-            }
-        }
+        //    while (!_cancellationTokenSource.Token.IsCancellationRequested)
+        //    {
+        //        var rssi = ConvertSignalQualityToRssi(GetRSSIForSSID(SELECTED_SSID_ITEM?.OriginalSSID ?? string.Empty));
+
+        //        RSSIDataForGraphSignalStrengthOverTime[0].Values.Add(rssi);
+        //        if (RSSIDataForGraphSignalStrengthOverTime[0].Values.Count > 100)
+        //        {
+        //            RSSIDataForGraphSignalStrengthOverTime[0].Values.RemoveAt(0);
+        //        }
+        //        RSSI_VALUE = rssi;
+        //        PerformWifiScan();
+
+        //        counter++;
+        //        if (counter >= refreshInterval)
+        //        {
+        //            RefreshSSIDs();
+        //            counter = 0;
+        //        }
+
+        //        await Task.Delay(TimeSpan.FromSeconds(1));
+        //    }
+        //}
 
         private int ConvertSignalQualityToRssi(int signalQuality)
         {
