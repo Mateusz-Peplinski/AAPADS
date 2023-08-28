@@ -145,6 +145,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\main\loadingScreen.xaml.cs">
+      <DependentUpon>loadingScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\dataModels\AccessPointRadarViewModel.cs" />
     <Compile Include="src\main\AccessPointRadarWindow.xaml.cs">
       <DependentUpon>AccessPointRadarWindow.xaml</DependentUpon>
@@ -174,6 +177,10 @@
     <Compile Include="src\dataModels\baseDataModel.cs" />
     <Compile Include="src\WLANScanInvoker\WifiScanner.cs" />
     <Compile Include="src\databaseAccess\TimeFrameIdGenerator.cs" />
+    <Page Include="src\main\loadingScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\main\AccessPointRadarWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
