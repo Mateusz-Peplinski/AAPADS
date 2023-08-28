@@ -53,7 +53,7 @@ namespace AAPADS
 
             WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new detectionSetUpViewDataModel();
 
-            ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
+            
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
 
@@ -149,6 +149,7 @@ namespace AAPADS
             }
             else if (tab == AccessPointInvestigateTab)
             {
+                ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
                 DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
             }
             else if (tab == DetectionSetupTab)
@@ -282,14 +283,5 @@ namespace AAPADS
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

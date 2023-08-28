@@ -36,7 +36,7 @@
 
         </Style>
         <DataTemplate x:Key="CustomLabelTemplate">
-            <TextBlock Foreground="AntiqueWhite" Text="{Binding}" />
+            <TextBlock Foreground="#d2d2d2" Text="{Binding}" />
         </DataTemplate>
     </Window.Resources>
     <WindowChrome.WindowChrome>
@@ -84,7 +84,7 @@
                     Background="Transparent"
                     BorderBrush="Transparent"
                     Content="_"
-                    Foreground="AntiqueWhite" />
+                    Foreground="#d2d2d2" />
                 <Button
                     x:Name="MaximizeButton"
                     Grid.Column="3"
@@ -94,7 +94,7 @@
                     Background="Transparent"
                     BorderBrush="Transparent"
                     Content="□"
-                    Foreground="AntiqueWhite" />
+                    Foreground="#d2d2d2" />
                 <Button
                     x:Name="CloseButton"
                     Grid.Column="4"
@@ -104,7 +104,7 @@
                     Background="Red"
                     BorderBrush="Red"
                     Content="X"
-                    Foreground="AntiqueWhite" />
+                    Foreground="#d2d2d2" />
             </Grid>
         </Border>
 
@@ -242,7 +242,7 @@
                                                             <materialDesign:PackIcon Foreground="{Binding RSSI, Converter={StaticResource RSSIColorConverter}}" Kind="{Binding RSSI, Converter={StaticResource RSSIIconConverter}}" />
                                                             <TextBlock
                                                                 FontWeight="Bold"
-                                                                Foreground="AntiqueWhite"
+                                                                Foreground="#d2d2d2"
                                                                 Text="{Binding RSSI, StringFormat={}{0}%}"
                                                                 TextAlignment="Left" />
                                                         </StackPanel>
@@ -253,7 +253,7 @@
                                             <DataGridTextColumn
                                                 Width="*"
                                                 Binding="{Binding BSSID}"
-                                                Foreground="AntiqueWhite"
+                                                Foreground="#d2d2d2"
                                                 Header="BSSID"
                                                 SortMemberPath="BSSID">
                                                 <DataGridTextColumn.ElementStyle>
@@ -266,7 +266,7 @@
                                             <DataGridTextColumn
                                                 Width="*"
                                                 Binding="{Binding SSID}"
-                                                Foreground="AntiqueWhite"
+                                                Foreground="#d2d2d2"
                                                 Header="SSID"
                                                 SortMemberPath="SSID">
                                                 <DataGridTextColumn.ElementStyle>
@@ -279,7 +279,7 @@
                                             <DataGridTextColumn
                                                 Width="100"
                                                 Binding="{Binding WLAN_STANDARD}"
-                                                Foreground="AntiqueWhite"
+                                                Foreground="#d2d2d2"
                                                 Header="STANDARD"
                                                 SortMemberPath="WLAN_STANDARD">
                                                 <DataGridTextColumn.ElementStyle>
@@ -331,7 +331,7 @@
                                             <DataGridTextColumn
                                                 Width="100"
                                                 Binding="{Binding ENCRYPTION_USED}"
-                                                Foreground="AntiqueWhite"
+                                                Foreground="#d2d2d2"
                                                 Header="ENC"
                                                 SortMemberPath="ENCRYPTION_USED">
                                                 <DataGridTextColumn.ElementStyle>
@@ -344,7 +344,7 @@
                                             <DataGridTextColumn
                                                 Width="*"
                                                 Binding="{Binding AUTHENTICATION}"
-                                                Foreground="AntiqueWhite"
+                                                Foreground="#d2d2d2"
                                                 Header="AUTH"
                                                 SortMemberPath="AUTHENTICATION">
                                                 <DataGridTextColumn.ElementStyle>
@@ -404,7 +404,7 @@
                                                                 Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
-                                                                Foreground="Beige"
+                                                                Foreground="#d2d2d2"
                                                                 Text="ACCESS POINTS DETECTED:" />
                                                             <Border
                                                                 Grid.Column="1"
@@ -434,7 +434,7 @@
                                                                 Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
-                                                                Foreground="Beige"
+                                                                Foreground="#d2d2d2"
                                                                 Text="SECURE ACCESS POINTS:" />
                                                             <Border
                                                                 Grid.Column="1"
@@ -464,7 +464,7 @@
                                                                 Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
-                                                                Foreground="Beige"
+                                                                Foreground="#d2d2d2"
                                                                 Text="2.4 GHz NETWORKS:" />
                                                             <Border
                                                                 Grid.Column="1"
@@ -494,7 +494,7 @@
                                                                 Margin="3"
                                                                 VerticalAlignment="Center"
                                                                 FontWeight="Bold"
-                                                                Foreground="Beige"
+                                                                Foreground="#d2d2d2"
                                                                 Text="5 GHz NETWORKS:" />
                                                             <Border
                                                                 Grid.Column="1"
@@ -526,18 +526,18 @@
                                                                 Grid.Row="0"
                                                                 HorizontalAlignment="Center"
                                                                 FontWeight="Bold"
-                                                                Foreground="AntiqueWhite"
+                                                                Foreground="#d2d2d2"
                                                                 Text="AVERAGE SIGNAL STRENGTH" />
                                                             <liveCharts:AngularGauge
                                                                 Grid.Row="1"
                                                                 Margin="5"
                                                                 FontSize="10"
                                                                 FontWeight="Bold"
-                                                                Foreground="AntiqueWhite"
+                                                                Foreground="#d2d2d2"
                                                                 FromValue="0"
                                                                 LabelsStep="10"
                                                                 SectionsInnerRadius=".5"
-                                                                TicksForeground="AntiqueWhite"
+                                                                TicksForeground="#d2d2d2"
                                                                 TicksStep="10"
                                                                 ToValue="100"
                                                                 Wedge="300"
@@ -799,7 +799,7 @@
                                                                             VerticalAlignment="Center"
                                                                             Background="Black"
                                                                             FontWeight="Bold"
-                                                                            Foreground="AntiqueWhite"
+                                                                            Foreground="#d2d2d2"
                                                                             Text="{Binding RISK_LEVEL}"
                                                                             TextAlignment="Center" />
                                                                     </Border>
@@ -844,12 +844,12 @@
                                                                         Width="24"
                                                                         Height="24"
                                                                         HorizontalAlignment="Center"
-                                                                        Foreground="AntiqueWhite"
+                                                                        Foreground="#d2d2d2"
                                                                         Kind="ShieldAlert" />
                                                                     <TextBlock
                                                                         HorizontalAlignment="Center"
                                                                         FontSize="12"
-                                                                        Foreground="AntiqueWhite"
+                                                                        Foreground="#d2d2d2"
                                                                         Text="INFO" />
                                                                 </StackPanel>
                                                             </TabItem.Header>
@@ -904,12 +904,12 @@
                                                                         Width="24"
                                                                         Height="24"
                                                                         HorizontalAlignment="Center"
-                                                                        Foreground="AntiqueWhite"
+                                                                        Foreground="#d2d2d2"
                                                                         Kind="ShieldAccount" />
                                                                     <TextBlock
                                                                         HorizontalAlignment="Center"
                                                                         FontSize="12"
-                                                                        Foreground="AntiqueWhite"
+                                                                        Foreground="#d2d2d2"
                                                                         Text="ACTIONS" />
                                                                 </StackPanel>
                                                             </TabItem.Header>
@@ -939,7 +939,7 @@
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListViewItem">
                                         <Setter Property="Background" Value="#424242" />
-                                        <Setter Property="Foreground" Value="AntiqueWhite" />
+                                        <Setter Property="Foreground" Value="#d2d2d2" />
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                     </Style>
                                 </ListView.ItemContainerStyle>
@@ -982,8 +982,8 @@
                                         MinWidth="72"
                                         materialDesign:HintAssist.FontFamily="Verdana"
                                         materialDesign:HintAssist.Hint="Select Access Point"
-                                        DisplayMemberPath="BSSID"
-                                        Foreground="AntiqueWhite"
+                                        DisplayMemberPath="DisplaySSID"
+                                        Foreground="#d2d2d2"
                                         ItemsSource="{Binding SSIDs}"
                                         SelectedItem="{Binding SELECTED_SSID_ITEM}"
                                         Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
@@ -999,6 +999,7 @@
                                     <Grid>
                                         <!--  Define 6 rows  -->
                                         <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
@@ -1025,35 +1026,195 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontWeight="Bold"
-                                                    Foreground="AntiqueWhite"
-                                                    Text="{Binding SELECTED_SSID_ITEM, StringFormat='SSID: {0}'}" />
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.DisplaySSID, StringFormat='SSID: {0}'}" />
                                             </Border>
-
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="50"
+                                                Margin="10,60,0,0"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="Bold"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.BSSID, StringFormat='MAC: {0}'}" />
+                                            </Border>
                                             <!--  Right Box  -->
                                             <Border
                                                 Grid.Column="1"
-                                                Height="100"
-                                                Margin="5"
+                                                Margin="5,5,5,0"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <!--  Your content here  -->
+                                                <!--  content here  -->
                                             </Border>
                                         </Grid>
 
+
                                         <!--  Row 2  -->
+                                        <Grid Grid.Row="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  number here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 3  -->
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  number here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 4  -->
+                                        <Grid Grid.Row="3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  number here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 5  -->
+                                        <Grid Grid.Row="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Margin="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <!--  number here  -->
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 6  -->
+                                        <Grid Grid.Row="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="30"
+                                                Margin="10,30,5,0"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="CLIENT CONNECTED" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Height="30"
+                                                Margin="5,30,5,0"
+                                                Background="Red"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="BUTTON" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row 7  -->
                                         <Border
-                                            Grid.Row="1"
+                                            Grid.Row="6"
                                             Height="300"
                                             Margin="5"
                                             Background="#303030"
-                                            CornerRadius="5">
+                                            CornerRadius="10,5,10,5">
                                             <DataGrid
                                                 x:Name="BSSIDDataGrid"
                                                 AutoGenerateColumns="False"
                                                 CanUserAddRows="False"
                                                 CanUserDeleteRows="False"
                                                 IsReadOnly="True"
-                                                ItemsSource="{Binding BSSIDs}">
+                                                ItemsSource="{Binding UNKNOWN}">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn
                                                         Width="*"
@@ -1073,118 +1234,7 @@
                                                         Header="Channel" />
                                                 </DataGrid.Columns>
                                             </DataGrid>
-
-
                                         </Border>
-
-                                        <!--  Row 3  -->
-                                        <Grid Grid.Row="2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!--  Main Rectangle  -->
-                                            <Border
-                                                Grid.Column="0"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <TextBlock Text="CLIENT CONNECTED:" />
-                                            </Border>
-
-                                            <!--  Small Rectangle on the Right  -->
-                                            <Border
-                                                Grid.Column="1"
-                                                Width="50"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <!--  Your number here  -->
-                                            </Border>
-                                        </Grid>
-
-                                        <!--  Rest of the Rows (similar to Row 3)  -->
-                                        <!--  Row 4  -->
-                                        <Grid Grid.Row="3">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!--  Main Rectangle  -->
-                                            <Border
-                                                Grid.Column="0"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <TextBlock Text="CLIENT CONNECTED:" />
-                                            </Border>
-
-                                            <!--  Small Rectangle on the Right  -->
-                                            <Border
-                                                Grid.Column="1"
-                                                Width="50"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <!--  Your number here  -->
-                                            </Border>
-                                        </Grid>
-
-                                        <!--  Row 5  -->
-                                        <Grid Grid.Row="4">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!--  Main Rectangle  -->
-                                            <Border
-                                                Grid.Column="0"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <TextBlock Text="CLIENT CONNECTED:" />
-                                            </Border>
-
-                                            <!--  Small Rectangle on the Right  -->
-                                            <Border
-                                                Grid.Column="1"
-                                                Width="50"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <!--  Your number here  -->
-                                            </Border>
-                                        </Grid>
-
-                                        <!--  Row 6  -->
-                                        <Grid Grid.Row="5">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!--  Main Rectangle  -->
-                                            <Border
-                                                Grid.Column="0"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <TextBlock Text="CLIENT CONNECTED:" />
-                                            </Border>
-
-                                            <!--  Small Rectangle on the Right  -->
-                                            <Border
-                                                Grid.Column="1"
-                                                Width="50"
-                                                Margin="5"
-                                                Background="#303030"
-                                                CornerRadius="5">
-                                                <!--  Your number here  -->
-                                            </Border>
-                                        </Grid>
                                     </Grid>
                                 </Border>
 
@@ -1218,11 +1268,11 @@
                                             Margin="5"
                                             FontSize="10"
                                             FontWeight="Bold"
-                                            Foreground="AntiqueWhite"
+                                            Foreground="#d2d2d2"
                                             FromValue="-100"
                                             LabelsStep="10"
                                             SectionsInnerRadius=".5"
-                                            TicksForeground="AntiqueWhite"
+                                            TicksForeground="#d2d2d2"
                                             TicksStep="10"
                                             ToValue="0"
                                             Wedge="300"
@@ -1267,7 +1317,7 @@
                                                 HorizontalAlignment="Center"
                                                 FontSize="12"
                                                 FontWeight="Bold"
-                                                Foreground="AntiqueWhite"
+                                                Foreground="#d2d2d2"
                                                 Text="RSSI (dBm)" />
 
                                             <liveCharts:CartesianChart Grid.Row="1" Series="{Binding RSSIDataForGraphSignalStrengthOverTime}">
@@ -1298,7 +1348,7 @@
                                             HorizontalAlignment="Center"
                                             FontSize="12"
                                             FontWeight="Bold"
-                                            Foreground="AntiqueWhite"
+                                            Foreground="#d2d2d2"
                                             Text="Graph 2" />
                                     </Grid>
                                 </Border>
@@ -1322,7 +1372,7 @@
                                             HorizontalAlignment="Center"
                                             FontSize="12"
                                             FontWeight="Bold"
-                                            Foreground="AntiqueWhite"
+                                            Foreground="#d2d2d2"
                                             Text="Graph 2" />
                                     </Grid>
                                 </Border>
@@ -1346,7 +1396,7 @@
                                             HorizontalAlignment="Center"
                                             FontSize="12"
                                             FontWeight="Bold"
-                                            Foreground="AntiqueWhite"
+                                            Foreground="#d2d2d2"
                                             Text="Graph 2" />
                                     </Grid>
                                 </Border>
@@ -1368,13 +1418,13 @@
                                 <Expander HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="AntiqueWhite" Text="STAGE: " />
+                                            <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
                                             <materialDesign:PackIcon
                                                 Margin="0,0,5,0"
                                                 Foreground="Green"
                                                 Kind="Numeric1Box" />
                                             <!--  Change Icon1 to your desired icon  -->
-                                            <TextBlock Foreground="AntiqueWhite" Text="INITIAL DETECTION CONFIGURATION " />
+                                            <TextBlock Foreground="#d2d2d2" Text="INITIAL DETECTION CONFIGURATION " />
                                         </StackPanel>
                                     </Expander.Header>
                                     <Grid>
@@ -1391,7 +1441,7 @@
                                             Grid.Row="0"
                                             Margin="24,8,24,16"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontStyle="Italic" Text="NOTE: This is the first stage of the detection system." />
                                             <TextBlock FontStyle="Italic" Text="Here you can start the detection configuration process. This process will run for 24hrs (default) to create the wireless profile enviroment" />
                                         </StackPanel>
@@ -1399,7 +1449,7 @@
                                             Grid.Row="1"
                                             Margin="24,8,24,0"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="STEP 1: SELECT NETWORK ADAPTER" />
                                         </StackPanel>
                                         <Grid Grid.Row="2">
@@ -1444,7 +1494,7 @@
                                             Grid.Row="3"
                                             Margin="24,8,24,0"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="STEP 2: SELECT TIME FRAME FOR CREATING A WIRELESS PROFILE (LONGER = MORE ACCURACY)" />
                                         </StackPanel>
                                         <Slider
@@ -1462,7 +1512,7 @@
                                             Grid.Row="5"
                                             Margin="24,8,24,0"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="STEP 3: PRESS START TO BEGIN STAGE 1 OF DETECTION" />
                                         </StackPanel>
                                         <Button
@@ -1482,7 +1532,7 @@
                                             Margin="24,70,24,0"
                                             HorizontalAlignment="Center"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="AFTER START BUTTON IS PRESSED A TIMER WILL BEGIN" />
                                             <TextBlock FontStyle="Italic" Text="PLEASE COME BACK TO STAGE 2 TO CONFIRM DATA " />
                                         </StackPanel>
@@ -1491,12 +1541,12 @@
                                 <Expander HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="AntiqueWhite" Text="STAGE: " />
+                                            <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
                                             <materialDesign:PackIcon
                                                 Margin="0,0,5,0"
                                                 Foreground="Orange"
                                                 Kind="Numeric2Box" />
-                                            <TextBlock Foreground="AntiqueWhite" Text="CONFIGURATION CONFIRMATION" />
+                                            <TextBlock Foreground="#d2d2d2" Text="CONFIGURATION CONFIRMATION" />
                                         </StackPanel>
                                     </Expander.Header>
                                     <Grid>
@@ -1513,7 +1563,7 @@
                                             Grid.Row="0"
                                             Margin="24,8,24,0"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontStyle="Italic" Text="NOTE: This is the second stage of the configuration of the detection system." />
                                             <TextBlock FontStyle="Italic" Text="Here you can start the detection process. The detections will be added to the detection tab." />
                                             <TextBlock FontStyle="Italic" Text="It is important that you correctly whitelist and blacklist item to mimimise false positives." />
@@ -1522,7 +1572,7 @@
                                             Grid.Row="1"
                                             Margin="24,8,24,5"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="STEP 1: SELECTING BLACKLIST" />
                                         </StackPanel>
                                         <Grid Grid.Row="2" />
@@ -1530,7 +1580,7 @@
                                             Grid.Row="3"
                                             Margin="24,8,24,0"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="STEP 2: CONFIRMATION OF BLACKLIST AND WHITE LIST" />
                                         </StackPanel>
 
@@ -1538,7 +1588,7 @@
                                             Grid.Row="4"
                                             Margin="24,8,24,0"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="STEP 3: BEGIN DETECTIONS" />
                                         </StackPanel>
                                         <Button
@@ -1557,7 +1607,7 @@
                                             Margin="24,5,24,0"
                                             HorizontalAlignment="Center"
                                             Orientation="Vertical"
-                                            TextBlock.Foreground="AntiqueWhite">
+                                            TextBlock.Foreground="#d2d2d2">
                                             <TextBlock FontWeight="Bold" Text="WHEN DETECTIONS ARE DISCOVERED THEY WILL BE VISABLE IN THE DETECTIONS TAB" />
                                             <TextBlock FontStyle="Italic" Text="STAGE 3: RUNTIME CONFIGURATION CAN BE USED TO MAKE CHANGES TO THE DETECTION ENGINE" />
                                         </StackPanel>
@@ -1566,18 +1616,18 @@
                                 <Expander HorizontalAlignment="Stretch">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="AntiqueWhite" Text="STAGE: " />
+                                            <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
                                             <materialDesign:PackIcon
                                                 Margin="0,0,5,0"
                                                 Foreground="Red"
                                                 Kind="Numeric3Box" />
-                                            <TextBlock Foreground="AntiqueWhite" Text="RUNTIME CONFIGURATION" />
+                                            <TextBlock Foreground="#d2d2d2" Text="RUNTIME CONFIGURATION" />
                                         </StackPanel>
                                     </Expander.Header>
                                     <StackPanel
                                         Margin="24,8,24,16"
                                         Orientation="Vertical"
-                                        TextBlock.Foreground="AntiqueWhite">
+                                        TextBlock.Foreground="#d2d2d2">
                                         <TextBlock Text="Content" />
                                     </StackPanel>
                                 </Expander>
