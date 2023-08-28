@@ -201,6 +201,7 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
 
         for (int j = 0; j < pNetworkList->dwNumberOfItems && count < maxNetworks; j++) {
             PWLAN_AVAILABLE_NETWORK pNetwork = &pNetworkList->Network[j];
+
             // SSID
             for (int k = 0; k < pNetwork->dot11Ssid.uSSIDLength; k++) {
                 networks[count].ssid[k] = pNetwork->dot11Ssid.ucSSID[k];
@@ -226,20 +227,63 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
 
             // Auth Method
             switch (pNetwork->dot11DefaultAuthAlgorithm) {
+            case DOT11_AUTH_ALGO_80211_OPEN:
+                strcpy_s(networks[count].authMethod, 32, "802.11 OPEN");
+                break;
+            case DOT11_AUTH_ALGO_80211_SHARED_KEY:
+                strcpy_s(networks[count].authMethod, 32, "802.11 SHARED KEY");
+                break;
             case DOT11_AUTH_ALGO_WPA:
                 strcpy_s(networks[count].authMethod, 32, "WPA");
+                break;
+            case DOT11_AUTH_ALGO_WPA_PSK:
+                strcpy_s(networks[count].authMethod, 32, "WPA PSK");
+                break;
+            case DOT11_AUTH_ALGO_WPA_NONE:
+                strcpy_s(networks[count].authMethod, 32, "WPA NONE");
+                break;
+            case DOT11_AUTH_ALGO_RSNA:
+                strcpy_s(networks[count].authMethod, 32, "RSNA");
+                break;
+            case DOT11_AUTH_ALGO_RSNA_PSK:
+                strcpy_s(networks[count].authMethod, 32, "RSNA PSK");
+                break;
+            case DOT11_AUTH_ALGO_WPA3:
+                strcpy_s(networks[count].authMethod, 32, "WPA3");
+                break;
+            case DOT11_AUTH_ALGO_WPA3_SAE:
+                strcpy_s(networks[count].authMethod, 32, "WPA3 SAE");
+                break;
+            case DOT11_AUTH_ALGO_OWE:
+                strcpy_s(networks[count].authMethod, 32, "OWE");
+                break;
+            case DOT11_AUTH_ALGO_WPA3_ENT:
+                strcpy_s(networks[count].authMethod, 32, "WPA3 ENT");
                 break;
             default:
                 strcpy_s(networks[count].authMethod, 32, "UNKNOWN");
                 break;
             }
 
+
             // Encryption Type
             switch (pNetwork->dot11DefaultCipherAlgorithm) {
+            case DOT11_CIPHER_ALGO_NONE:
+                strcpy_s(networks[count].encryptionType, 32, "NONE");
+                break;
             case DOT11_CIPHER_ALGO_WEP40:
             case DOT11_CIPHER_ALGO_WEP:
             case DOT11_CIPHER_ALGO_WEP104:
                 strcpy_s(networks[count].encryptionType, 32, "WEP");
+                break;
+            case DOT11_CIPHER_ALGO_TKIP:
+                strcpy_s(networks[count].encryptionType, 32, "TKIP");
+                break;
+            case DOT11_CIPHER_ALGO_CCMP:
+                strcpy_s(networks[count].encryptionType, 32, "CCMP");
+                break;
+            case DOT11_CIPHER_ALGO_WPA_USE_GROUP:
+                strcpy_s(networks[count].encryptionType, 32, "WPA USE GROUP");
                 break;
             default:
                 strcpy_s(networks[count].encryptionType, 32, "UNKNOWN");
@@ -250,6 +294,7 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
             if (count >= maxNetworks) {
                 break;
             }
+
 
         }
         WlanFreeMemory(pNetworkList);
