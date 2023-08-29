@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:gif="http://wpfanimatedgif.codeplex.com"
     xmlns:local="clr-namespace:AAPADS"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,17 +15,17 @@
     mc:Ignorable="d">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" />
+        <WindowChrome CaptionHeight="0" CornerRadius="20" />
     </WindowChrome.WindowChrome>
-
-    <Grid Background="#303030">
-        <Image
-            Width="1055"
-            Height="498"
-            Margin="-152,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Source="/res/graphics/LargeLogoNoBackground.png" />
+    <Grid>
+        <Grid.Background>
+            <ImageBrush>
+                <ImageBrush.ImageSource>
+                    <BitmapImage UriSource="/res/graphics/animated.gif" />
+                </ImageBrush.ImageSource>
+            </ImageBrush>
+        </Grid.Background>
+        <Image gif:ImageBehavior.AnimatedSource="/res/graphics/animated.gif" Stretch="UniformToFill" />
         <ProgressBar
             Margin="281,384,299,30"
             Foreground="#ff002a"
@@ -32,4 +33,6 @@
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
     </Grid>
+
+
 </Window>

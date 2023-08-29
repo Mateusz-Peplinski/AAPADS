@@ -31,25 +31,23 @@ namespace AAPADS
 
         private void StartLoadingProcess()
         {
-            // Initialize the main window but don't show it yet
+
             _mainWindow = new MainWindow();
 
-            // Set up the timer
+            
             _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromSeconds(1); // Wait for 5 seconds
+            _timer.Interval = TimeSpan.FromSeconds(4); 
             _timer.Tick += Timer_Tick;
             _timer.Start();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            // Stop the timer
+            
             _timer.Stop();
-
-            // Show the main window
+    
             _mainWindow.Show();
 
-            // Close the loading window
             this.Close();
         }
 
