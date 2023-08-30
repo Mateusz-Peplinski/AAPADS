@@ -28,10 +28,19 @@ namespace AAPADS
 
     public class AccessPointInvestigatorDataModel : INotifyPropertyChanged
     {
-        const int MAX_SSID_LENGTH = 32;
-        const int MAX_BSSIDS_PER_SSID = 5;
 
-        private CancellationTokenSource _cancellationTokenSource;
+        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetVisibleNetworks([Out] NetworkInfo[] networks, int maxNetworks);
+
+
+        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetAvailableSSIDs(ref SSIDList ssidList);
+
+        [DllImport("WLANLibrary.dll", CharSet = CharSet.Ansi)]
+        public static extern int GetRSSIForSSID(string ssid);
+
+        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool PerformWifiScan();
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         public struct SSIDList
@@ -60,20 +69,7 @@ namespace AAPADS
             public int channel;
         }
 
-
-        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int GetVisibleNetworks([Out] NetworkInfo[] networks, int maxNetworks);
-
-
-        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetAvailableSSIDs(ref SSIDList ssidList);
-
-        [DllImport("WLANLibrary.dll", CharSet = CharSet.Ansi)]
-        public static extern int GetRSSIForSSID(string ssid);
-
-        [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool PerformWifiScan();
-
+        private CancellationTokenSource _cancellationTokenSource;
 
         private ObservableCollection<SSIDItem> _ssids = new ObservableCollection<SSIDItem>();
         public ObservableCollection<SSIDItem> SSIDs
@@ -130,9 +126,6 @@ namespace AAPADS
             PopulateRSSIValueDataInGaugeAndLineSeries();
         }
 
-
-
-
         private SeriesCollection _rssiDataForGraph = new SeriesCollection
         {
             new LineSeries
@@ -182,7 +175,7 @@ namespace AAPADS
         }
         public void LoadWLANData()
         {
-            NetworkInfo[] networkInfos = new NetworkInfo[100]; // Assuming a max of 100 networks for example
+            NetworkInfo[] networkInfos = new NetworkInfo[100];
 
             int count = GetVisibleNetworks(networkInfos, networkInfos.Length);
 
@@ -209,7 +202,8 @@ namespace AAPADS
                 // Update the SSID list in place
                 foreach (var ssid in newSSIDs)
                 {
-                    if (!SSIDs.Any(s => s.DisplaySSID == ssid.DisplaySSID))
+                    Console.WriteLine($"New SSID: {ssid.DisplaySSID}, BSSID: {ssid.BSSID}");
+                    if (!SSIDs.Any(s => s.BSSID == ssid.BSSID)) // Use BSSID for uniqueness
                     {
                         SSIDs.Add(ssid);
                     }
@@ -217,7 +211,7 @@ namespace AAPADS
 
                 for (int i = SSIDs.Count - 1; i >= 0; i--)
                 {
-                    if (!newSSIDs.Any(s => s.DisplaySSID == SSIDs[i].DisplaySSID))
+                    if (!newSSIDs.Any(s => s.BSSID == SSIDs[i].BSSID)) // Use BSSID for uniqueness
                     {
                         SSIDs.RemoveAt(i);
                     }
@@ -225,49 +219,29 @@ namespace AAPADS
             });
         }
 
-
-
-
-        public IEnumerable<SSIDItem> GetSSIDItemsFromCharArray(char[] charArray, int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                var originalSSID = new string(charArray.Skip(i * 32).Take(32).ToArray()).TrimEnd('\0');
-
-                var displaySSID = new string(originalSSID.Where(c => c >= 32 && c <= 126).ToArray());
-                if (string.IsNullOrWhiteSpace(displaySSID) || displaySSID == "")
-                {
-                    displaySSID = "[HIDDEN NETWORK]";
-                }
-                yield return new SSIDItem
-                {
-                    DisplaySSID = displaySSID,
-                    OriginalSSID = originalSSID
-                };
-            }
-        }
-
         public void RefreshSSIDs()
         {
-            
-            try 
+            try
             {
-                // Load the new WLAN - C libary call 
+                // Load the new WLAN - C library call 
                 LoadWLANData();
-            } 
-            catch { MessageBox.Show("Error calling LoadWLANData from WLANLibrary.dll"); };
-            
-            
+            }
+            catch
+            {
+                MessageBox.Show("Error calling LoadWLANData from WLANLibrary.dll");
+            };
+
             var currentSSIDs = SSIDs.ToList();
-            
 
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Add new SSIDs
                 foreach (var ssid in currentSSIDs)
                 {
-                    if (!SSIDs.Any(s => s.OriginalSSID == ssid.OriginalSSID))
+                    if (!SSIDs.Any(s => s.BSSID == ssid.BSSID)) // Use BSSID for uniqueness
                     {
+                        Console.WriteLine($"Adding SSID: {ssid.DisplaySSID}, BSSID: {ssid.BSSID}");
+
                         SSIDs.Add(ssid);
                     }
                 }
@@ -275,13 +249,15 @@ namespace AAPADS
                 // Remove SSIDs that are no longer in the current SSIDs list
                 for (int i = SSIDs.Count - 1; i >= 0; i--)
                 {
-                    if (!currentSSIDs.Any(s => s.OriginalSSID == SSIDs[i].OriginalSSID))
+                    if (!currentSSIDs.Any(s => s.BSSID == SSIDs[i].BSSID)) // Use BSSID for uniqueness
                     {
+                        Console.WriteLine($"Removing SSID: {SSIDs[i].DisplaySSID}, BSSID: {SSIDs[i].BSSID}");
                         SSIDs.RemoveAt(i);
                     }
                 }
             });
         }
+
 
         private async void PopulateRSSIValueDataInGaugeAndLineSeries()
         {
