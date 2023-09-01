@@ -23,9 +23,6 @@ namespace AAPADS
         public string BSSID { get; set; }
         public int Channel { get; set; }
     }
-
-
-
     public class AccessPointInvestigatorDataModel : INotifyPropertyChanged
     {
 
@@ -67,6 +64,8 @@ namespace AAPADS
             public string encryptionType;
 
             public int channel;
+
+            public int bssType;
         }
 
         private CancellationTokenSource _cancellationTokenSource;
@@ -149,7 +148,7 @@ namespace AAPADS
                         //new GradientStop(Color.FromRgb(0, 128, 0), 0)        // Green 
 
                         new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
-                        new GradientStop(Color.FromRgb(110, 204, 37), 0)        // Green 
+                        new GradientStop(Color.FromArgb(60,110, 204, 37), 0)
                     }
                 }
             }

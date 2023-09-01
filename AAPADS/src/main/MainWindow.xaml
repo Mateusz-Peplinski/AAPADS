@@ -35,9 +35,10 @@
             <Setter Property="BorderBrush" Value="Transparent" />
 
         </Style>
-        <DataTemplate x:Key="CustomLabelTemplate">
-            <TextBlock Foreground="#d2d2d2" Text="{Binding}" />
-        </DataTemplate>
+
+
+        <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#ef3945" />
+
     </Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" />
@@ -101,8 +102,8 @@
                     Width="50"
                     Height="30"
                     Padding="0"
-                    Background="Red"
-                    BorderBrush="Red"
+                    Background="#ef3945"
+                    BorderBrush="#ef3945"
                     Content="X"
                     Foreground="#d2d2d2" />
             </Grid>
@@ -982,6 +983,8 @@
                                         MinWidth="72"
                                         materialDesign:HintAssist.FontFamily="Verdana"
                                         materialDesign:HintAssist.Hint="Select Access Point"
+                                        BorderBrush="{StaticResource PrimaryHueMidBrush}"
+                                        BorderThickness="0"
                                         DisplayMemberPath="DisplaySSID"
                                         Foreground="#d2d2d2"
                                         ItemsSource="{Binding SSIDs}"
@@ -1065,9 +1068,13 @@
                                                 Grid.Column="0"
                                                 Height="25"
                                                 Margin="10,5,10,5"
+                                                Padding="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="RECEIVED SIGNAL STRENGTH INDICATOR (dBm):" />
                                             </Border>
 
                                             <!--  Small Rectangle on the Right  -->
@@ -1077,7 +1084,11 @@
                                                 Margin="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <!--  number here  -->
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding RSSI_VALUE}" />
                                             </Border>
                                         </Grid>
 
@@ -1093,9 +1104,13 @@
                                                 Grid.Column="0"
                                                 Height="25"
                                                 Margin="10,5,10,5"
+                                                Padding="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="AUTHENTICATION TYPE:" />
                                             </Border>
 
                                             <!--  Small Rectangle on the Right  -->
@@ -1105,7 +1120,11 @@
                                                 Margin="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <!--  number here  -->
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.AuthMethod}" />
                                             </Border>
                                         </Grid>
 
@@ -1121,9 +1140,13 @@
                                                 Grid.Column="0"
                                                 Height="25"
                                                 Margin="10,5,10,5"
+                                                Padding="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="ENCRYPTION TYPE:" />
                                             </Border>
 
                                             <!--  Small Rectangle on the Right  -->
@@ -1133,7 +1156,11 @@
                                                 Margin="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <!--  number here  -->
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.EncryptionType}" />
                                             </Border>
                                         </Grid>
 
@@ -1149,9 +1176,13 @@
                                                 Grid.Column="0"
                                                 Height="25"
                                                 Margin="10,5,10,5"
+                                                Padding="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <TextBlock VerticalAlignment="Center" Text="CLIENT CONNECTED:" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="CLIENT CONNECTED:" />
                                             </Border>
 
                                             <!--  Small Rectangle on the Right  -->
