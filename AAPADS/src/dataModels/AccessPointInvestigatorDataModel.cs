@@ -98,8 +98,8 @@ namespace AAPADS
             get => _selectedSSIDItem;
             set
             {
-                if (_selectedSSIDItem?.DisplaySSID == value?.DisplaySSID)
-                    return; // If selected SSID has not changed contine
+                if (_selectedSSIDItem?.BSSID == value?.BSSID)
+                    return; // If selected BSSID has not changed continue
 
                 _selectedSSIDItem = value;
                 OnPropertyChanged(nameof(SELECTED_SSID_ITEM));
@@ -239,8 +239,6 @@ namespace AAPADS
                 {
                     if (!SSIDs.Any(s => s.BSSID == ssid.BSSID)) // Use BSSID for uniqueness
                     {
-                        Console.WriteLine($"Adding SSID: {ssid.DisplaySSID}, BSSID: {ssid.BSSID}");
-
                         SSIDs.Add(ssid);
                     }
                 }
@@ -250,7 +248,6 @@ namespace AAPADS
                 {
                     if (!currentSSIDs.Any(s => s.BSSID == SSIDs[i].BSSID)) // Use BSSID for uniqueness
                     {
-                        Console.WriteLine($"Removing SSID: {SSIDs[i].DisplaySSID}, BSSID: {SSIDs[i].BSSID}");
                         SSIDs.RemoveAt(i);
                     }
                 }
