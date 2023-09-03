@@ -170,8 +170,11 @@ typedef struct {
     char bssid[18]; // 17 characters + null terminator
     char authMethod[32];
     char encryptionType[32];
+    int bssidPhyType;
     int channel;
     int bssType;
+    int beaconPeriod;
+    ULONG frequency;
 } NetworkInfo;
 
 __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetworks) {
@@ -216,8 +219,18 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
                     //Channel
                     networks[count].channel = ConvertFrequencyToChannel(pBssEntry->ulChCenterFrequency);
 
-                    // BSS Type
+                    //Freq
+                    networks[count].frequency = pBssEntry->ulChCenterFrequency;
+
+                    // BSS Type (int)
                     networks[count].bssType = pNetwork->dot11BssType;
+
+                    // BSSID PHY TYPE (int)
+                    networks[count].bssidPhyType = pNetwork->dot11PhyTypes;
+
+                    // BECON PERIOD (int)
+                    networks[count].beaconPeriod = pBssEntry->usBeaconPeriod;
+
 
                     // SSID
                     for (int k = 0; k < pNetwork->dot11Ssid.uSSIDLength; k++) {
@@ -345,17 +358,17 @@ __declspec(dllexport) int GetRSSIForSSID(const char* targetSSID) {
 
     int rssi = 0;
     for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
-        WLAN_AVAILABLE_NETWORK_LIST* pAvailableNetworkList;
-        WlanGetAvailableNetworkList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, 0, NULL, &pAvailableNetworkList);
+        PWLAN_BSS_LIST pBssList;
+        WlanGetNetworkBssList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, NULL, dot11_BSS_type_any, FALSE, NULL, &pBssList);
 
-        for (DWORD j = 0; j < pAvailableNetworkList->dwNumberOfItems; j++) {
-            if (strcmp(targetSSID, pAvailableNetworkList->Network[j].dot11Ssid.ucSSID) == 0) {
-                rssi = pAvailableNetworkList->Network[j].wlanSignalQuality;
+        for (DWORD j = 0; j < pBssList->dwNumberOfItems; j++) {
+            if (strcmp(targetSSID, pBssList->wlanBssEntries[j].dot11Ssid.ucSSID) == 0) {
+                rssi = pBssList->wlanBssEntries[j].lRssi;
                 break;
             }
         }
 
-        WlanFreeMemory(pAvailableNetworkList);
+        WlanFreeMemory(pBssList);
     }
 
     WlanFreeMemory(pInterfaceList);
@@ -363,6 +376,7 @@ __declspec(dllexport) int GetRSSIForSSID(const char* targetSSID) {
 
     return rssi;
 }
+
 __declspec(dllexport) void FreeSSIDListMemory(SSIDList* pSsidList) {
     
 }

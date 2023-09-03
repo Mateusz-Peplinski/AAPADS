@@ -1012,6 +1012,7 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
                                         <!--  Row 1  -->
@@ -1059,7 +1060,7 @@
                                         </Grid>
 
 
-                                        <!--  Row 2  -->
+                                        <!--  Row RSSI  -->
                                         <Grid Grid.Row="1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -1095,7 +1096,7 @@
                                             </Border>
                                         </Grid>
 
-                                        <!--  Row 3  -->
+                                        <!--  Row AUTH  -->
                                         <Grid Grid.Row="2">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -1131,7 +1132,7 @@
                                             </Border>
                                         </Grid>
 
-                                        <!--  Row 4  -->
+                                        <!--  Row ENC  -->
                                         <Grid Grid.Row="3">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -1167,7 +1168,7 @@
                                             </Border>
                                         </Grid>
 
-                                        <!--  Row 5  -->
+                                        <!--  Row CCH  -->
                                         <Grid Grid.Row="4">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -1185,7 +1186,7 @@
                                                 <TextBlock
                                                     VerticalAlignment="Center"
                                                     Foreground="#d2d2d2"
-                                                    Text="CLIENTS CONNECTED:" />
+                                                    Text="CENTER CHANNEL:" />
                                             </Border>
 
                                             <!--  Small Rectangle on the Right  -->
@@ -1195,11 +1196,16 @@
                                                 Margin="5"
                                                 Background="#ef3945"
                                                 CornerRadius="5">
-                                                <!--  number here  -->
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="Bold"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.Channel, StringFormat='CH: {0}'}" />
                                             </Border>
                                         </Grid>
 
-                                        <!--  Row 6  -->
+                                        <!--  Row FREQ  -->
                                         <Grid Grid.Row="5">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -1209,29 +1215,30 @@
                                             <!--  Main Rectangle  -->
                                             <Border
                                                 Grid.Column="0"
-                                                Height="30"
-                                                Margin="10,30,5,0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Padding="5"
                                                 Background="#303030"
                                                 CornerRadius="5">
                                                 <TextBlock
-                                                    HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Foreground="#d2d2d2"
-                                                    Text="CLIENT CONNECTED" />
+                                                    Text="CENTER FREQUENCY:" />
                                             </Border>
 
                                             <!--  Small Rectangle on the Right  -->
                                             <Border
                                                 Grid.Column="1"
                                                 Width="100"
-                                                Height="30"
-                                                Margin="5,30,5,0"
-                                                Background="Red"
+                                                Margin="5"
+                                                Background="#ef3945"
                                                 CornerRadius="5">
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
-                                                    Text="BUTTON" />
+                                                    FontWeight="Bold"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.Frequency, StringFormat='{}{0} MHz'}" />
                                             </Border>
                                         </Grid>
 

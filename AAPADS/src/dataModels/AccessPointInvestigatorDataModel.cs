@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,13 +23,16 @@ namespace AAPADS
         public string EncryptionType { get; set; }
         public string BSSID { get; set; }
         public int Channel { get; set; }
+        public int BssType { get; set; } 
+        public int BssidPhyType { get; set; }
+        public int BeaconPeriod { get; set; }
+        public uint Frequency { get; set; }
     }
     public class AccessPointInvestigatorDataModel : INotifyPropertyChanged
     {
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetVisibleNetworks([Out] NetworkInfo[] networks, int maxNetworks);
-
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetAvailableSSIDs(ref SSIDList ssidList);
@@ -63,9 +67,15 @@ namespace AAPADS
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string encryptionType;
 
+            public int bssidPhyType;
+
             public int channel;
 
             public int bssType;
+
+            public int beaconPeriod;
+
+            public uint frequency;
         }
 
         private CancellationTokenSource _cancellationTokenSource;
@@ -190,7 +200,11 @@ namespace AAPADS
                     DisplaySSID = string.IsNullOrWhiteSpace(network.ssid) ? "[HIDDEN NETWORK]" : network.ssid,
                     AuthMethod = network.authMethod,
                     EncryptionType = network.encryptionType,
-                    Channel = network.channel
+                    Channel = network.channel,
+                    BssidPhyType = network.bssidPhyType,
+                    BssType = network.bssType,
+                    BeaconPeriod = network.beaconPeriod,
+                    Frequency = network.frequency,  
                 };
 
                 newSSIDs.Add(ssidItem);
@@ -265,7 +279,7 @@ namespace AAPADS
                 // GetRSSIForSSID C Libray dll call
                 try
                 {
-                    var rssi = ConvertSignalQualityToRssi(GetRSSIForSSID(SELECTED_SSID_ITEM?.OriginalSSID ?? string.Empty));
+                    var rssi = GetRSSIForSSID(SELECTED_SSID_ITEM?.OriginalSSID ?? string.Empty);
 
                     RSSIDataForGraphSignalStrengthOverTime[0].Values.Add(rssi);
                     if (RSSIDataForGraphSignalStrengthOverTime[0].Values.Count > 100)
@@ -287,7 +301,7 @@ namespace AAPADS
                     counter = 0;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(3));
             }
         }
 
