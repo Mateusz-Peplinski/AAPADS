@@ -20,6 +20,7 @@
     TextOptions.TextRenderingMode="Auto"
     mc:Ignorable="d">
     <Window.Resources>
+
         <local:RSSIIconConverter x:Key="RSSIIconConverter" />
         <local:RSSIColorConverter x:Key="RSSIColorConverter" />
         <local:FrequencyBandColorConverter x:Key="FrequencyBandColorConverter" />
@@ -28,7 +29,9 @@
         <local:CriticalityLevelToColorConverter x:Key="CriticalityColorConverter" />
         <local:CriticalityLevelToTextConverter x:Key="CriticalityTextConverter" />
         <local:DetectionStatusToColorConverter x:Key="DetectionStatusToColorConverter" />
+
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+
         <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
 
             <Setter Property="Background" Value="Transparent" />
@@ -1082,7 +1085,7 @@
                                                 Grid.Column="1"
                                                 Width="100"
                                                 Margin="5"
-                                                Background="#303030"
+                                                Background="#ef3945"
                                                 CornerRadius="5">
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
@@ -1118,7 +1121,7 @@
                                                 Grid.Column="1"
                                                 Width="100"
                                                 Margin="5"
-                                                Background="#303030"
+                                                Background="#ef3945"
                                                 CornerRadius="5">
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
@@ -1154,7 +1157,7 @@
                                                 Grid.Column="1"
                                                 Width="100"
                                                 Margin="5"
-                                                Background="#303030"
+                                                Background="#ef3945"
                                                 CornerRadius="5">
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
@@ -1182,7 +1185,7 @@
                                                 <TextBlock
                                                     VerticalAlignment="Center"
                                                     Foreground="#d2d2d2"
-                                                    Text="CLIENT CONNECTED:" />
+                                                    Text="CLIENTS CONNECTED:" />
                                             </Border>
 
                                             <!--  Small Rectangle on the Right  -->
@@ -1190,7 +1193,7 @@
                                                 Grid.Column="1"
                                                 Width="100"
                                                 Margin="5"
-                                                Background="#303030"
+                                                Background="#ef3945"
                                                 CornerRadius="5">
                                                 <!--  number here  -->
                                             </Border>
