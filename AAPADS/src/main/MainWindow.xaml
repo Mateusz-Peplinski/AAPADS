@@ -1013,6 +1013,8 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
                                         <!--  Row 1  -->
@@ -1091,6 +1093,7 @@
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
+                                                    FontWeight="Bold"
                                                     Foreground="#d2d2d2"
                                                     Text="{Binding RSSI_VALUE}" />
                                             </Border>
@@ -1127,6 +1130,7 @@
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
+                                                    FontWeight="Bold"
                                                     Foreground="#d2d2d2"
                                                     Text="{Binding SELECTED_SSID_ITEM.AuthMethod}" />
                                             </Border>
@@ -1163,6 +1167,7 @@
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
+                                                    FontWeight="Bold"
                                                     Foreground="#d2d2d2"
                                                     Text="{Binding SELECTED_SSID_ITEM.EncryptionType}" />
                                             </Border>
@@ -1242,11 +1247,122 @@
                                             </Border>
                                         </Grid>
 
+                                        <!--  Row BSS NETWORK TYPE  -->
+                                        <Grid Grid.Row="6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Padding="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="NETWORK TYPE:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Margin="5"
+                                                Background="#ef3945"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="Bold"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.BssType}" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row BSS PHY NETWORK TYPE  -->
+                                        <Grid Grid.Row="7">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Padding="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="NETWORK PHYSICAL TYPE:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Margin="5"
+                                                Background="#ef3945"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="Bold"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.BssidPhyType}" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!--  Row  BEACON PERIOD TYPE  -->
+                                        <Grid Grid.Row="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Main Rectangle  -->
+                                            <Border
+                                                Grid.Column="0"
+                                                Height="25"
+                                                Margin="10,5,10,5"
+                                                Padding="5"
+                                                Background="#303030"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#d2d2d2"
+                                                    Text="BEACON FRAME PERIOD:" />
+                                            </Border>
+
+                                            <!--  Small Rectangle on the Right  -->
+                                            <Border
+                                                Grid.Column="1"
+                                                Width="100"
+                                                Margin="5"
+                                                Background="#ef3945"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="Bold"
+                                                    Foreground="#d2d2d2"
+                                                    Text="{Binding SELECTED_SSID_ITEM.BeaconPeriod, StringFormat='{}{0} ms'}" />
+                                            </Border>
+                                        </Grid>
+
                                         <!--  Row 7  -->
                                         <Border
-                                            Grid.Row="6"
-                                            Height="300"
-                                            Margin="5"
+                                            Grid.Row="9"
+                                            Height="100"
+                                            Margin="10,5,5,5"
                                             Background="#303030"
                                             CornerRadius="10,5,10,5">
                                             <DataGrid
