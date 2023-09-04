@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,7 +23,7 @@ namespace AAPADS
         public string EncryptionType { get; set; }
         public string BSSID { get; set; }
         public int Channel { get; set; }
-        public int BssType { get; set; } 
+        public string BssType { get; set; }
         public int BssidPhyType { get; set; }
         public int BeaconPeriod { get; set; }
         public uint Frequency { get; set; }
@@ -202,9 +202,9 @@ namespace AAPADS
                     EncryptionType = network.encryptionType,
                     Channel = network.channel,
                     BssidPhyType = network.bssidPhyType,
-                    BssType = network.bssType,
+                    BssType = mapBssType(network.bssType),
                     BeaconPeriod = network.beaconPeriod,
-                    Frequency = network.frequency,  
+                    Frequency = network.frequency,
                 };
 
                 newSSIDs.Add(ssidItem);
@@ -304,10 +304,56 @@ namespace AAPADS
                 await Task.Delay(TimeSpan.FromSeconds(3));
             }
         }
-
-        private int ConvertSignalQualityToRssi(int signalQuality)
+        private string mapBssType(int value)
         {
-            return (signalQuality / 2) - 100;
+            //    typedef enum _DOT11_BSS_TYPE
+            //{
+            //    dot11_BSS_type_infrastructure = 1,
+            //    dot11_BSS_type_independent = 2,
+            //    dot11_BSS_type_any = 3
+            //}
+            //DOT11_BSS_TYPE, *PDOT11_BSS_TYPE;
+
+            string BSSType;
+
+            switch (value)
+            {
+                case 1:
+                    BSSType = "INFRASTRUCTURE";
+                    break;
+                case 2:
+                    BSSType = "INDEPENDENT";
+                    break;
+                case 3:
+                    BSSType = "ANY";
+                    break;
+                default:
+                    BSSType = "UNKNOWN";
+                    break;
+            }
+            return BSSType;
+        }
+
+        private string mapBSSPHYType(int value)
+        {
+        //    typedef enum _DOT11_PHY_TYPE
+        //    {
+        //    dot11_phy_type_unknown = 0,
+        //    dot11_phy_type_any = 0,
+        //    dot11_phy_type_fhss = 1,
+        //    dot11_phy_type_dsss = 2,
+        //    dot11_phy_type_irbaseband = 3,
+        //    dot11_phy_type_ofdm = 4,
+        //    dot11_phy_type_hrdsss = 5,
+        //    dot11_phy_type_erp = 6,
+        //    dot11_phy_type_ht = 7,
+        //    dot11_phy_type_vht = 8,
+        //    dot11_phy_type_IHV_start = 0x80000000,
+        //    dot11_phy_type_IHV_end = 0xffffffff
+        //    }
+        //DOT11_PHY_TYPE, *PDOT11_PHY_TYPE;
+
+            return "";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
