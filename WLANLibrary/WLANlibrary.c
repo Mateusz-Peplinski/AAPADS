@@ -59,99 +59,6 @@ __declspec(dllexport) BOOL PerformWifiScan() {
     return TRUE; 
 }
 
-__declspec(dllexport) void GetAvailableSSIDs_Extended(ExtendedSSIDList* pResult) {
-    DWORD negotiatedVersion;
-    HANDLE clientHandle;
-    WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
-
-    WLAN_INTERFACE_INFO_LIST* pInterfaceList;
-    WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
-
-    for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
-        WLAN_AVAILABLE_NETWORK_LIST* pAvailableNetworkList;
-        WlanGetAvailableNetworkList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, 0, NULL, &pAvailableNetworkList);
-
-        pResult->count = pAvailableNetworkList->dwNumberOfItems;
-
-        for (DWORD j = 0; j < pAvailableNetworkList->dwNumberOfItems; j++) {
-            // SSID
-            char* currentSSIDStart = pResult->ssids + j * MAX_STRING_LENGTH;
-            strncpy_s(currentSSIDStart, MAX_STRING_LENGTH, pAvailableNetworkList->Network[j].dot11Ssid.ucSSID, _TRUNCATE);
-            currentSSIDStart[MAX_STRING_LENGTH - 1] = '\0';  // ensure null termination
-
-            // Authentication method
-            char* currentAuthStart = pResult->authMethods + j * MAX_STRING_LENGTH;
-            switch (pAvailableNetworkList->Network[j].dot11DefaultAuthAlgorithm) {
-            case DOT11_AUTH_ALGO_WPA:
-                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA");
-                break;
-            case DOT11_AUTH_ALGO_WPA_PSK:
-                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA-PSK");
-                break;
-            case DOT11_AUTH_ALGO_WPA_NONE:
-                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA-NONE");
-                break;
-            case DOT11_AUTH_ALGO_WPA3:
-                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA3");
-                break;
-            case DOT11_AUTH_ALGO_80211_SHARED_KEY:
-                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "SHARED KEY");
-                break;
-            case DOT11_AUTH_ALGO_80211_OPEN:
-                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "OPEN");
-                break;
-            default:
-                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "UNKNOWN");
-                break;
-            }
-
-            // Encryption type
-            char* currentEncStart = pResult->encryptionTypes + j * MAX_STRING_LENGTH;
-            switch (pAvailableNetworkList->Network[j].dot11DefaultCipherAlgorithm) {
-            case DOT11_CIPHER_ALGO_WEP40:
-            case DOT11_CIPHER_ALGO_WEP:
-            case DOT11_CIPHER_ALGO_WEP104:
-                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "WEP");
-                break;
-            case DOT11_CIPHER_ALGO_CCMP:
-                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "AES");
-                break;
-            case DOT11_CIPHER_ALGO_TKIP:
-                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "TKIP");
-                break;
-            case DOT11_CIPHER_ALGO_NONE:
-                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "NONE");
-                break;
-            default:
-                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "UNKNOWN");
-                break;
-            }
-
-            // BSSID (MAC address)
-            WLAN_BSS_LIST* pBssList;
-            WlanGetNetworkBssList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, &pAvailableNetworkList->Network[j].dot11Ssid, pAvailableNetworkList->Network[j].dot11BssType, FALSE, NULL, &pBssList);
-            for (DWORD bssidIndex = 0; bssidIndex < pBssList->dwNumberOfItems && bssidIndex < MAX_BSSIDS_PER_SSID; bssidIndex++) {
-                char* currentBSSIDStart = pResult->bssids + (j * MAX_BSSIDS_PER_SSID + bssidIndex) * 17; 
-                sprintf_s(currentBSSIDStart, 17, "%02X:%02X:%02X:%02X:%02X:%02X",
-                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[0],
-                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[1],
-                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[2],
-                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[3],
-                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[4],
-                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[5]);
-                int channel = ConvertFrequencyToChannel(pBssList->wlanBssEntries[bssidIndex].ulChCenterFrequency);
-                pResult->channels[j][bssidIndex] = channel;
-            }
-            WlanFreeMemory(pBssList);
-           
-        }
-
-        WlanFreeMemory(pAvailableNetworkList);
-    }
-
-    WlanFreeMemory(pInterfaceList);
-    WlanCloseHandle(clientHandle, NULL);
-}
 
 int ConvertFrequencyToChannel(ULONG freq) {
     if (freq >= 2412000 && freq <= 2483000) {
@@ -165,6 +72,7 @@ int ConvertFrequencyToChannel(ULONG freq) {
     }
 }
 
+// MAIN NETWORK STRUCT FOR AAPADS AAPI
 typedef struct {
     char ssid[32];
     char bssid[18]; // 17 characters + null terminator
@@ -318,34 +226,59 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
     return count;
 }
 
+typedef struct {
+    ULONGLONG TransmittedFrameCount;
+    ULONGLONG ReceivedFrameCount;
+    ULONGLONG WEPExcludedCount;
+    ULONGLONG TKIPLocalMICFailures;
+    ULONGLONG TKIPReplays;
+    ULONGLONG TKIPICVErrorCount;
+    ULONGLONG CCMPReplays;
+    ULONGLONG CCMPDecryptErrors;
+    ULONGLONG WEPUndecryptableCount;
+    ULONGLONG WEPICVErrorCount;
+    ULONGLONG DecryptSuccessCount;
+    ULONGLONG DecryptFailureCount;
+} CustomMacFrameStats;
 
+__declspec(dllexport) int GetCustomMacFrameStatistics(CustomMacFrameStats* stats) {
+    if (!stats) return -1; // Null pointer check
 
-__declspec(dllexport) void GetAvailableSSIDs(SSIDList* pResult) {
-    DWORD negotiatedVersion;
-    HANDLE clientHandle;
+    HANDLE hClient = NULL;
+    DWORD dwMaxClient = 2;    
+    DWORD dwCurVersion = 0;
+    DWORD dwResult = 0;
 
-    WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
-
-    WLAN_INTERFACE_INFO_LIST* pInterfaceList;
-    WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
-
-    for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
-        WLAN_AVAILABLE_NETWORK_LIST* pAvailableNetworkList;
-        WlanGetAvailableNetworkList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, 0, NULL, &pAvailableNetworkList);
-
-        pResult->count = pAvailableNetworkList->dwNumberOfItems;
-
-        for (DWORD j = 0; j < pAvailableNetworkList->dwNumberOfItems; j++) {
-            char* currentSSIDStart = pResult->ssids + j * MAX_STRING_LENGTH;
-            strncpy_s(currentSSIDStart, MAX_STRING_LENGTH, pAvailableNetworkList->Network[j].dot11Ssid.ucSSID, _TRUNCATE);
-            currentSSIDStart[MAX_STRING_LENGTH - 1] = '\0';  
-        }
-
-        WlanFreeMemory(pAvailableNetworkList);
+    dwResult = WlanOpenHandle(dwMaxClient, NULL, &dwCurVersion, &hClient);
+    if (dwResult != ERROR_SUCCESS) {
+        return -1;
     }
 
-    WlanFreeMemory(pInterfaceList);
-    WlanCloseHandle(clientHandle, NULL);
+    WLAN_INTERFACE_INFO_LIST* pIfList = NULL;
+    dwResult = WlanEnumInterfaces(hClient, NULL, &pIfList);
+    if (dwResult != ERROR_SUCCESS || pIfList == NULL) {
+        WlanCloseHandle(hClient, NULL);
+        return -1; 
+    }
+
+    // only interface 1
+    WLAN_CONNECTION_ATTRIBUTES connAttributes;
+    DWORD dwSize = sizeof(WLAN_CONNECTION_ATTRIBUTES);
+    dwResult = WlanQueryInterface(hClient, &pIfList->InterfaceInfo[0].InterfaceGuid, wlan_intf_opcode_current_connection, NULL, &dwSize, (PVOID*)&connAttributes, NULL);
+    if (dwResult != ERROR_SUCCESS) {
+        WlanFreeMemory(pIfList);
+        WlanCloseHandle(hClient, NULL);
+        return -1; 
+    }
+
+    // STRUCT populate
+    stats->TransmittedFrameCount = connAttributes.wlanAssociationAttributes.wlanSignalQuality;
+    stats->ReceivedFrameCount = connAttributes.wlanAssociationAttributes.dot11Bssid;
+    // TO-DO: Continute enum the struct
+
+    WlanFreeMemory(pIfList);
+    WlanCloseHandle(hClient, NULL);
+    return 0; // Success
 }
 
 __declspec(dllexport) int GetRSSIForSSID(const char* targetSSID) {
@@ -377,6 +310,130 @@ __declspec(dllexport) int GetRSSIForSSID(const char* targetSSID) {
     return rssi;
 }
 
-__declspec(dllexport) void FreeSSIDListMemory(SSIDList* pSsidList) {
-    
+
+// ###############################################################################
+//                                FUNCTION ACHIVE BELOW                      #####
+//                           CURRENTLY NOT IN USE IN AAPADS                  #####
+// ###############################################################################
+
+__declspec(dllexport) void GetAvailableSSIDs(SSIDList* pResult) {
+    DWORD negotiatedVersion;
+    HANDLE clientHandle;
+
+    WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
+
+    WLAN_INTERFACE_INFO_LIST* pInterfaceList;
+    WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
+
+    for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
+        WLAN_AVAILABLE_NETWORK_LIST* pAvailableNetworkList;
+        WlanGetAvailableNetworkList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, 0, NULL, &pAvailableNetworkList);
+
+        pResult->count = pAvailableNetworkList->dwNumberOfItems;
+
+        for (DWORD j = 0; j < pAvailableNetworkList->dwNumberOfItems; j++) {
+            char* currentSSIDStart = pResult->ssids + j * MAX_STRING_LENGTH;
+            strncpy_s(currentSSIDStart, MAX_STRING_LENGTH, pAvailableNetworkList->Network[j].dot11Ssid.ucSSID, _TRUNCATE);
+            currentSSIDStart[MAX_STRING_LENGTH - 1] = '\0';
+        }
+
+        WlanFreeMemory(pAvailableNetworkList);
+    }
+
+    WlanFreeMemory(pInterfaceList);
+    WlanCloseHandle(clientHandle, NULL);
+}
+
+__declspec(dllexport) void GetAvailableSSIDs_Extended(ExtendedSSIDList* pResult) {
+    DWORD negotiatedVersion;
+    HANDLE clientHandle;
+    WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
+
+    WLAN_INTERFACE_INFO_LIST* pInterfaceList;
+    WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
+
+    for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
+        WLAN_AVAILABLE_NETWORK_LIST* pAvailableNetworkList;
+        WlanGetAvailableNetworkList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, 0, NULL, &pAvailableNetworkList);
+
+        pResult->count = pAvailableNetworkList->dwNumberOfItems;
+
+        for (DWORD j = 0; j < pAvailableNetworkList->dwNumberOfItems; j++) {
+            // SSID
+            char* currentSSIDStart = pResult->ssids + j * MAX_STRING_LENGTH;
+            strncpy_s(currentSSIDStart, MAX_STRING_LENGTH, pAvailableNetworkList->Network[j].dot11Ssid.ucSSID, _TRUNCATE);
+            currentSSIDStart[MAX_STRING_LENGTH - 1] = '\0';  // ensure null termination
+
+            // Authentication method
+            char* currentAuthStart = pResult->authMethods + j * MAX_STRING_LENGTH;
+            switch (pAvailableNetworkList->Network[j].dot11DefaultAuthAlgorithm) {
+            case DOT11_AUTH_ALGO_WPA:
+                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA");
+                break;
+            case DOT11_AUTH_ALGO_WPA_PSK:
+                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA-PSK");
+                break;
+            case DOT11_AUTH_ALGO_WPA_NONE:
+                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA-NONE");
+                break;
+            case DOT11_AUTH_ALGO_WPA3:
+                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "WPA3");
+                break;
+            case DOT11_AUTH_ALGO_80211_SHARED_KEY:
+                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "SHARED KEY");
+                break;
+            case DOT11_AUTH_ALGO_80211_OPEN:
+                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "OPEN");
+                break;
+            default:
+                strcpy_s(currentAuthStart, MAX_STRING_LENGTH, "UNKNOWN");
+                break;
+            }
+
+            // Encryption type
+            char* currentEncStart = pResult->encryptionTypes + j * MAX_STRING_LENGTH;
+            switch (pAvailableNetworkList->Network[j].dot11DefaultCipherAlgorithm) {
+            case DOT11_CIPHER_ALGO_WEP40:
+            case DOT11_CIPHER_ALGO_WEP:
+            case DOT11_CIPHER_ALGO_WEP104:
+                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "WEP");
+                break;
+            case DOT11_CIPHER_ALGO_CCMP:
+                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "AES");
+                break;
+            case DOT11_CIPHER_ALGO_TKIP:
+                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "TKIP");
+                break;
+            case DOT11_CIPHER_ALGO_NONE:
+                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "NONE");
+                break;
+            default:
+                strcpy_s(currentEncStart, MAX_STRING_LENGTH, "UNKNOWN");
+                break;
+            }
+
+            // BSSID (MAC address)
+            WLAN_BSS_LIST* pBssList;
+            WlanGetNetworkBssList(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, &pAvailableNetworkList->Network[j].dot11Ssid, pAvailableNetworkList->Network[j].dot11BssType, FALSE, NULL, &pBssList);
+            for (DWORD bssidIndex = 0; bssidIndex < pBssList->dwNumberOfItems && bssidIndex < MAX_BSSIDS_PER_SSID; bssidIndex++) {
+                char* currentBSSIDStart = pResult->bssids + (j * MAX_BSSIDS_PER_SSID + bssidIndex) * 17;
+                sprintf_s(currentBSSIDStart, 17, "%02X:%02X:%02X:%02X:%02X:%02X",
+                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[0],
+                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[1],
+                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[2],
+                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[3],
+                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[4],
+                    pBssList->wlanBssEntries[bssidIndex].dot11Bssid[5]);
+                int channel = ConvertFrequencyToChannel(pBssList->wlanBssEntries[bssidIndex].ulChCenterFrequency);
+                pResult->channels[j][bssidIndex] = channel;
+            }
+            WlanFreeMemory(pBssList);
+
+        }
+
+        WlanFreeMemory(pAvailableNetworkList);
+    }
+
+    WlanFreeMemory(pInterfaceList);
+    WlanCloseHandle(clientHandle, NULL);
 }
