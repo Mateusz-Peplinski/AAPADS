@@ -59,7 +59,6 @@ __declspec(dllexport) BOOL PerformWifiScan() {
     return TRUE; 
 }
 
-
 int ConvertFrequencyToChannel(ULONG freq) {
     if (freq >= 2412000 && freq <= 2483000) {
         return (freq - 2412000) / 5000 + 1;
@@ -131,10 +130,10 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
                     networks[count].frequency = pBssEntry->ulChCenterFrequency;
 
                     // BSS Type (int)
-                    networks[count].bssType = pNetwork->dot11BssType;
+                    networks[count].bssType = pBssEntry->dot11BssType;
 
                     // BSSID PHY TYPE (int)
-                    networks[count].bssidPhyType = pNetwork->dot11PhyTypes;
+                    networks[count].bssidPhyType = pBssEntry->dot11BssPhyType;
 
                     // BECON PERIOD (int)
                     networks[count].beaconPeriod = pBssEntry->usBeaconPeriod;
@@ -239,46 +238,37 @@ typedef struct {
     ULONGLONG WEPICVErrorCount;
     ULONGLONG DecryptSuccessCount;
     ULONGLONG DecryptFailureCount;
-} CustomMacFrameStats;
+} MyWLANStats;
 
-__declspec(dllexport) int GetCustomMacFrameStatistics(CustomMacFrameStats* stats) {
-    if (!stats) return -1; // Null pointer check
+__declspec(dllexport) int GetWLANStatistics(MyWLANStats* stats) {
+    DWORD negotiatedVersion;
+    HANDLE clientHandle;
+    WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
 
-    HANDLE hClient = NULL;
-    DWORD dwMaxClient = 2;    
-    DWORD dwCurVersion = 0;
-    DWORD dwResult = 0;
+    WLAN_INTERFACE_INFO_LIST* pInterfaceList;
+    WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
 
-    dwResult = WlanOpenHandle(dwMaxClient, NULL, &dwCurVersion, &hClient);
-    if (dwResult != ERROR_SUCCESS) {
-        return -1;
-    }
+    WLAN_STATISTICS wlanStats;
+    DWORD dataSize = sizeof(WLAN_STATISTICS);
+    WlanQueryInterface(clientHandle, &pInterfaceList->InterfaceInfo[0].InterfaceGuid, wlan_intf_opcode_statistics, NULL, &dataSize, (PVOID*)&wlanStats, NULL);
 
-    WLAN_INTERFACE_INFO_LIST* pIfList = NULL;
-    dwResult = WlanEnumInterfaces(hClient, NULL, &pIfList);
-    if (dwResult != ERROR_SUCCESS || pIfList == NULL) {
-        WlanCloseHandle(hClient, NULL);
-        return -1; 
-    }
+    stats->TransmittedFrameCount = wlanStats.MacUcastCounters.ullTransmittedFrameCount;
+    stats->ReceivedFrameCount = wlanStats.MacUcastCounters.ullReceivedFrameCount;
+    stats->WEPExcludedCount = wlanStats.MacUcastCounters.ullWEPExcludedCount;
+    stats->TKIPLocalMICFailures = wlanStats.MacUcastCounters.ullTKIPLocalMICFailures;
+    stats->TKIPReplays = wlanStats.MacUcastCounters.ullTKIPReplays;
+    stats->TKIPICVErrorCount = wlanStats.MacUcastCounters.ullTKIPICVErrorCount;
+    stats->CCMPReplays = wlanStats.MacUcastCounters.ullCCMPReplays;
+    stats->CCMPDecryptErrors = wlanStats.MacUcastCounters.ullCCMPDecryptErrors;
+    stats->WEPUndecryptableCount = wlanStats.MacUcastCounters.ullWEPUndecryptableCount;
+    stats->WEPICVErrorCount = wlanStats.MacUcastCounters.ullWEPICVErrorCount;
+    stats->DecryptSuccessCount = wlanStats.MacUcastCounters.ullDecryptSuccessCount;
+    stats->DecryptFailureCount = wlanStats.MacUcastCounters.ullDecryptFailureCount;
 
-    // only interface 1
-    WLAN_CONNECTION_ATTRIBUTES connAttributes;
-    DWORD dwSize = sizeof(WLAN_CONNECTION_ATTRIBUTES);
-    dwResult = WlanQueryInterface(hClient, &pIfList->InterfaceInfo[0].InterfaceGuid, wlan_intf_opcode_current_connection, NULL, &dwSize, (PVOID*)&connAttributes, NULL);
-    if (dwResult != ERROR_SUCCESS) {
-        WlanFreeMemory(pIfList);
-        WlanCloseHandle(hClient, NULL);
-        return -1; 
-    }
+    WlanFreeMemory(pInterfaceList);
+    WlanCloseHandle(clientHandle, NULL);
 
-    // STRUCT populate
-    stats->TransmittedFrameCount = connAttributes.wlanAssociationAttributes.wlanSignalQuality;
-    stats->ReceivedFrameCount = connAttributes.wlanAssociationAttributes.dot11Bssid;
-    // TO-DO: Continute enum the struct
-
-    WlanFreeMemory(pIfList);
-    WlanCloseHandle(hClient, NULL);
-    return 0; // Success
+    return 0; // Return 0 for success or another value for failure.
 }
 
 __declspec(dllexport) int GetRSSIForSSID(const char* targetSSID) {
