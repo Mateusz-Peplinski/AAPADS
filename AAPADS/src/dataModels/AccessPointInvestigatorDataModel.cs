@@ -15,24 +15,25 @@ using System.Windows.Media;
 
 namespace AAPADS
 {
-    public class SSIDItem
+    public class ACCESS_POINT_DATA
     {
-        public string DisplaySSID { get; set; }
-        public string OriginalSSID { get; set; }
-        public string AuthMethod { get; set; }
-        public string EncryptionType { get; set; }
+        public string DISPLAY_SSID { get; set; }
+        public string ORIGNAL_SSID { get; set; }
+        public string AUTH_METHOD { get; set; }
+        public string ENCRYPTION_TYPE { get; set; }
         public string BSSID { get; set; }
-        public int Channel { get; set; }
-        public string BssType { get; set; }
-        public int BssidPhyType { get; set; }
-        public int BeaconPeriod { get; set; }
-        public uint Frequency { get; set; }
+        public int CHANNEL { get; set; }
+        public string BSS_TYPE { get; set; }
+        public string BSSID_DOT11_TYPE { get; set; }
+        public string BSSID_DOT11_TYPE_DESC { get; set; }
+        public int BEACON_PERIOD { get; set; }
+        public uint FREQUENCY { get; set; }
     }
     public class AccessPointInvestigatorDataModel : INotifyPropertyChanged
     {
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int GetVisibleNetworks([Out] NetworkInfo[] networks, int maxNetworks);
+        public static extern int GetVisibleNetworks([Out] NETWORK_INFO[] networks, int maxNetworks);
 
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetAvailableSSIDs(ref SSIDList ssidList);
@@ -53,7 +54,7 @@ namespace AAPADS
         SSIDList ssidList = new SSIDList();
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        public struct NetworkInfo
+        public struct NETWORK_INFO
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string ssid;
@@ -80,8 +81,8 @@ namespace AAPADS
 
         private CancellationTokenSource _cancellationTokenSource;
 
-        private ObservableCollection<SSIDItem> _ssids = new ObservableCollection<SSIDItem>();
-        public ObservableCollection<SSIDItem> SSIDs
+        private ObservableCollection<ACCESS_POINT_DATA> _ssids = new ObservableCollection<ACCESS_POINT_DATA>();
+        public ObservableCollection<ACCESS_POINT_DATA> SSIDs
         {
             get => _ssids;
             set
@@ -102,8 +103,8 @@ namespace AAPADS
             }
         }
 
-        private SSIDItem _selectedSSIDItem;
-        public SSIDItem SELECTED_SSID_ITEM
+        private ACCESS_POINT_DATA _selectedSSIDItem;
+        public ACCESS_POINT_DATA SELECTED_SSID_ITEM
         {
             get => _selectedSSIDItem;
             set
@@ -184,27 +185,28 @@ namespace AAPADS
         }
         public void LoadWLANData()
         {
-            NetworkInfo[] networkInfos = new NetworkInfo[100];
+            NETWORK_INFO[] networkInfos = new NETWORK_INFO[100];
 
             int count = GetVisibleNetworks(networkInfos, networkInfos.Length);
 
             Console.WriteLine($"Number of SSIDs retrieved: {count}");
 
-            var newSSIDs = new List<SSIDItem>();
+            var newSSIDs = new List<ACCESS_POINT_DATA>();
 
             foreach (var network in networkInfos.Take(count))
             {
-                var ssidItem = new SSIDItem
+                var ssidItem = new ACCESS_POINT_DATA
                 {
                     BSSID = network.bssid,
-                    DisplaySSID = string.IsNullOrWhiteSpace(network.ssid) ? "[HIDDEN NETWORK]" : network.ssid,
-                    AuthMethod = network.authMethod,
-                    EncryptionType = network.encryptionType,
-                    Channel = network.channel,
-                    BssidPhyType = network.bssidPhyType,
-                    BssType = mapBssType(network.bssType),
-                    BeaconPeriod = network.beaconPeriod,
-                    Frequency = network.frequency,
+                    DISPLAY_SSID = string.IsNullOrWhiteSpace(network.ssid) ? "[HIDDEN NETWORK]" : network.ssid,
+                    AUTH_METHOD = network.authMethod,
+                    ENCRYPTION_TYPE = network.encryptionType,
+                    CHANNEL = network.channel,
+                    BSSID_DOT11_TYPE = mapBSSPHYType(network.bssidPhyType),
+                    BSSID_DOT11_TYPE_DESC = mapBSSPHYTypeDesc(network.bssidPhyType),
+                    BSS_TYPE = mapBssType(network.bssType),
+                    BEACON_PERIOD = network.beaconPeriod,
+                    FREQUENCY = network.frequency,
                 };
 
                 newSSIDs.Add(ssidItem);
@@ -215,7 +217,7 @@ namespace AAPADS
                 // Update the SSID list in place
                 foreach (var ssid in newSSIDs)
                 {
-                    Console.WriteLine($"New SSID: {ssid.DisplaySSID}, BSSID: {ssid.BSSID}");
+                    Console.WriteLine($"New SSID: {ssid.DISPLAY_SSID}, BSSID: {ssid.BSSID}");
                     if (!SSIDs.Any(s => s.BSSID == ssid.BSSID)) // Use BSSID for uniqueness
                     {
                         SSIDs.Add(ssid);
@@ -231,7 +233,6 @@ namespace AAPADS
                 }
             });
         }
-
         public void RefreshSSIDs()
         {
             try
@@ -267,8 +268,6 @@ namespace AAPADS
                 }
             });
         }
-
-
         private async void PopulateRSSIValueDataInGaugeAndLineSeries()
         {
             int refreshInterval = 10;
@@ -279,7 +278,7 @@ namespace AAPADS
                 // GetRSSIForSSID C Libray dll call
                 try
                 {
-                    var rssi = GetRSSIForSSID(SELECTED_SSID_ITEM?.OriginalSSID ?? string.Empty);
+                    var rssi = GetRSSIForSSID(SELECTED_SSID_ITEM?.ORIGNAL_SSID ?? string.Empty);
 
                     RSSIDataForGraphSignalStrengthOverTime[0].Values.Add(rssi);
                     if (RSSIDataForGraphSignalStrengthOverTime[0].Values.Count > 100)
@@ -306,14 +305,6 @@ namespace AAPADS
         }
         private string mapBssType(int value)
         {
-            //    typedef enum _DOT11_BSS_TYPE
-            //{
-            //    dot11_BSS_type_infrastructure = 1,
-            //    dot11_BSS_type_independent = 2,
-            //    dot11_BSS_type_any = 3
-            //}
-            //DOT11_BSS_TYPE, *PDOT11_BSS_TYPE;
-
             string BSSType;
 
             switch (value)
@@ -336,26 +327,120 @@ namespace AAPADS
 
         private string mapBSSPHYType(int value)
         {
-        //    typedef enum _DOT11_PHY_TYPE
-        //    {
-        //    dot11_phy_type_unknown = 0,
-        //    dot11_phy_type_any = 0,
-        //    dot11_phy_type_fhss = 1,
-        //    dot11_phy_type_dsss = 2,
-        //    dot11_phy_type_irbaseband = 3,
-        //    dot11_phy_type_ofdm = 4,
-        //    dot11_phy_type_hrdsss = 5,
-        //    dot11_phy_type_erp = 6,
-        //    dot11_phy_type_ht = 7,
-        //    dot11_phy_type_vht = 8,
-        //    dot11_phy_type_IHV_start = 0x80000000,
-        //    dot11_phy_type_IHV_end = 0xffffffff
-        //    }
-        //DOT11_PHY_TYPE, *PDOT11_PHY_TYPE;
+            //dot11_phy_type_unknown = 0,
+            //dot11_phy_type_any = 0,
+            //dot11_phy_type_fhss = 1,
+            //dot11_phy_type_dsss = 2,
+            //dot11_phy_type_irbaseband = 3,
+            //dot11_phy_type_ofdm = 4,
+            //dot11_phy_type_hrdsss = 5,
+            //dot11_phy_type_erp = 6,
+            //dot11_phy_type_ht = 7,
+            //dot11_phy_type_vht = 8,
+            //dot11_phy_type_dmg = 9,
+            //dot11_phy_type_he = 10,
+            //dot11_phy_type_eht = 11,
+            //dot11_phy_type_IHV_start = 0x80000000,
+            //dot11_phy_type_IHV_end = 0xffffffff
 
-            return "";
+
+            string BSSPHYType;
+
+            switch (value) { 
+                case 0:
+                    BSSPHYType = "UNKNOWN";
+                    break;
+                case 1:
+                    BSSPHYType = "(O) 802.11"; //Orignal 802.11
+                    break;
+                case 2:
+                    BSSPHYType = "(O) 802.11"; //Orignal 802.11
+                    break;  
+                case 3:
+                    BSSPHYType = "(IR) 802.11"; // Infrared baseband 802.11
+                    break;
+                case 4:
+                    BSSPHYType= "802.11a/g";
+                    break;
+                case 5:
+                    BSSPHYType = "802.11b";
+                    break;
+                case 6:
+                    BSSPHYType = "802.11g";
+                    break;
+                case 7:
+                    BSSPHYType = "802.11n";
+                    break;
+                case 8:
+                    BSSPHYType = "802.11ac";
+                    break;
+                case 9:
+                    BSSPHYType = "802.11ad";
+                    break;
+                case 10:
+                    BSSPHYType = "802.11ax";
+                    break;
+                case 11:
+                    BSSPHYType = "802.11be";
+                    break;
+                default : 
+                    BSSPHYType = "UNKNOWN";
+                    break;
+            }
+
+
+            return BSSPHYType;
         }
+        private string mapBSSPHYTypeDesc(int value)
+        {
+            string BSSPHYTypeDesc;
 
+            switch (value)
+            {
+                case 0:
+                    BSSPHYTypeDesc = "An unknown or uninitialized PHY type";
+                    break;
+                case 1:
+                    BSSPHYTypeDesc = "Frequency-hopping spread-spectrum (FHSS) PHY. Bluetooth devices can use FHSS or an adaptation of FHSS";
+                    break;
+                case 2:
+                    BSSPHYTypeDesc = "Direct sequence spread spectrum (DSSS) PHY type.";
+                    break;
+                case 3:
+                    BSSPHYTypeDesc = "Infrared (IR) baseband PHY type";
+                    break;
+                case 4:
+                    BSSPHYTypeDesc = "Orthogonal frequency division multiplexing (OFDM) PHY type. 802.11a devices can use OFDM";
+                    break;
+                case 5:
+                    BSSPHYTypeDesc = "High-rate DSSS (HRDSSS) PHY type";
+                    break;
+                case 6:
+                    BSSPHYTypeDesc = "Extended rate PHY type (ERP). 802.11g devices can use ERP";
+                    break;
+                case 7:
+                    BSSPHYTypeDesc = "802.11n PHY type";
+                    break;
+                case 8:
+                    BSSPHYTypeDesc = "The very high throughput (VHT) PHY type specified in IEEE 802.11ac";
+                    break;
+                case 9:
+                    BSSPHYTypeDesc = "Directional Multi-Gigabit (DMG) 802.11ad PHY";
+                    break;
+                case 10:
+                    BSSPHYTypeDesc = "High Efficiency (HE) 802.11ax PHY";
+                    break;
+                case 11:
+                    BSSPHYTypeDesc = "Extremely high-throughput (EHT) 802.11be PHY";
+                    break;
+                default:
+                    BSSPHYTypeDesc = "An unknown or uninitialized PHY type";
+                    break;
+            }
+
+
+            return BSSPHYTypeDesc;
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
