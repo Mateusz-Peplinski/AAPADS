@@ -1516,9 +1516,7 @@
                                                 Foreground="#d2d2d2"
                                                 Text="RSSI (dBm)" />
 
-                                            <liveCharts:CartesianChart Grid.Row="1" Series="{Binding RSSIDataForGraphSignalStrengthOverTime}">
-                                                <!--  Graph Configuration goes here  -->
-                                            </liveCharts:CartesianChart>
+                                            <liveCharts:CartesianChart Grid.Row="1" Series="{Binding RSSIDataForGraphSignalStrengthOverTime}" />
                                         </Grid>
                                     </Border>
                                 </Grid>
@@ -1535,8 +1533,35 @@
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <liveCharts:CartesianChart Grid.Row="0">
-                                            <!--  Graph Configuration goes here  -->
+                                        <liveCharts:CartesianChart
+                                            Name="AccessPointInvestChannelAllocation24GHz"
+                                            Grid.Row="0"
+                                            Series="{Binding CHANNEL_ALLOCATION_SERIES_24GHZ}">
+                                            <liveCharts:CartesianChart.AxisX>
+                                                <liveCharts:Axis
+                                                    Title="Frequency (MHz)"
+                                                    MaxValue="2497"
+                                                    MinValue="2402">
+                                                    <liveCharts:Axis.Separator>
+                                                        <liveCharts:Separator
+                                                            Step="5"
+                                                            Stroke="Gray"
+                                                            StrokeThickness="1" />
+                                                    </liveCharts:Axis.Separator>
+                                                </liveCharts:Axis>
+                                            </liveCharts:CartesianChart.AxisX>
+                                            <liveCharts:CartesianChart.AxisY>
+                                                <liveCharts:Axis
+                                                    Title="RSSI (dBm)"
+                                                    MaxValue="0"
+                                                    MinValue="-100">
+                                                    <liveCharts:Axis.Separator>
+                                                        <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
+                                                    </liveCharts:Axis.Separator>
+                                                </liveCharts:Axis>
+                                            </liveCharts:CartesianChart.AxisY>
+
+
                                         </liveCharts:CartesianChart>
 
                                         <TextBlock
@@ -1559,8 +1584,34 @@
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <liveCharts:CartesianChart Grid.Row="0">
-                                            <!--  Graph Configuration goes here  -->
+                                        <liveCharts:CartesianChart
+                                            Name="AccessPointInvestChannelAllocation5GHz"
+                                            Grid.Row="0"
+                                            Series="{Binding CHANNEL_ALLOCATION_SERIES_5GHZ}">
+                                            <liveCharts:CartesianChart.AxisX>
+                                                <liveCharts:Axis
+                                                    Title="Frequency (MHz)"
+                                                    MaxValue="5835"
+                                                    MinValue="5170">
+                                                    <liveCharts:Axis.Separator>
+                                                        <liveCharts:Separator
+                                                            Step="40"
+                                                            Stroke="Gray"
+                                                            StrokeThickness="1" />
+
+                                                    </liveCharts:Axis.Separator>
+                                                </liveCharts:Axis>
+                                            </liveCharts:CartesianChart.AxisX>
+                                            <liveCharts:CartesianChart.AxisY>
+                                                <liveCharts:Axis
+                                                    Title="RSSI (dBm)"
+                                                    MaxValue="0"
+                                                    MinValue="-100">
+                                                    <liveCharts:Axis.Separator>
+                                                        <liveCharts:Separator Stroke="Gray" StrokeThickness="1" />
+                                                    </liveCharts:Axis.Separator>
+                                                </liveCharts:Axis>
+                                            </liveCharts:CartesianChart.AxisY>
                                         </liveCharts:CartesianChart>
 
                                         <TextBlock

@@ -131,7 +131,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         FrequencySeriesCollection = new SeriesCollection
         {
 
-            new LiveCharts.Wpf.LineSeries
+            new LineSeries
             {
                 Title = "2.4GHz",
                 Values = new ChartValues<int>(),
@@ -153,7 +153,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 }
             },
 
-            new LiveCharts.Wpf.LineSeries
+            new LineSeries
             {
                 Title = "5GHz",
                 Values = new ChartValues<int>(),
