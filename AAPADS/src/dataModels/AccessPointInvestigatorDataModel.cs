@@ -86,7 +86,6 @@ namespace AAPADS
         }
         #endregion
         private CancellationTokenSource _cancellationTokenSource;
-
         private ObservableCollection<ACCESS_POINT_DATA> _ssids = new ObservableCollection<ACCESS_POINT_DATA>();
         public ObservableCollection<ACCESS_POINT_DATA> SSIDs
         {
@@ -97,8 +96,8 @@ namespace AAPADS
                 OnPropertyChanged(nameof(SSIDs));
             }
         }
-
         private double _rssiValueForGuage;
+        private ACCESS_POINT_DATA _selectedSSIDItem;
         public double RSSI_VALUE
         {
             get => _rssiValueForGuage;
@@ -108,8 +107,6 @@ namespace AAPADS
                 OnPropertyChanged(nameof(RSSI_VALUE));
             }
         }
-
-        private ACCESS_POINT_DATA _selectedSSIDItem;
         public ACCESS_POINT_DATA SELECTED_SSID_ITEM
         {
             get => _selectedSSIDItem;
@@ -130,7 +127,6 @@ namespace AAPADS
                 RefreshChannelAllocationChartsAsync(data24GHz, data5GHz);
             }
         }
-
         private void ClearGraphData()
         {
             RSSIDataForGraphSignalStrengthOverTime[0].Values.Clear();
@@ -142,7 +138,6 @@ namespace AAPADS
 
             PopulateRSSIValueDataInGaugeAndLineSeries();
         }
-
         private SeriesCollection _rssiDataForGraph = new SeriesCollection
         {
             new LineSeries
@@ -171,7 +166,6 @@ namespace AAPADS
                 }
             }
         };
-
         public SeriesCollection RSSIDataForGraphSignalStrengthOverTime
         {
             get => _rssiDataForGraph;
