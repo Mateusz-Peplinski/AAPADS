@@ -13,8 +13,11 @@ using System.Windows.Media;
 
 public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 {
+    //#####################################################################################
+    //#####                               PUBLIC ITEMS                              #######            
+    //#####################################################################################
+    #region
     public ObservableCollection<dataModelStructure> AccessPoints { get; }
-
     public SeriesCollection FrequencySeriesCollection { get; set; } = new SeriesCollection
     {
         new LineSeries
@@ -30,11 +33,9 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     };
     public SeriesCollection ChannelAllocationSeries5GHz { get; set; } = new SeriesCollection();
     public SeriesCollection ChannelAllocationSeries24GHz { get; set; } = new SeriesCollection();
-
     public Func<double, string> YAxisFormatter { get; set; }
-
     public Func<double, string> DateTimeFormatter { get; set; }
-
+    public event PropertyChangedEventHandler PropertyChanged;
     private int _totalDetectedAP;
     private int _totalSecureAP;
     private int _total24GHzNetworks;
@@ -123,11 +124,18 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
+    #endregion
 
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
 
+        createFrequencySeriesCollection();
+
+
+    }
+    public void createFrequencySeriesCollection()
+    {
         FrequencySeriesCollection = new SeriesCollection
         {
 
@@ -178,11 +186,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         };
         YAxisFormatter = value => value.ToString("N0");
         DateTimeFormatter = value => DateTime.Now.ToString("hh:mm:ss");
-
-
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
