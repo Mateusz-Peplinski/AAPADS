@@ -17,12 +17,12 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
     public SeriesCollection FrequencySeriesCollection { get; set; } = new SeriesCollection
     {
-        new LiveCharts.Wpf.LineSeries
+        new LineSeries
         {
             Title = "2.4GHz",
             Values = new ChartValues<int>()
         },
-        new LiveCharts.Wpf.LineSeries
+        new LineSeries
         {
             Title = "5GHz",
             Values = new ChartValues<int>()
@@ -360,6 +360,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     PointGeometrySize = 10,
                     StrokeThickness = 2,
                     Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                    Foreground = new SolidColorBrush(Color.FromRgb(239, 57, 69)),
                     Fill = new LinearGradientBrush
                     {
                         StartPoint = new Point(0, 1),
@@ -475,6 +476,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     PointGeometrySize = 10,
                     StrokeThickness = 2,
                     Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                    Foreground = new SolidColorBrush(Color.FromRgb(239, 57, 69)),
                     Fill = new LinearGradientBrush
                     {
                         StartPoint = new Point(0, 1),
