@@ -85,7 +85,13 @@ namespace AAPADS
             public uint frequency;
         }
         #endregion
+
+        //#####################################################################################
+        //#####                                 VIEW MODEL                              #######            
+        //#####################################################################################
+        #region
         private CancellationTokenSource _cancellationTokenSource;
+        public event PropertyChangedEventHandler PropertyChanged;
         private ObservableCollection<ACCESS_POINT_DATA> _ssids = new ObservableCollection<ACCESS_POINT_DATA>();
         public ObservableCollection<ACCESS_POINT_DATA> SSIDs
         {
@@ -175,6 +181,12 @@ namespace AAPADS
                 OnPropertyChanged(nameof(RSSIDataForGraphSignalStrengthOverTime));
             }
         }
+        #endregion
+
+        //#####################################################################################
+        //#####                                 UI METHODS                              #######            
+        //#####################################################################################
+        #region
         public AccessPointInvestigatorDataModel()
         {
             ssidList.ssids = new char[3200];
@@ -438,6 +450,11 @@ namespace AAPADS
 
             return BSSPHYTypeDesc;
         }
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
 
         //#####################################################################################
         //#####                            GRAPHS BELOW                                 #######            
@@ -458,10 +475,10 @@ namespace AAPADS
                 Application.Current.Dispatcher.Invoke(action);
             }
         }
-        private (List<SSIDInfoForCHAllocation24GHz>, List<SSIDInfoForCHAllocation5GHz>) PopulateSSIDInfoList(List<ACCESS_POINT_DATA> accessPointDataList)
+        private (List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ>, List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ>) PopulateSSIDInfoList(List<ACCESS_POINT_DATA> accessPointDataList)
         {
-            var ssidInfoList24Ghz = new List<SSIDInfoForCHAllocation24GHz>();
-            var ssidInfoList5Ghz = new List<SSIDInfoForCHAllocation5GHz>();
+            var ssidInfoList24Ghz = new List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ>();
+            var ssidInfoList5Ghz = new List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ>();
 
             for (int i = 0; i < accessPointDataList.Count; i++)
             {
@@ -472,7 +489,7 @@ namespace AAPADS
                 // and 5GHz band frequencies are between 5000 and 6000 MHz
                 if (frequency >= 2400000 && frequency <= 2500000)
                 {
-                    ssidInfoList24Ghz.Add(new SSIDInfoForCHAllocation24GHz
+                    ssidInfoList24Ghz.Add(new SSID_INFO_FOR_CH_ALLOCATION_24GHZ
                     {
                         SSID = currentData.DISPLAY_SSID,
                         BSSID = currentData.BSSID,
@@ -482,7 +499,7 @@ namespace AAPADS
                 }
                 else if (frequency >= 5000000 && frequency <= 6000000)
                 {
-                    ssidInfoList5Ghz.Add(new SSIDInfoForCHAllocation5GHz
+                    ssidInfoList5Ghz.Add(new SSID_INFO_FOR_CH_ALLOCATION5_GHZ
                     {
                         SSID = currentData.DISPLAY_SSID,
                         BSSID = currentData.BSSID,
@@ -495,7 +512,7 @@ namespace AAPADS
             return (ssidInfoList24Ghz, ssidInfoList5Ghz);
         }
          
-        public async Task RefreshChannelAllocationChartsAsync(List<SSIDInfoForCHAllocation24GHz> data24GHz, List<SSIDInfoForCHAllocation5GHz> data5GHz)
+        public async Task RefreshChannelAllocationChartsAsync(List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ> data24GHz, List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ> data5GHz)
         {
             var channelCount24GHz = await Task.Run(() => ChannelAllocationProcessData24GHz(data24GHz));
             UpdateChannelAllocationChart24GHz(channelCount24GHz);
@@ -504,7 +521,7 @@ namespace AAPADS
             var channelCount5GHz = await Task.Run(() => ChannelAllocationProcessData5GHz(data5GHz));
             UpdateChannelAllocationChart5GHz(channelCount5GHz);
         }
-        private Dictionary<int, List<(double rssi, string bssid)>> ChannelAllocationProcessData24GHz(List<SSIDInfoForCHAllocation24GHz> data)
+        private Dictionary<int, List<(double rssi, string bssid)>> ChannelAllocationProcessData24GHz(List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ> data)
         {
             var channelData = new Dictionary<int, List<(double rssi, string bssid)>>();
 
@@ -522,7 +539,7 @@ namespace AAPADS
 
             return channelData;
         }
-        private Dictionary<int, List<(double rssi, string bssid)>> ChannelAllocationProcessData5GHz(List<SSIDInfoForCHAllocation5GHz> data)
+        private Dictionary<int, List<(double rssi, string bssid)>> ChannelAllocationProcessData5GHz(List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ> data)
         {
             var channelData = new Dictionary<int, List<(double rssi, string bssid)>>();
 
@@ -756,21 +773,15 @@ namespace AAPADS
 
         #endregion
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
     }
-    public class SSIDInfoForCHAllocation24GHz
+    public class SSID_INFO_FOR_CH_ALLOCATION_24GHZ
     {
         public string SSID { get; set; }
         public string BSSID { get; set; }
         public int Channel { get; set; }
         public double SignalStrength { get; set; }
     }
-    public class SSIDInfoForCHAllocation5GHz
+    public class SSID_INFO_FOR_CH_ALLOCATION5_GHZ
     {
         public string SSID { get; set; }
         public string BSSID { get; set; }

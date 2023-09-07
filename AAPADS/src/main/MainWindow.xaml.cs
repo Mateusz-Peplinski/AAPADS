@@ -22,6 +22,7 @@ namespace AAPADS
 
         private readonly DataIngestEngine DATA_INGESTION_ENGINE_OBJECT;
         private readonly DetectionEngine DETECTION_ENGINE_OBJECT;
+
         private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL_OBJECT;
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL_OBJECT;
         private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
@@ -152,7 +153,6 @@ namespace AAPADS
             else if (tab == AccessPointInvestigateTab)
             {
                 ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
-                //AccessPointInvestChannelAllocation24GHz.SeriesCollection.OfType<LineSeries>().ToList().FirstOrDefault()?.Foreground = Brushes.Green;
                 DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
             }
             else if (tab == DetectionSetupTab)
