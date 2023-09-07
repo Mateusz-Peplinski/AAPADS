@@ -320,25 +320,25 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         var channelCount5GHz = await Task.Run(() => ChannelAllocationProcessData5GHz(data5GHz));
         UpdateChannelAllocationChart5GHz(channelCount5GHz);
     }
-    private Dictionary<int, List<double>> ChannelAllocationProcessData5GHz(List<SSIDInfoForCHAllocation5GHz> data)
+    private Dictionary<int, List<(double rssi, string ssid)>> ChannelAllocationProcessData5GHz(List<SSIDInfoForCHAllocation5GHz> data)
     {
-        var channelData = new Dictionary<int, List<double>>();
+        var channelData = new Dictionary<int, List<(double rssi, string ssid)>>();
 
         foreach (var info in data)
         {
             if (!channelData.ContainsKey(info.Channel))
             {
-                channelData[info.Channel] = new List<double>();
+                channelData[info.Channel] = new List<(double rssi, string ssid)>();
             }
 
             // Estimate RSSI value 
             double rssi = (info.SignalStrength / 2) - 100;
-            channelData[info.Channel].Add(rssi);
+            channelData[info.Channel].Add((rssi, info.SSID));
         }
 
         return channelData;
     }
-    private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<double>> data)
+    private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
 
         if (!Application.Current.Dispatcher.CheckAccess())
@@ -355,7 +355,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             var signalStrengthsOnChannel = entry.Value;
             string channelToolTip = channel.ToString();
 
-            foreach (var rssi in signalStrengthsOnChannel)
+            foreach (var (rssi, ssid) in signalStrengthsOnChannel)
             {
                 var lineSeries = new LineSeries
                 {
@@ -364,7 +364,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     PointGeometrySize = 10,
                     StrokeThickness = 2,
                     Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                    Foreground = new SolidColorBrush(Color.FromRgb(239, 57, 69)),
+                    Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
                     Fill = new LinearGradientBrush
                     {
                         StartPoint = new Point(0, 1),
@@ -425,7 +425,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
                     if (point.Y == maxVal)
                     {
-                        return channel.ToString(); 
+                        return $"CH:{channel} ({ssid})";
                     }
                     return ""; 
                 };
@@ -435,26 +435,26 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             }
         }
     }
-
-    private Dictionary<int, List<double>> ChannelAllocationProcessData24GHz(List<SSIDInfoForCHAllocation24GHz> data)
+    private Dictionary<int, List<(double rssi, string ssid)>> ChannelAllocationProcessData24GHz(List<SSIDInfoForCHAllocation24GHz> data)
     {
-        var channelData = new Dictionary<int, List<double>>();
+        var channelData = new Dictionary<int, List<(double rssi, string ssid)>>();
 
         foreach (var info in data)
         {
             if (!channelData.ContainsKey(info.Channel))
             {
-                channelData[info.Channel] = new List<double>();
+                channelData[info.Channel] = new List<(double rssi, string ssid)>();
             }
 
             // Estimate RSSI value 
             double rssi = (info.SignalStrength / 2) - 100;
-            channelData[info.Channel].Add(rssi);
+            channelData[info.Channel].Add((rssi, info.SSID));
         }
 
         return channelData;
     }
-    private void UpdateChannelAllocationChart24GHz(Dictionary<int, List<double>> data)
+
+    private void UpdateChannelAllocationChart24GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
 
         if (!Application.Current.Dispatcher.CheckAccess())
@@ -471,7 +471,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             var signalStrengthsOnChannel = entry.Value;
             string channelToolTip = channel.ToString();
 
-            foreach (var rssi in signalStrengthsOnChannel)
+            foreach (var (rssi, ssid) in signalStrengthsOnChannel)
             {
                 var lineSeries = new LiveCharts.Wpf.LineSeries
                 {
@@ -480,7 +480,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     PointGeometrySize = 10,
                     StrokeThickness = 2,
                     Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                    Foreground = new SolidColorBrush(Color.FromRgb(239, 57, 69)),
+                    Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
                     Fill = new LinearGradientBrush
                     {
                         StartPoint = new Point(0, 1),
@@ -529,7 +529,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
                     if (point.Y == maxVal)
                     {
-                        return channel.ToString(); 
+                        return $"CH:{channel} ({ssid})";
                     }
                     return ""; 
                 };
