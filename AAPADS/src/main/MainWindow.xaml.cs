@@ -1,4 +1,5 @@
 ﻿using AAPADS.src.engine;
+using LiveCharts.Wpf;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace AAPADS
 {
@@ -150,6 +152,7 @@ namespace AAPADS
             else if (tab == AccessPointInvestigateTab)
             {
                 ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
+                //AccessPointInvestChannelAllocation24GHz.SeriesCollection.OfType<LineSeries>().ToList().FirstOrDefault()?.Foreground = Brushes.Green;
                 DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
             }
             else if (tab == DetectionSetupTab)

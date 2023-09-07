@@ -1,6 +1,7 @@
 ﻿using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
+using LiveCharts.Wpf.Charts.Base;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
 using System.Windows.Media;
 
 
@@ -123,6 +126,8 @@ namespace AAPADS
 
                 // Start collecting data for the new SSID
                 StartDataCollectionForSSID(_selectedSSIDItem?.BSSID);
+                var (data24GHz, data5GHz) = PopulateSSIDInfoList(SSIDs.ToList());
+                RefreshChannelAllocationChartsAsync(data24GHz, data5GHz);
             }
         }
 
@@ -210,8 +215,7 @@ namespace AAPADS
 
                 newSSIDs.Add(ssidItem);
             }
-            var (data24GHz, data5GHz) = PopulateSSIDInfoList(newSSIDs);
-            await RefreshChannelAllocationChartsAsync(data24GHz, data5GHz);
+            
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Update the SSID list in place
@@ -479,7 +483,7 @@ namespace AAPADS
                         SSID = currentData.DISPLAY_SSID,
                         BSSID = currentData.BSSID,
                         Channel = currentData.CHANNEL,
-                        SignalStrength = 100 
+                        SignalStrength = 150 
                     });
                 }
                 else if (frequency >= 5000000 && frequency <= 6000000)
@@ -489,7 +493,7 @@ namespace AAPADS
                         SSID = currentData.DISPLAY_SSID,
                         BSSID = currentData.BSSID,
                         Channel = currentData.CHANNEL,
-                        SignalStrength = 100 
+                        SignalStrength = 150 
                     });
                 }
             }
@@ -506,43 +510,43 @@ namespace AAPADS
             var channelCount5GHz = await Task.Run(() => ChannelAllocationProcessData5GHz(data5GHz));
             UpdateChannelAllocationChart5GHz(channelCount5GHz);
         }
-        private Dictionary<int, List<double>> ChannelAllocationProcessData24GHz(List<SSIDInfoForCHAllocation24GHz> data)
+        private Dictionary<int, List<(double rssi, string bssid)>> ChannelAllocationProcessData24GHz(List<SSIDInfoForCHAllocation24GHz> data)
         {
-            var channelData = new Dictionary<int, List<double>>();
+            var channelData = new Dictionary<int, List<(double rssi, string bssid)>>();
 
             foreach (var info in data)
             {
                 if (!channelData.ContainsKey(info.Channel))
                 {
-                    channelData[info.Channel] = new List<double>();
+                    channelData[info.Channel] = new List<(double rssi, string bssid)>();
                 }
 
                 // Estimate RSSI value 
                 double rssi = (info.SignalStrength / 2) - 100;
-                channelData[info.Channel].Add(rssi);
+                channelData[info.Channel].Add((rssi, info.BSSID));
             }
 
             return channelData;
         }
-        private Dictionary<int, List<double>> ChannelAllocationProcessData5GHz(List<SSIDInfoForCHAllocation5GHz> data)
+        private Dictionary<int, List<(double rssi, string bssid)>> ChannelAllocationProcessData5GHz(List<SSIDInfoForCHAllocation5GHz> data)
         {
-            var channelData = new Dictionary<int, List<double>>();
+            var channelData = new Dictionary<int, List<(double rssi, string bssid)>>();
 
             foreach (var info in data)
             {
                 if (!channelData.ContainsKey(info.Channel))
                 {
-                    channelData[info.Channel] = new List<double>();
+                    channelData[info.Channel] = new List<(double rssi, string bssid)>();
                 }
 
                 // Estimate RSSI value 
                 double rssi = (info.SignalStrength / 2) - 100;
-                channelData[info.Channel].Add(rssi);
+                channelData[info.Channel].Add((rssi, info.BSSID));
             }
 
             return channelData;
         }
-        private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<double>> data)
+        private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<(double rssi, string bssid)>> data)
         {
 
             if (!Application.Current.Dispatcher.CheckAccess())
@@ -550,6 +554,28 @@ namespace AAPADS
                 Application.Current.Dispatcher.Invoke(() => UpdateChannelAllocationChart5GHz(data));
                 return;
             }
+
+            var defaultGradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                {
+                    new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+                    new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)   // Green 
+                }
+            };
+
+            var selectedGradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                {
+                    new GradientStop(Color.FromRgb(239, 57, 69), 1),        // Red
+                    new GradientStop(Color.FromArgb(60, 239, 57, 69), 0)  // Transparent Red
+                }
+            };
 
             CHANNEL_ALLOCATION_SERIES_5GHZ.Clear();
 
@@ -559,7 +585,7 @@ namespace AAPADS
                 var signalStrengthsOnChannel = entry.Value;
                 string channelToolTip = channel.ToString();
 
-                foreach (var rssi in signalStrengthsOnChannel)
+                foreach (var (rssi, bssid) in signalStrengthsOnChannel)
                 {
                     var lineSeries = new LineSeries
                     {
@@ -567,18 +593,11 @@ namespace AAPADS
                         Values = new ChartValues<ObservablePoint>(),
                         PointGeometrySize = 10,
                         StrokeThickness = 2,
-                        Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                        Fill = new LinearGradientBrush
-                        {
-                            StartPoint = new Point(0, 1),
-                            EndPoint = new Point(0, 0),
-                            GradientStops = new GradientStopCollection
-                        {
-
-                            new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
-                            new GradientStop(Color.FromArgb(60,110, 204, 37), 0)        // Green 
-                        }
-                        },
+                        Stroke = bssid == SELECTED_SSID_ITEM?.BSSID
+                        ? new SolidColorBrush(Color.FromRgb(239, 57, 69)) // Red for selected BSSID
+                        : new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                        Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+                        Fill = bssid == SELECTED_SSID_ITEM?.BSSID ? selectedGradient : defaultGradient,
                         DataLabels = true
                     };
                     Dictionary<int, (int Start, int Peak, int End)> channelFrequencies5GHz = new Dictionary<int, (int Start, int Peak, int End)>
@@ -628,7 +647,7 @@ namespace AAPADS
                         var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
                         if (point.Y == maxVal)
                         {
-                            return channel.ToString();
+                            return $"CH: {channel}";
                         }
                         return "";
                     };
@@ -638,14 +657,35 @@ namespace AAPADS
                 }
             }
         }
-        private void UpdateChannelAllocationChart24GHz(Dictionary<int, List<double>> data)
+        private void UpdateChannelAllocationChart24GHz(Dictionary<int, List<(double rssi, string bssid)>> data)
         {
-
             if (!Application.Current.Dispatcher.CheckAccess())
             {
                 Application.Current.Dispatcher.Invoke(() => UpdateChannelAllocationChart24GHz(data));
                 return;
             }
+
+            var defaultGradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                {
+                    new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+                    new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)   // Green 
+                }
+            };
+
+            var selectedGradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                {
+                    new GradientStop(Color.FromRgb(239, 57, 69), 1),        // Red
+                    new GradientStop(Color.FromArgb(60, 239, 57, 69), 0)  // Transparent Red
+                }
+            };
 
             CHANNEL_ALLOCATION_SERIES_24GHZ.Clear();
 
@@ -655,7 +695,7 @@ namespace AAPADS
                 var signalStrengthsOnChannel = entry.Value;
                 string channelToolTip = channel.ToString();
 
-                foreach (var rssi in signalStrengthsOnChannel)
+                foreach (var (rssi, bssid) in signalStrengthsOnChannel)
                 {
                     var lineSeries = new LineSeries
                     {
@@ -663,18 +703,11 @@ namespace AAPADS
                         Values = new ChartValues<ObservablePoint>(),
                         PointGeometrySize = 10,
                         StrokeThickness = 2,
-                        Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                        Fill = new LinearGradientBrush
-                        {
-                            StartPoint = new Point(0, 1),
-                            EndPoint = new Point(0, 0),
-                            GradientStops = new GradientStopCollection
-                        {
-
-                            new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
-                            new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)        // Green 
-                        }
-                        },
+                        Stroke = bssid == SELECTED_SSID_ITEM?.BSSID
+                        ? new SolidColorBrush(Color.FromRgb(239, 57, 69)) // Red for selected BSSID
+                        : new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                        Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+                        Fill = bssid == SELECTED_SSID_ITEM?.BSSID ? selectedGradient : defaultGradient,
                         DataLabels = true
                     };
 
@@ -714,10 +747,14 @@ namespace AAPADS
                         var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
                         if (point.Y == maxVal)
                         {
-                            return channel.ToString();
+                            //return channel.ToString();
+                            return $"CH: {channel}";
                         }
                         return "";
                     };
+
+
+
                     CHANNEL_ALLOCATION_SERIES_24GHZ.Add(lineSeries);
                 }
             }
