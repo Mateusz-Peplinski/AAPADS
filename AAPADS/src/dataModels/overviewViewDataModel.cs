@@ -126,6 +126,10 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     }
     #endregion
 
+    //#####################################################################################
+    //#####                           UI METHODS BELOW                              #######            
+    //#####################################################################################
+    #region
     public overviewViewDataModel()
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
@@ -282,6 +286,12 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return averageSignalStrength;
     }
+    #endregion  
+
+    //#####################################################################################
+    //#####                            GRAPHS BELOW                                 #######            
+    //#####################################################################################
+    #region
     public void RunOnUIThread(Action action)
     {
         if (Application.Current.Dispatcher.CheckAccess())
@@ -566,6 +576,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return (ssidInfoList24Ghz, ssidInfoList5Ghz);
     }
+    #endregion
 
     public void Dispose()
     {
