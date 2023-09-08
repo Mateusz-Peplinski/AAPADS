@@ -148,6 +148,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\dataModels\NetworkCardInfoViewModel.cs" />
     <Compile Include="src\main\loadingScreen.xaml.cs">
       <DependentUpon>loadingScreen.xaml</DependentUpon>
     </Compile>
@@ -180,6 +181,7 @@
     <Compile Include="src\dataModels\baseDataModel.cs" />
     <Compile Include="src\WLANScanInvoker\WifiScanner.cs" />
     <Compile Include="src\databaseAccess\TimeFrameIdGenerator.cs" />
+    <Compile Include="src\main\converters\StatusToColorConverter.cs" />
     <Page Include="src\main\loadingScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

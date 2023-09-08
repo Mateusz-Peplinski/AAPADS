@@ -29,6 +29,7 @@
         <local:CriticalityLevelToColorConverter x:Key="CriticalityColorConverter" />
         <local:CriticalityLevelToTextConverter x:Key="CriticalityTextConverter" />
         <local:DetectionStatusToColorConverter x:Key="DetectionStatusToColorConverter" />
+        <local:StatusToColorConverter x:Key="StatusToColorConverter" />
 
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
 
@@ -51,10 +52,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--  Custom Title Bar  -->
-        <Border Background="#333" PreviewMouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+        <Border
+            Grid.Row="0"
+            Background="#333"
+            PreviewMouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -112,7 +117,7 @@
             </Grid>
         </Border>
 
-        <!--  Your Window Content Goes Here  -->
+
         <Grid Grid.Row="1">
             <materialDesign:Card Background="#303030">
                 <TabControl
@@ -541,7 +546,7 @@
                                                                 FromValue="0"
                                                                 LabelsStep="10"
                                                                 SectionsInnerRadius=".5"
-                                                                TicksForeground="#d2d2d2"
+                                                                TicksForeground="#424242"
                                                                 TicksStep="10"
                                                                 ToValue="100"
                                                                 Wedge="300"
@@ -1881,7 +1886,6 @@
                             </StackPanel>
                         </materialDesign:Card>
                     </TabItem>
-
                     <TabItem Name="SettingsTab">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -1899,5 +1903,46 @@
                 </TabControl>
             </materialDesign:Card>
         </Grid>
+        <Expander
+            x:Name="NetworkCardInfoExpander"
+            Grid.Row="2"
+            Margin="2"
+            Panel.ZIndex="1"
+            Background="#424242"
+            ExpandDirection="Up"
+            Expanded="Expander_Expanded"
+            Foreground="#d2d2d2">
+            <Expander.Header>
+                <StackPanel Orientation="Horizontal">
+                    <!--  Status Box  -->
+                    <Border
+                        Width="20"
+                        Height="20"
+                        Margin="0,0,5,0"
+                        Background="{Binding ADAPTER_STATUS, Converter={StaticResource StatusToColorConverter}}"
+                        CornerRadius="5" />
+
+                    <!--  Status Text  -->
+                    <TextBlock Margin="0,0,5,0" Text="{Binding ADAPTER_STATUS, StringFormat='[STATUS: {0}]'}" />
+
+                    <!--  Interface Name  -->
+                    <TextBlock Text="{Binding NETWORK_CARD_NAME, StringFormat='[{0}]'}" />
+                </StackPanel>
+            </Expander.Header>
+
+            <Border
+                Height="60"
+                Margin="2"
+                Background="#303030"
+                BorderBrush="#424242"
+                CornerRadius="5">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="{Binding NETWORK_CARD_NAME}" />
+            </Border>
+        </Expander>
+
     </Grid>
+
 </Window>

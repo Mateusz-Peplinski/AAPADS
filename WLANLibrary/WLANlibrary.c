@@ -238,6 +238,8 @@ typedef struct {
     ULONGLONG WEPICVErrorCount;
     ULONGLONG DecryptSuccessCount;
     ULONGLONG DecryptFailureCount;
+    char AdapterName[256]; 
+    WLAN_INTERFACE_STATE AdapterStatus;
 } MyWLANStats;
 
 __declspec(dllexport) int GetWLANStatistics(MyWLANStats* stats) {
@@ -252,6 +254,10 @@ __declspec(dllexport) int GetWLANStatistics(MyWLANStats* stats) {
     DWORD dataSize = sizeof(WLAN_STATISTICS);
     WlanQueryInterface(clientHandle, &pInterfaceList->InterfaceInfo[0].InterfaceGuid, wlan_intf_opcode_statistics, NULL, &dataSize, (PVOID*)&wlanStats, NULL);
 
+    WCHAR* interfaceName = pInterfaceList->InterfaceInfo[0].strInterfaceDescription;
+    WideCharToMultiByte(CP_UTF8, 0, interfaceName, -1, stats->AdapterName, sizeof(stats->AdapterName), NULL, NULL);
+
+    stats->AdapterStatus = pInterfaceList->InterfaceInfo[0].isState;
     stats->TransmittedFrameCount = wlanStats.MacUcastCounters.ullTransmittedFrameCount;
     stats->ReceivedFrameCount = wlanStats.MacUcastCounters.ullReceivedFrameCount;
     stats->WEPExcludedCount = wlanStats.MacUcastCounters.ullWEPExcludedCount;

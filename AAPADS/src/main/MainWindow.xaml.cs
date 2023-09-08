@@ -27,7 +27,8 @@ namespace AAPADS
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL_OBJECT;
         private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
         private  AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
-        
+        public NetworkCardInfoViewModel NetworkCardInfoVM { get; set; }
+
         private double _originalWidth;
         private double _originalHeight;
         private double _originalLeft;
@@ -56,7 +57,8 @@ namespace AAPADS
 
             WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new detectionSetUpViewDataModel();
 
-            
+            NetworkCardInfoVM = new NetworkCardInfoViewModel();
+            NetworkCardInfoExpander.DataContext = NetworkCardInfoVM;
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
 
@@ -173,6 +175,12 @@ namespace AAPADS
             {
                 DETECTION_VIEW_MODEL_OBJECT.updateDetections(DETECTION_ENGINE_OBJECT);
             });
+        }
+
+        private async void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+
+            await NetworkCardInfoVM.UpdateDataAsync();
         }
         private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
