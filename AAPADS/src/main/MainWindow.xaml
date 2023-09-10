@@ -1910,23 +1910,26 @@
             Panel.ZIndex="1"
             Background="#424242"
             ExpandDirection="Up"
-            Expanded="Expander_Expanded"
             Foreground="#d2d2d2">
             <Expander.Header>
                 <StackPanel Orientation="Horizontal">
                     <!--  Status Box  -->
                     <Border
-                        Width="20"
-                        Height="20"
+                        Width="15"
+                        Height="15"
                         Margin="0,0,5,0"
                         Background="{Binding ADAPTER_STATUS, Converter={StaticResource StatusToColorConverter}}"
                         CornerRadius="5" />
 
                     <!--  Status Text  -->
-                    <TextBlock Margin="0,0,5,0" Text="{Binding ADAPTER_STATUS, StringFormat='[STATUS: {0}]'}" />
+                    <TextBlock
+                        Margin="0,0,5,0"
+                        FontWeight="Bold"
+                        Foreground="{Binding ADAPTER_STATUS, Converter={StaticResource StatusToColorConverter}}"
+                        Text="{Binding ADAPTER_STATUS, StringFormat='[{0}]'}" />
 
                     <!--  Interface Name  -->
-                    <TextBlock Text="{Binding NETWORK_CARD_NAME, StringFormat='[{0}]'}" />
+                    <TextBlock Text="{Binding NETWORK_CARD_NAME, StringFormat='[ {0} ]'}" />
                 </StackPanel>
             </Expander.Header>
 
