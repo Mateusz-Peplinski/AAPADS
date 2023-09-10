@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -53,10 +54,22 @@ namespace AAPADS
 
     public class NetworkCardInfoViewModel : INotifyPropertyChanged
     {
-        
+
         private string _networkCardName;
         private string _adapterStatus;
-        private ObservableCollection<MacFrameData> _macFrameDataCollection;
+        private ulong _TransmittedFrameCount;
+        private ulong _ReceivedFrameCount;
+        private ulong _WEPExcludedCount;
+        private ulong _TKIPLocalMICFailures;
+        private ulong _TKIPReplays;
+        private ulong _TKIPICVErrorCount;
+        private ulong _CCMPReplays;
+        private ulong _CCMPDecryptErrors;
+        private ulong _WEPUndecryptableCount;
+        private ulong _WEPICVErrorCount;
+        private ulong _DecryptSuccessCount;
+        private ulong _DecryptFailureCount;
+        private CancellationTokenSource _cts;
 
         public string NETWORK_CARD_NAME
         {
@@ -76,14 +89,128 @@ namespace AAPADS
                 OnPropertyChanged(nameof(ADAPTER_STATUS));
             }
         }
-
-        public ObservableCollection<MacFrameData> MacFrameDataCollection
+        public ulong TRANSMITTED_FRAME_COUNT
         {
-            get { return _macFrameDataCollection; }
+            get { return _TransmittedFrameCount; }
             set
             {
-                _macFrameDataCollection = value;
-                OnPropertyChanged(nameof(MacFrameDataCollection));
+                _TransmittedFrameCount = value;
+                OnPropertyChanged(nameof(TRANSMITTED_FRAME_COUNT));
+            }
+        }
+        public ulong RECEIVED_FRAME_COUNT
+        {
+            get { return _ReceivedFrameCount; }
+            set
+            {
+                _ReceivedFrameCount = value;
+                OnPropertyChanged(nameof(RECEIVED_FRAME_COUNT));
+            }
+        }
+        public ulong WEP_EXCLUDED_COUNT
+        {
+            get { return _WEPExcludedCount; }
+            set
+            {
+                _WEPExcludedCount = value;
+                OnPropertyChanged(nameof(WEP_EXCLUDED_COUNT));
+            }
+        }
+        public ulong TKIP_LOCAL_MIC_FAILURES
+        {
+            get { return _TKIPLocalMICFailures; }
+            set
+            {
+                _TKIPLocalMICFailures = value;
+                OnPropertyChanged(nameof(TKIP_LOCAL_MIC_FAILURES));
+            }
+        }
+        public ulong TKIP_REPLAYS
+        {
+            get { return _TKIPReplays; }
+            set
+            {
+                _TKIPReplays = value;
+                OnPropertyChanged(nameof(TKIP_REPLAYS));
+            }
+        }
+        public ulong TKIP_ICV_ERROR_COUNT
+        {
+            get { return _TKIPICVErrorCount; }
+            set
+            {
+                _TKIPICVErrorCount = value;
+                OnPropertyChanged(nameof(TKIP_ICV_ERROR_COUNT));
+            }
+        }
+        public ulong CCMP_REPLAYS
+        {
+            get { return _CCMPReplays; }
+            set
+            {
+                _CCMPReplays = value;
+                OnPropertyChanged(nameof(CCMP_REPLAYS));
+            }
+        }
+        public ulong CCMP_DECRYPT_ERRORS
+        {
+            get { return _CCMPDecryptErrors; }
+            set
+            {
+                _CCMPDecryptErrors = value;
+                OnPropertyChanged(nameof(CCMP_DECRYPT_ERRORS));
+            }
+        }
+        public ulong WEP_UNDECRYPTABLE_COUNT
+        {
+            get { return _WEPUndecryptableCount; }
+            set
+            {
+                _WEPUndecryptableCount = value;
+                OnPropertyChanged(nameof(WEP_UNDECRYPTABLE_COUNT));
+            }
+        }
+        public ulong WEP_ICV_ERROR_COUNT
+        {
+            get { return _WEPICVErrorCount; }
+            set
+            {
+                _WEPICVErrorCount = value;
+                OnPropertyChanged(nameof(WEP_ICV_ERROR_COUNT));
+            }
+        }
+        public ulong DECRYPT_SUCCESS_COUNT
+        {
+            get { return _DecryptSuccessCount; }
+            set
+            {
+                _DecryptSuccessCount = value;
+                OnPropertyChanged(nameof(DECRYPT_SUCCESS_COUNT));
+            }
+        }
+        public ulong DECRYPT_FAILURE_COUNT
+        {
+            get { return _DecryptFailureCount; }
+            set
+            {
+                _DecryptFailureCount = value;
+                OnPropertyChanged(nameof(DECRYPT_FAILURE_COUNT));
+            }
+        }
+
+        public NetworkCardInfoViewModel()
+        {
+            _cts = new CancellationTokenSource();
+            StartDataUpdateLoop(_cts.Token);
+        }
+        private async void StartDataUpdateLoop(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await UpdateDataAsync();
+
+                // Wait for 5 seconds before the next iteration
+                await Task.Delay(TimeSpan.FromSeconds(5), token);
             }
         }
 
@@ -94,6 +221,18 @@ namespace AAPADS
                 var stats = await GetWlanStatsAsync();
                 NETWORK_CARD_NAME = stats.AdapterName;
                 ADAPTER_STATUS = mapWLANInterfaceStatus(stats.AdapterStatus);
+                TRANSMITTED_FRAME_COUNT = stats.TransmittedFrameCount;
+                RECEIVED_FRAME_COUNT = stats.ReceivedFrameCount;
+                WEP_EXCLUDED_COUNT = stats.WEPExcludedCount;
+                TKIP_LOCAL_MIC_FAILURES = stats.TKIPLocalMICFailures;
+                TKIP_REPLAYS = stats.TKIPReplays;
+                TKIP_ICV_ERROR_COUNT = stats.TKIPICVErrorCount;
+                CCMP_REPLAYS = stats.CCMPReplays;
+                CCMP_DECRYPT_ERRORS = stats.CCMPDecryptErrors;
+                WEP_UNDECRYPTABLE_COUNT = stats.WEPUndecryptableCount;
+                WEP_ICV_ERROR_COUNT = stats.WEPICVErrorCount;
+                DECRYPT_SUCCESS_COUNT = stats.DecryptSuccessCount;
+                DECRYPT_FAILURE_COUNT = stats.DecryptFailureCount;
             }
             catch (Exception ex)
             {
@@ -101,12 +240,13 @@ namespace AAPADS
             }
         }
 
+       
         private async Task<NativeMethods.MyWLANStats> GetWlanStatsAsync()
         {
             return await Task.Run(() =>
             {
                 NativeMethods.MyWLANStats stats = new NativeMethods.MyWLANStats();
-                NativeMethods.GetWLANStatistics(out stats); // Use ref here
+                NativeMethods.GetWLANStatistics(out stats);
                 return stats;
             });
         }
@@ -143,13 +283,6 @@ namespace AAPADS
 
 
 
-    }
-
-    public class MacFrameData
-    {
-        public string SourceAddress { get; set; }
-        public string DestinationAddress { get; set; }
-        // Add other properties as needed
     }
 
 }

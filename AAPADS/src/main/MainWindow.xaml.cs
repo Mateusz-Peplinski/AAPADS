@@ -59,7 +59,7 @@ namespace AAPADS
 
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
             NetworkCardInfoExpander.DataContext = NetworkCardInfoVM;
-            initializeWLANInterface();
+            
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
 
@@ -178,15 +178,6 @@ namespace AAPADS
             });
         }
 
-        private async void initializeWLANInterface()
-        {
-            await NetworkCardInfoVM.UpdateDataAsync();
-        }
-        private async void Expander_Expanded(object sender, RoutedEventArgs e)
-        {
-
-            await NetworkCardInfoVM.UpdateDataAsync();
-        }
         private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
