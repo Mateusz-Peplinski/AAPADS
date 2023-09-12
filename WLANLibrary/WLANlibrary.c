@@ -245,10 +245,20 @@ typedef struct {
 __declspec(dllexport) int GetWLANStatistics(MyWLANStats* stats) {
     DWORD negotiatedVersion;
     HANDLE clientHandle;
+
+    memset(stats, 0, sizeof(MyWLANStats));
+
+
     WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
 
     WLAN_INTERFACE_INFO_LIST* pInterfaceList;
     WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
+
+    DWORD result;
+    result = WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
+    if (result != ERROR_SUCCESS) {
+        printf("Error\n");
+    }
 
     WLAN_STATISTICS wlanStats;
     DWORD dataSize = sizeof(WLAN_STATISTICS);
@@ -270,6 +280,7 @@ __declspec(dllexport) int GetWLANStatistics(MyWLANStats* stats) {
     stats->WEPICVErrorCount = wlanStats.MacUcastCounters.ullWEPICVErrorCount;
     stats->DecryptSuccessCount = wlanStats.MacUcastCounters.ullDecryptSuccessCount;
     stats->DecryptFailureCount = wlanStats.MacUcastCounters.ullDecryptFailureCount;
+    printf("%llu\n", wlanStats.MacUcastCounters.ullTransmittedFrameCount);
 
     WlanFreeMemory(pInterfaceList);
     WlanCloseHandle(clientHandle, NULL);
