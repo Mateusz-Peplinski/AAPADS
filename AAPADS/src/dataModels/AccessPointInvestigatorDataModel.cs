@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -104,6 +105,28 @@ namespace AAPADS
         }
         private double _rssiValueForGuage;
         private ACCESS_POINT_DATA _selectedSSIDItem;
+
+        private string _manufacturerName;
+        public string ManufacturerName
+        {
+            get => _manufacturerName;
+            set
+            {
+                _manufacturerName = value;
+                OnPropertyChanged(nameof(ManufacturerName));
+            }
+        }
+
+        private string _logoPath;
+        public string LogoPath
+        {
+            get => _logoPath;
+            set
+            {
+                _logoPath = value;
+                OnPropertyChanged(nameof(LogoPath));
+            }
+        }
         public double RSSI_VALUE
         {
             get => _rssiValueForGuage;
@@ -113,6 +136,28 @@ namespace AAPADS
                 OnPropertyChanged(nameof(RSSI_VALUE));
             }
         }
+        private Visibility _logoVisibility = Visibility.Collapsed;
+        public Visibility LogoVisibility
+        {
+            get => _logoVisibility;
+            set
+            {
+                _logoVisibility = value;
+                OnPropertyChanged(nameof(LogoVisibility));
+            }
+        }
+
+        private Visibility _manufacturerNameVisibility = Visibility.Visible;
+        public Visibility ManufacturerNameVisibility
+        {
+            get => _manufacturerNameVisibility;
+            set
+            {
+                _manufacturerNameVisibility = value;
+                OnPropertyChanged(nameof(ManufacturerNameVisibility));
+            }
+        }
+
         public ACCESS_POINT_DATA SELECTED_SSID_ITEM
         {
             get => _selectedSSIDItem;
@@ -131,8 +176,109 @@ namespace AAPADS
                 StartDataCollectionForSSID(_selectedSSIDItem?.BSSID);
                 var (data24GHz, data5GHz) = PopulateSSIDInfoList(SSIDs.ToList());
                 RefreshChannelAllocationChartsAsync(data24GHz, data5GHz);
+                fetchImageForSelectedBSSID();
             }
         }
+        private void fetchImageForSelectedBSSID()
+        {
+
+            if (_selectedSSIDItem != null)
+            {
+                var ouiToManufacturer = ParseOUIFile();
+                string oui = _selectedSSIDItem.BSSID.Replace(":", "").Substring(0, 6).ToUpper();
+
+                if (ouiToManufacturer.TryGetValue(oui, out string manufacturer))
+                {
+                    ManufacturerName = manufacturer;
+
+                    if (HasLogo(manufacturer))
+                    {
+                        LogoPath = GetLogoPath(manufacturer);
+                        LogoVisibility = Visibility.Visible;
+                        ManufacturerNameVisibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        ManufacturerName = manufacturer;
+                        LogoVisibility = Visibility.Collapsed;
+                        ManufacturerNameVisibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    ManufacturerName = "Unknown Manufacturer";
+                    LogoPath = null;
+                }
+            }
+        }
+        private Dictionary<string, string> ParseOUIFile()
+        {
+            var path = "./res/OUI.txt";
+            var ouiToManufacturer = new Dictionary<string, string>();
+            string currentManufacturer = "";
+            bool foundManufacturer = false;
+
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("OUI file not found!");
+                return null;
+            }
+
+            foreach (var line in File.ReadLines(path))
+            {
+                if (!foundManufacturer && line.Contains("(hex)"))
+                {
+                    var parts = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 3)
+                    {
+                        currentManufacturer = parts[2].Trim();
+                        foundManufacturer = true;
+                    }
+                }
+                else if (foundManufacturer && line.Contains("(base 16)"))
+                {
+                    var parts = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 1)
+                    {
+                        string currentOUI = parts[0].Replace("-", "").Trim().ToUpper();
+                        ouiToManufacturer[currentOUI] = currentManufacturer;
+                        foundManufacturer = false;
+                        currentManufacturer = ""; // Reset the manufacturer for the next entry
+                    }
+                }
+            }
+
+            Console.WriteLine("Dictionary contents:");
+            foreach (var kvp in ouiToManufacturer.Take(10))
+            {
+                Console.WriteLine($"OUI: {kvp.Key}, Manufacturer: {kvp.Value}");
+            }
+
+            return ouiToManufacturer;
+        }
+
+
+
+
+
+        //Console.WriteLine("Dictionary contents:");
+        //    foreach (var kvp in ouiToManufacturer.Take(10))
+        //    {
+        //        Console.WriteLine($"OUI: {kvp.Key}, Manufacturer: {kvp.Value}");
+        //    }
+
+
+        private bool HasLogo(string manufacturer)
+        {
+            var logoPath = $"./res/manufacturers/{manufacturer}.png"; // Assuming PNG format for logos
+            return File.Exists(logoPath);
+        }
+
+        private string GetLogoPath(string manufacturer)
+        {
+            return $"./res/manufacturers/{manufacturer}.png";
+        }
+
         private void ClearGraphData()
         {
             RSSIDataForGraphSignalStrengthOverTime[0].Values.Clear();

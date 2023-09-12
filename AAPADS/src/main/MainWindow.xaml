@@ -1063,8 +1063,13 @@
                                                 Margin="5,5,5,0"
                                                 Background="#303030"
                                                 CornerRadius="5">
-                                                <!--  content here  -->
+                                                <StackPanel>
+                                                    <Image Source="{Binding LogoPath}" Visibility="{Binding LogoVisibility}" />
+                                                    <TextBlock Text="{Binding ManufacturerName}" Visibility="{Binding ManufacturerNameVisibility}" />
+                                                </StackPanel>
                                             </Border>
+
+
                                         </Grid>
 
 
