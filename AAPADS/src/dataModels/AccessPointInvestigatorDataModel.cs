@@ -184,7 +184,7 @@ namespace AAPADS
 
             if (_selectedSSIDItem != null)
             {
-                var ouiToManufacturer = ParseOUIFile();
+                var ouiToManufacturer = ParseFilteredOUIFile();
                 string oui = _selectedSSIDItem.BSSID.Replace(":", "").Substring(0, 6).ToUpper();
 
                 if (ouiToManufacturer.TryGetValue(oui, out string manufacturer))
@@ -211,61 +211,48 @@ namespace AAPADS
                 }
             }
         }
-        private Dictionary<string, string> ParseOUIFile()
+        private void FilterBase16Lines()
         {
             var path = "./res/OUI.txt";
-            var ouiToManufacturer = new Dictionary<string, string>();
-            string currentManufacturer = "";
-            bool foundManufacturer = false;
+            var outputPath = "./res/FilteredOUI.txt";
 
             if (!File.Exists(path))
             {
                 Console.WriteLine("OUI file not found!");
+                return;
+            }
+
+            var filteredLines = File.ReadLines(path)
+                                    .Where(line => line.Contains("(base 16)"))
+                                    .ToList();
+
+            File.WriteAllLines(outputPath, filteredLines);
+        }
+
+        private Dictionary<string, string> ParseFilteredOUIFile()
+        {
+            var path = "./res/FilteredOUI.txt";
+            var ouiToManufacturer = new Dictionary<string, string>();
+
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("Filtered OUI file not found!");
                 return null;
             }
 
             foreach (var line in File.ReadLines(path))
             {
-                if (!foundManufacturer && line.Contains("(hex)"))
+                var parts = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 2)
                 {
-                    var parts = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 3)
-                    {
-                        currentManufacturer = parts[2].Trim();
-                        foundManufacturer = true;
-                    }
+                    string currentOUI = parts[0].Replace("(base 16)", "").Trim().ToUpper();
+                    string currentManufacturer = parts[1].Trim();
+                    ouiToManufacturer[currentOUI] = currentManufacturer;
                 }
-                else if (foundManufacturer && line.Contains("(base 16)"))
-                {
-                    var parts = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 1)
-                    {
-                        string currentOUI = parts[0].Replace("-", "").Trim().ToUpper();
-                        ouiToManufacturer[currentOUI] = currentManufacturer;
-                        foundManufacturer = false;
-                        currentManufacturer = ""; // Reset the manufacturer for the next entry
-                    }
-                }
-            }
-
-            Console.WriteLine("Dictionary contents:");
-            foreach (var kvp in ouiToManufacturer.Take(10))
-            {
-                Console.WriteLine($"OUI: {kvp.Key}, Manufacturer: {kvp.Value}");
             }
 
             return ouiToManufacturer;
         }
-
-
-
-
-
-        //Console.WriteLine("Dictionary contents:");
-        //    foreach (var kvp in ouiToManufacturer.Take(10))
-        //    {
-        //        Console.WriteLine($"OUI: {kvp.Key}, Manufacturer: {kvp.Value}");
-        //    }
 
 
         private bool HasLogo(string manufacturer)
@@ -335,6 +322,8 @@ namespace AAPADS
         #region
         public AccessPointInvestigatorDataModel()
         {
+            FilterBase16Lines();
+
             ssidList.ssids = new char[3200];
 
             PerformWifiScan();
@@ -373,7 +362,6 @@ namespace AAPADS
                 // Update the SSID list in place
                 foreach (var ssid in newSSIDs)
                 {
-                    Console.WriteLine($"New SSID: {ssid.DISPLAY_SSID}, BSSID: {ssid.BSSID}");
                     if (!SSIDs.Any(s => s.BSSID == ssid.BSSID)) // Use BSSID for uniqueness
                     {
                         SSIDs.Add(ssid);
