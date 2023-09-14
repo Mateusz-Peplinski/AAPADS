@@ -8,8 +8,8 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="AAPADS"
-    Width="600"
-    Height="450"
+    Width="540"
+    Height="362"
     Icon="/icon.ico"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -17,18 +17,15 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" CornerRadius="20" />
     </WindowChrome.WindowChrome>
-    <Grid>
-        <Grid.Background>
-            <ImageBrush>
-                <ImageBrush.ImageSource>
-                    <BitmapImage UriSource="/res/graphics/animated.gif" />
-                </ImageBrush.ImageSource>
-            </ImageBrush>
-        </Grid.Background>
-        <Image gif:ImageBehavior.AnimatedSource="/res/graphics/animated.gif" Stretch="UniformToFill" />
+    <Grid Background="#303030">
+        <Image Margin="0,-41,0,41" Source="/src/main/LargeLogoNoBackground.png" />
+        <Image
+            Margin="6,205,14,0"
+            gif:ImageBehavior.AnimatedSource="/res/graphics/Loading_Loop.gif"
+            Stretch="None" />
         <ProgressBar
-            Margin="281,384,299,30"
-            Foreground="#ff002a"
+            Margin="510,10,10,316"
+            Foreground="#ef3945"
             IsIndeterminate="True"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
