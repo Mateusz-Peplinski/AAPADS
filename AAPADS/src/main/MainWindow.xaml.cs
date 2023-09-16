@@ -189,6 +189,14 @@ namespace AAPADS
             }
             return (IntPtr)0;
         }
+        private void TextBlock_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if (tb != null)
+            {
+                Clipboard.SetText(tb.Text);
+            }
+        }
 
         private static void WmGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
         {

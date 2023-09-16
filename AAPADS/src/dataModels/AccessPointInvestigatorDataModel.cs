@@ -116,17 +116,6 @@ namespace AAPADS
                 OnPropertyChanged(nameof(ManufacturerName));
             }
         }
-
-        private string _logoPath;
-        public string LogoPath
-        {
-            get => _logoPath;
-            set
-            {
-                _logoPath = value;
-                OnPropertyChanged(nameof(LogoPath));
-            }
-        }
         public double RSSI_VALUE
         {
             get => _rssiValueForGuage;
@@ -136,28 +125,7 @@ namespace AAPADS
                 OnPropertyChanged(nameof(RSSI_VALUE));
             }
         }
-        private Visibility _logoVisibility = Visibility.Collapsed;
-        public Visibility LogoVisibility
-        {
-            get => _logoVisibility;
-            set
-            {
-                _logoVisibility = value;
-                OnPropertyChanged(nameof(LogoVisibility));
-            }
-        }
-
-        private Visibility _manufacturerNameVisibility = Visibility.Visible;
-        public Visibility ManufacturerNameVisibility
-        {
-            get => _manufacturerNameVisibility;
-            set
-            {
-                _manufacturerNameVisibility = value;
-                OnPropertyChanged(nameof(ManufacturerNameVisibility));
-            }
-        }
-
+        
         public ACCESS_POINT_DATA SELECTED_SSID_ITEM
         {
             get => _selectedSSIDItem;
@@ -190,24 +158,10 @@ namespace AAPADS
                 if (ouiToManufacturer.TryGetValue(oui, out string manufacturer))
                 {
                     ManufacturerName = manufacturer;
-
-                    if (HasLogo(manufacturer))
-                    {
-                        LogoPath = GetLogoPath(manufacturer);
-                        LogoVisibility = Visibility.Visible;
-                        ManufacturerNameVisibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        ManufacturerName = manufacturer;
-                        LogoVisibility = Visibility.Collapsed;
-                        ManufacturerNameVisibility = Visibility.Visible;
-                    }
                 }
                 else
                 {
                     ManufacturerName = "Unknown Manufacturer";
-                    LogoPath = null;
                 }
             }
         }
@@ -252,18 +206,6 @@ namespace AAPADS
             }
 
             return ouiToManufacturer;
-        }
-
-
-        private bool HasLogo(string manufacturer)
-        {
-            var logoPath = $"./res/manufacturers/{manufacturer}.png"; // Assuming PNG format for logos
-            return File.Exists(logoPath);
-        }
-
-        private string GetLogoPath(string manufacturer)
-        {
-            return $"./res/manufacturers/{manufacturer}.png";
         }
 
         private void ClearGraphData()
