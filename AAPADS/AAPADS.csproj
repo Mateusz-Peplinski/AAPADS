@@ -272,11 +272,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\manufacturers\ASUSTek COMPUTER INC..png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="res\graphics\Loading_Loop.gif" />
   </ItemGroup>
   <ItemGroup>

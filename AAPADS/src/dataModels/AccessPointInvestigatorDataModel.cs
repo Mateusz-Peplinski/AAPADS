@@ -555,14 +555,15 @@ namespace AAPADS
         {
             var ssidInfoList24Ghz = new List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ>();
             var ssidInfoList5Ghz = new List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ>();
-
+            int rssiDecrease24 = 150; //To make sure access points dont stack
+            int rssiDecrease5 = 150; //To make sure access points dont stack
             for (int i = 0; i < accessPointDataList.Count; i++)
             {
                 var currentData = accessPointDataList[i];
                 uint frequency = currentData.FREQUENCY;
 
-                // Assuming 2.4GHz band frequencies are between 2400 and 2500 MHz
-                // and 5GHz band frequencies are between 5000 and 6000 MHz
+                // Assuming 2.4GHz band frequencies are between 2400000 and 2500000 MHz
+                // and 5GHz band frequencies are between 5000000 and 6000000 MHz
                 if (frequency >= 2400000 && frequency <= 2500000)
                 {
                     ssidInfoList24Ghz.Add(new SSID_INFO_FOR_CH_ALLOCATION_24GHZ
@@ -570,8 +571,9 @@ namespace AAPADS
                         SSID = currentData.DISPLAY_SSID,
                         BSSID = currentData.BSSID,
                         Channel = currentData.CHANNEL,
-                        SignalStrength = 150 
+                        SignalStrength = rssiDecrease24
                     });
+                    rssiDecrease24 = rssiDecrease24 - 10;
                 }
                 else if (frequency >= 5000000 && frequency <= 6000000)
                 {
@@ -580,9 +582,11 @@ namespace AAPADS
                         SSID = currentData.DISPLAY_SSID,
                         BSSID = currentData.BSSID,
                         Channel = currentData.CHANNEL,
-                        SignalStrength = 150 
+                        SignalStrength = rssiDecrease5
                     });
+                    rssiDecrease5 = rssiDecrease24 - 10;   
                 }
+                
             }
 
             return (ssidInfoList24Ghz, ssidInfoList5Ghz);
