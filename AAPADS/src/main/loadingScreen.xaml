@@ -18,7 +18,7 @@
         <WindowChrome CaptionHeight="0" CornerRadius="20" />
     </WindowChrome.WindowChrome>
     <Grid Background="#303030">
-        <Image Margin="0,-41,0,41" Source="/src/main/LargeLogoNoBackground.png" />
+        <Image Margin="0,-41,0,41" Source="/res/graphics/LargeLogoNoBackground.png" />
         <Image
             Margin="6,205,14,0"
             gif:ImageBehavior.AnimatedSource="/res/graphics/Loading_Loop.gif"

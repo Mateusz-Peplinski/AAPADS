@@ -153,6 +153,21 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
                     case DOT11_AUTH_ALGO_80211_SHARED_KEY:
                         strcpy_s(networks[count].authMethod, 32, "802.11 SHARED KEY");
                         break;
+                    case DOT11_AUTH_ALGO_RSNA:
+                        strcpy_s(networks[count].authMethod, 32, "WPA2 Enterprise");
+                        break;
+                    case DOT11_AUTH_ALGO_RSNA_PSK:
+                        strcpy_s(networks[count].authMethod, 32, "WPA2 PSK");
+                        break;
+                    case DOT11_AUTH_ALGO_WPA3:
+                        strcpy_s(networks[count].authMethod, 32, "WPA3");
+                        break;
+                    case DOT11_AUTH_ALGO_WPA3_SAE:
+                        strcpy_s(networks[count].authMethod, 32, "WPA3 Personal");
+                        break;
+                    case DOT11_AUTH_ALGO_WPA3_ENT:
+                        strcpy_s(networks[count].authMethod, 32, "WPA3 Enterprise");
+                        break;
                     case DOT11_AUTH_ALGO_WPA:
                         strcpy_s(networks[count].authMethod, 32, "WPA");
                         break;
@@ -162,23 +177,8 @@ __declspec(dllexport) int GetVisibleNetworks(NetworkInfo* networks, int maxNetwo
                     case DOT11_AUTH_ALGO_WPA_NONE:
                         strcpy_s(networks[count].authMethod, 32, "WPA NONE");
                         break;
-                    case DOT11_AUTH_ALGO_RSNA:
-                        strcpy_s(networks[count].authMethod, 32, "RSNA");
-                        break;
-                    case DOT11_AUTH_ALGO_RSNA_PSK:
-                        strcpy_s(networks[count].authMethod, 32, "RSNA PSK");
-                        break;
-                    case DOT11_AUTH_ALGO_WPA3:
-                        strcpy_s(networks[count].authMethod, 32, "WPA3");
-                        break;
-                    case DOT11_AUTH_ALGO_WPA3_SAE:
-                        strcpy_s(networks[count].authMethod, 32, "WPA3 SAE");
-                        break;
                     case DOT11_AUTH_ALGO_OWE:
                         strcpy_s(networks[count].authMethod, 32, "OWE");
-                        break;
-                    case DOT11_AUTH_ALGO_WPA3_ENT:
-                        strcpy_s(networks[count].authMethod, 32, "WPA3 ENT");
                         break;
                     default:
                         strcpy_s(networks[count].authMethod, 32, "UNKNOWN");

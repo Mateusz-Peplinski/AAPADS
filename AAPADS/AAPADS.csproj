@@ -275,9 +275,6 @@
     <Resource Include="res\graphics\Loading_Loop.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="src\main\LargeLogoNoBackground.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="res\graphics\SmallLogoNoBackground.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

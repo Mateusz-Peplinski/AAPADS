@@ -1,7 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
-using LiveCharts.Wpf.Charts.Base;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,8 +11,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Markup;
 using System.Windows.Media;
 
 
@@ -125,7 +122,7 @@ namespace AAPADS
                 OnPropertyChanged(nameof(RSSI_VALUE));
             }
         }
-        
+
         public ACCESS_POINT_DATA SELECTED_SSID_ITEM
         {
             get => _selectedSSIDItem;
@@ -298,7 +295,7 @@ namespace AAPADS
 
                 newSSIDs.Add(ssidItem);
             }
-            
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Update the SSID list in place
@@ -431,7 +428,8 @@ namespace AAPADS
 
             string BSSPHYType;
 
-            switch (value) { 
+            switch (value)
+            {
                 case 0:
                     BSSPHYType = "UNKNOWN";
                     break;
@@ -440,12 +438,12 @@ namespace AAPADS
                     break;
                 case 2:
                     BSSPHYType = "(O) 802.11"; //Orignal 802.11
-                    break;  
+                    break;
                 case 3:
                     BSSPHYType = "(IR) 802.11"; // Infrared baseband 802.11
                     break;
                 case 4:
-                    BSSPHYType= "802.11a/g";
+                    BSSPHYType = "802.11a/g";
                     break;
                 case 5:
                     BSSPHYType = "802.11b";
@@ -468,7 +466,7 @@ namespace AAPADS
                 case 11:
                     BSSPHYType = "802.11be";
                     break;
-                default : 
+                default:
                     BSSPHYType = "UNKNOWN";
                     break;
             }
@@ -539,7 +537,6 @@ namespace AAPADS
 
         public SeriesCollection CHANNEL_ALLOCATION_SERIES_5GHZ { get; set; } = new SeriesCollection();
         public SeriesCollection CHANNEL_ALLOCATION_SERIES_24GHZ { get; set; } = new SeriesCollection();
-
         public void RunOnUIThread(Action action)
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -584,14 +581,14 @@ namespace AAPADS
                         Channel = currentData.CHANNEL,
                         SignalStrength = rssiDecrease5
                     });
-                    rssiDecrease5 = rssiDecrease24 - 10;   
+                    rssiDecrease5 = rssiDecrease24 - 10;
                 }
-                
+
             }
 
             return (ssidInfoList24Ghz, ssidInfoList5Ghz);
         }
-         
+
         public async Task RefreshChannelAllocationChartsAsync(List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ> data24GHz, List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ> data5GHz)
         {
             var channelCount24GHz = await Task.Run(() => ChannelAllocationProcessData24GHz(data24GHz));
