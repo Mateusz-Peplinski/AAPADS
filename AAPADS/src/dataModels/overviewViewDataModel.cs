@@ -323,7 +323,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 series5GHz.Values.RemoveAt(0);
         });
     }
-
     public async Task RefreshChannelAllocationChartsAsync(List<SSIDInfoForCHAllocation24GHz> data24GHz, List<SSIDInfoForCHAllocation5GHz> data5GHz)
     {
         var channelCount24GHz = await Task.Run(() => ChannelAllocationProcessData24GHz(data24GHz));
@@ -350,9 +349,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return channelData;
     }
-    // NOTE:
-    //Optimization: The channelFrequencies5GHz dictionary is static data and can be defined
-    //outside the method or as a static class member to avoid recreating it every time the method is called.
     private Dictionary<int, (int Start, int Peak, int End)> channelFrequencies5GHz = new Dictionary<int, (int Start, int Peak, int End)>
                 {
                     {36, (5170, 5180, 5190)},
@@ -391,6 +387,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         }
 
         ChannelAllocationSeries5GHz.Clear();
+
+        updateBaseVisualsFor5GHzChart();
 
         foreach (var entry in data)
         {
@@ -451,226 +449,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
             }
         }
-        var gapStartFrequency = channelFrequencies5GHz[64].End;
-        var gapEndFrequency = channelFrequencies5GHz[100].Start;
-        var gapYValue = -10; 
-
-        var gapLineSeries = new LineSeries
-        {
-
-            LineSmoothness = 0,
-            Values = new ChartValues<ObservablePoint>
-                    {
-                       new ObservablePoint(gapStartFrequency, -100),
-                        new ObservablePoint(gapStartFrequency, gapYValue), 
-                        new ObservablePoint(gapEndFrequency, gapYValue), 
-                        new ObservablePoint(gapEndFrequency, -100)
-                    },
-            PointGeometrySize = 0, 
-            StrokeThickness = 2,
-            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-            Stroke = new SolidColorBrush(Color.FromRgb(255, 0, 42)), 
-            Fill = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 1),
-                EndPoint = new Point(0, 0),
-                GradientStops = new GradientStopCollection
-                        {
-                            new GradientStop(Color.FromRgb(239, 57, 69), 1),    
-                            new GradientStop(Color.FromArgb(60,239, 57, 69), 0)     
-                        }
-            },
-            DataLabels = true,
-            
-        };
-        gapLineSeries.LabelPoint = point =>
-        {
-            var maxVal = (gapLineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
-            if (point.Y == maxVal)
-            {
-                return $"RADAR BAND";
-            }
-            return "";
-        };
-        ChannelAllocationSeries5GHz.Add(gapLineSeries);
-
-        var UNNI1StartFrequency = channelFrequencies5GHz[36].Start;
-        var UNNI1EndFrequency = channelFrequencies5GHz[52].Start;
-        var UNNI1gapYValue = -10; 
-
-        var UNNI1LineSeries = new LineSeries
-        {
-            //Title = "UNNI1",
-            //ToolTip = false,
-            LineSmoothness = 0,
-            Values = new ChartValues<ObservablePoint>
-                    {
-                       new ObservablePoint(UNNI1StartFrequency, -100),
-                        new ObservablePoint(UNNI1StartFrequency, UNNI1gapYValue), 
-                        new ObservablePoint(UNNI1EndFrequency, UNNI1gapYValue), 
-                        new ObservablePoint(UNNI1EndFrequency, -100)
-                    },
-            PointGeometrySize = 0, 
-            StrokeThickness = 2,
-            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-            Stroke = new SolidColorBrush(Color.FromRgb(255, 224, 0)), 
-            Fill = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 1),
-                EndPoint = new Point(0, 0),
-                GradientStops = new GradientStopCollection
-                        {
-                            new GradientStop(Color.FromRgb(255,224,0), 1),    
-                            new GradientStop(Color.FromArgb(30,255,224,0), 0)    
-                        }
-            },
-            DataLabels = true,
-
-        };
-        UNNI1LineSeries.LabelPoint = point =>
-        {
-            var maxVal = (UNNI1LineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
-            if (point.Y == maxVal)
-            {
-                return $"UNNI-1";
-            }
-            return "";
-        };
-        ChannelAllocationSeries5GHz.Add(UNNI1LineSeries);
-        var UNNI2StartFrequency = channelFrequencies5GHz[48].End;
-        var UNNI2EndFrequency = channelFrequencies5GHz[64].End;
-        var UNNI2gapYValue = -10; 
-
-        var UNNI2LineSeries = new LineSeries
-        {
-
-            LineSmoothness = 0,
-            Values = new ChartValues<ObservablePoint>
-                    {
-                       new ObservablePoint(UNNI2StartFrequency, -100),
-                        new ObservablePoint(UNNI2StartFrequency, UNNI2gapYValue), 
-                        new ObservablePoint(UNNI2EndFrequency, UNNI2gapYValue), 
-                        new ObservablePoint(UNNI2EndFrequency, -100)
-                    },
-            PointGeometrySize = 0, 
-            StrokeThickness = 2,
-            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-            Stroke = new SolidColorBrush(Color.FromRgb(255, 156, 0)),
-            Fill = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 1),
-                EndPoint = new Point(0, 0),
-                GradientStops = new GradientStopCollection
-                        {
-                            new GradientStop(Color.FromRgb(255,156,0), 1),      
-                            new GradientStop(Color.FromArgb(60,255,156,0), 0)      
-                        }
-            },
-            DataLabels = true,
-
-        };
-        UNNI2LineSeries.LabelPoint = point =>
-        {
-            var maxVal = (UNNI2LineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
-            if (point.Y == maxVal)
-            {
-                return $"UNNI-2";
-            }
-            return "";
-
-
-        };
-        ChannelAllocationSeries5GHz.Add(UNNI2LineSeries);
-
-        var UNNI2EStartFrequency = channelFrequencies5GHz[100].Start;
-        var UNNI2EEndFrequency = channelFrequencies5GHz[144].End;
-        var UNNI2EgapYValue = -10; 
-
-        var UNNI2ELineSeries = new LineSeries
-        {
-            LineSmoothness = 0,
-            Values = new ChartValues<ObservablePoint>
-                    {
-                       new ObservablePoint(UNNI2EStartFrequency, -100),
-                        new ObservablePoint(UNNI2EStartFrequency, UNNI2EgapYValue), 
-                        new ObservablePoint(UNNI2EEndFrequency, UNNI2EgapYValue), 
-                        new ObservablePoint(UNNI2EEndFrequency, -100)
-                    },
-            PointGeometrySize = 0, 
-            StrokeThickness = 2,
-            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-            Stroke = new SolidColorBrush(Color.FromRgb(22, 141, 255)),
-            Fill = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 1),
-                EndPoint = new Point(0, 0),
-                GradientStops = new GradientStopCollection
-                        {
-                            new GradientStop(Color.FromRgb(22,141,255), 1),       
-                            new GradientStop(Color.FromArgb(60,22,141,255), 0)        
-                        }
-            },
-            DataLabels = true,
-
-        };
-        UNNI2ELineSeries.LabelPoint = point =>
-        {
-            var maxVal = (UNNI2ELineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
-            if (point.Y == maxVal)
-            {
-                return $"UNNI-2 EXTENDED";
-            }
-            return "";
-
-
-        };
-        ChannelAllocationSeries5GHz.Add(UNNI2ELineSeries);
-
-        var UNNI3StartFrequency = channelFrequencies5GHz[144].End;
-        var UNNI3EndFrequency = channelFrequencies5GHz[165].End;
-        var UNNI3gapYValue = -10; 
-
-        var UNNI3LineSeries = new LineSeries
-        {
-            //Title = "UNNI1",
-            //ToolTip = false,
-            LineSmoothness = 0,
-            Values = new ChartValues<ObservablePoint>
-                    {
-                       new ObservablePoint(UNNI3StartFrequency, -100),
-                        new ObservablePoint(UNNI3StartFrequency, UNNI3gapYValue), 
-                        new ObservablePoint(UNNI3EndFrequency, UNNI3gapYValue), 
-                        new ObservablePoint(UNNI3EndFrequency, -100)
-                    },
-            PointGeometrySize = 0,
-            StrokeThickness = 2,
-            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-            Stroke = new SolidColorBrush(Color.FromRgb(194, 3, 252)),
-            Fill = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 1),
-                EndPoint = new Point(0, 0),
-                GradientStops = new GradientStopCollection
-                        {
-                            new GradientStop(Color.FromRgb(194, 3, 252), 1),       
-                            new GradientStop(Color.FromArgb(60,194, 3, 252), 0)        
-                        }
-            },
-            DataLabels = true,
-
-        };
-        UNNI3LineSeries.LabelPoint = point =>
-        {
-            var maxVal = (UNNI3LineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
-            if (point.Y == maxVal)
-            {
-                return $"UNNI-3";
-            }
-            return "";
-
-
-        };
-        ChannelAllocationSeries5GHz.Add(UNNI3LineSeries);
+        
     }
     private Dictionary<int, List<(double rssi, string ssid)>> ChannelAllocationProcessData24GHz(List<SSIDInfoForCHAllocation24GHz> data)
     {
@@ -690,7 +469,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return channelData;
     }
-
     private void UpdateChannelAllocationChart24GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
 
@@ -802,6 +580,240 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         }
 
         return (ssidInfoList24Ghz, ssidInfoList5Ghz);
+    }
+    private void updateBaseVisualsFor5GHzChart()
+    {
+        var gapStartFrequency = channelFrequencies5GHz[64].End;      
+        var gapEndFrequency = channelFrequencies5GHz[100].Start;
+        int gapMiddleFrequency = (gapStartFrequency + gapEndFrequency) / 2;
+        var gapYValue = -10;
+
+        var gapLineSeries = new LineSeries
+        {
+
+            LineSmoothness = 0,
+            Values = new ChartValues<ObservablePoint>
+                    {
+                       new ObservablePoint(gapStartFrequency, -100),
+                        new ObservablePoint(gapStartFrequency, gapYValue),
+                        new ObservablePoint(gapMiddleFrequency, gapYValue + 1),
+                        new ObservablePoint(gapEndFrequency, gapYValue),
+                        new ObservablePoint(gapEndFrequency, -100)
+                    },
+            PointGeometrySize = 0,
+            StrokeThickness = 2,
+            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+            Stroke = new SolidColorBrush(Color.FromRgb(255, 0, 42)),
+            Fill = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                        {
+                            new GradientStop(Color.FromRgb(239, 57, 69), 1),
+                           new GradientStop(Color.FromArgb(60,239, 57, 69), 0.5),
+                            new GradientStop(Color.FromArgb(0,239, 57, 69), 0)
+                        }
+            },
+            DataLabels = true,
+
+        };
+        gapLineSeries.LabelPoint = point =>
+        {
+            var maxVal = (gapLineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
+            if (point.Y == maxVal)
+            {
+                return $"RADAR BAND [NOT IN-USE FOR WIFI]";
+            }
+            return "";
+        };
+        ChannelAllocationSeries5GHz.Add(gapLineSeries);
+
+        var UNNI1StartFrequency = channelFrequencies5GHz[36].Start;
+        var UNNI1EndFrequency = channelFrequencies5GHz[52].Start;
+        int UNNI1MidFrequency = (UNNI1StartFrequency + UNNI1EndFrequency) / 2;
+        var UNNI1gapYValue = -10;
+
+        var UNNI1LineSeries = new LineSeries
+        {
+            LineSmoothness = 0,
+            Values = new ChartValues<ObservablePoint>
+                    {
+                       new ObservablePoint(UNNI1StartFrequency, -100),
+                        new ObservablePoint(UNNI1StartFrequency, UNNI1gapYValue),
+                        new ObservablePoint(UNNI1MidFrequency, UNNI1gapYValue + 1),
+                        new ObservablePoint(UNNI1EndFrequency, UNNI1gapYValue),
+                        new ObservablePoint(UNNI1EndFrequency, -100)
+                    },
+            PointGeometrySize = 0,
+            StrokeThickness = 2,
+            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+            Stroke = new SolidColorBrush(Color.FromRgb(255, 224, 0)),
+            Fill = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                        {
+                            new GradientStop(Color.FromRgb(255,224,0), 1),
+                            new GradientStop(Color.FromArgb(60,255,224,0), 0.5),
+                            new GradientStop(Color.FromArgb(0,255,224,0), 0)
+                        }
+            },
+            DataLabels = true,
+
+        };
+        UNNI1LineSeries.LabelPoint = point =>
+        {
+            var maxVal = (UNNI1LineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
+            if (point.Y == maxVal)
+            {
+                return $"UNNI-1";
+            }
+            return "";
+        };
+        ChannelAllocationSeries5GHz.Add(UNNI1LineSeries);
+        var UNNI2StartFrequency = channelFrequencies5GHz[48].End;
+        var UNNI2EndFrequency = channelFrequencies5GHz[64].End;
+        int UNNI2MidFrequency = (UNNI2StartFrequency + UNNI2EndFrequency) / 2;
+        var UNNI2gapYValue = -10;
+
+        var UNNI2LineSeries = new LineSeries
+        {
+
+            LineSmoothness = 0,
+            Values = new ChartValues<ObservablePoint>
+                    {
+                       new ObservablePoint(UNNI2StartFrequency, -100),
+                        new ObservablePoint(UNNI2StartFrequency, UNNI2gapYValue),
+                        new ObservablePoint(UNNI2MidFrequency, UNNI2gapYValue + 1),
+                        new ObservablePoint(UNNI2EndFrequency, UNNI2gapYValue),
+                        new ObservablePoint(UNNI2EndFrequency, -100)
+                    },
+            PointGeometrySize = 0,
+            StrokeThickness = 2,
+            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+            Stroke = new SolidColorBrush(Color.FromRgb(255, 156, 0)),
+            Fill = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                        {
+                            new GradientStop(Color.FromRgb(255,156,0), 1),
+                            new GradientStop(Color.FromArgb(60,255,156,0), 0.5),
+                            new GradientStop(Color.FromArgb(0,255,156,0), 0)
+                        }
+            },
+            DataLabels = true,
+
+        };
+        UNNI2LineSeries.LabelPoint = point =>
+        {
+            var maxVal = (UNNI2LineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
+            if (point.Y == maxVal)
+            {
+                return $"UNNI-2";
+            }
+            return "";
+
+
+        };
+        ChannelAllocationSeries5GHz.Add(UNNI2LineSeries);
+
+        var UNNI2EStartFrequency = channelFrequencies5GHz[100].Start;
+        var UNNI2EEndFrequency = channelFrequencies5GHz[144].End;
+        int UNNI2EMidFrequency = (UNNI2EStartFrequency + UNNI2EEndFrequency) / 2;
+        var UNNI2EgapYValue = -10;
+
+        var UNNI2ELineSeries = new LineSeries
+        {
+            LineSmoothness = 0,
+            Values = new ChartValues<ObservablePoint>
+                    {
+                       new ObservablePoint(UNNI2EStartFrequency, -100),
+                        new ObservablePoint(UNNI2EStartFrequency, UNNI2EgapYValue),
+                        new ObservablePoint(UNNI2EMidFrequency, UNNI2EgapYValue + 1),
+                        new ObservablePoint(UNNI2EEndFrequency, UNNI2EgapYValue),
+                        new ObservablePoint(UNNI2EEndFrequency, -100)
+                    },
+            PointGeometrySize = 0,
+            StrokeThickness = 2,
+            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+            Stroke = new SolidColorBrush(Color.FromRgb(22, 141, 255)),
+            Fill = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                        {
+                            new GradientStop(Color.FromRgb(22,141,255), 1),
+                            new GradientStop(Color.FromArgb(60,22,141,255), 0.5),
+                            new GradientStop(Color.FromArgb(0,22,141,255), 0)
+                        }
+            },
+            DataLabels = true,
+
+        };
+        UNNI2ELineSeries.LabelPoint = point =>
+        {
+            var maxVal = (UNNI2ELineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
+            if (point.Y == maxVal)
+            {
+                return $"UNNI-2 EXTENDED";
+            }
+            return "";
+
+
+        };
+        ChannelAllocationSeries5GHz.Add(UNNI2ELineSeries);
+
+        var UNNI3StartFrequency = channelFrequencies5GHz[144].End;
+        var UNNI3EndFrequency = channelFrequencies5GHz[165].End;
+        int UNNI3MidFrequency = (UNNI3StartFrequency + UNNI3EndFrequency) / 2;
+        var UNNI3gapYValue = -10;
+
+        var UNNI3LineSeries = new LineSeries
+        {
+            LineSmoothness = 0,
+            Values = new ChartValues<ObservablePoint>
+                    {
+                       new ObservablePoint(UNNI3StartFrequency, -100),
+                        new ObservablePoint(UNNI3StartFrequency, UNNI3gapYValue),
+                        new ObservablePoint(UNNI3MidFrequency, UNNI3gapYValue + 1),
+                        new ObservablePoint(UNNI3EndFrequency, UNNI3gapYValue),
+                        new ObservablePoint(UNNI3EndFrequency, -100)
+                    },
+            PointGeometrySize = 0,
+            StrokeThickness = 2,
+            Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+            Stroke = new SolidColorBrush(Color.FromRgb(194, 3, 252)),
+            Fill = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+                        {
+                            new GradientStop(Color.FromRgb(194, 3, 252), 1),
+                            new GradientStop(Color.FromArgb(60,194, 3, 252), 0.5),
+                            new GradientStop(Color.FromArgb(0,194, 3, 252), 0)
+                        }
+            },
+            DataLabels = true,
+
+        };
+        UNNI3LineSeries.LabelPoint = point =>
+        {
+            var maxVal = (UNNI3LineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
+            if (point.Y == maxVal)
+            {
+                return $"UNNI-3";
+            }
+            return "";
+
+
+        };
+        ChannelAllocationSeries5GHz.Add(UNNI3LineSeries);
     }
     #endregion
 
