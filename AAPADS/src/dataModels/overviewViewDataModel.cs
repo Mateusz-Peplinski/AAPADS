@@ -136,7 +136,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         AccessPoints = new ObservableCollection<dataModelStructure>();
 
         createFrequencySeriesCollection();
-
+        updateBaseVisualsFor5GHzChart();
 
     }
     public void createFrequencySeriesCollection()
@@ -377,6 +377,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     {161, (5795, 5805, 5815)},
                     {165, (5815, 5825, 5835)}
                 };
+    private HashSet<LineSeries> lineSeriesHashSet = new HashSet<LineSeries>();
     private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
 
@@ -386,9 +387,11 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             return;
         }
 
-        ChannelAllocationSeries5GHz.Clear();
-
-        updateBaseVisualsFor5GHzChart();
+        foreach (var series in lineSeriesHashSet)
+        {
+            ChannelAllocationSeries5GHz.Remove(series);
+        }
+        lineSeriesHashSet.Clear();
 
         foreach (var entry in data)
         {
@@ -446,6 +449,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 };
 
                 ChannelAllocationSeries5GHz.Add(lineSeries);
+                lineSeriesHashSet.Add(lineSeries);
 
             }
         }
