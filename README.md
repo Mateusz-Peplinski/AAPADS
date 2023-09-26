@@ -58,5 +58,5 @@ Will be released with the first official program release
 ## 📜 License
 TBA 
 <p align="center">
-  <img src="AAPADS/res/graphics/animated.gif" width="800">
+  <img src="AAPADS/res/graphics/Loading_Loop.gif" width="800">
 </p>
