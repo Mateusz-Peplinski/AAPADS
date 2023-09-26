@@ -160,8 +160,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                         {
 
                         new GradientStop(Color.FromRgb(239, 57, 69), 1),
-                        new GradientStop(Color.FromArgb(0,239, 57, 69), 0.3),
-                        new GradientStop(Color.FromArgb(0,255, 255, 255), 0)
+                        new GradientStop(Color.FromArgb(50,239, 57, 69), 0.3),
+                        new GradientStop(Color.FromArgb(5,255, 255, 255), 0.1)
                         }
                 }
             },
@@ -182,8 +182,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                         {
 
                         new GradientStop(Color.FromRgb(19, 120, 216), 1),       // blue-bright
-                        new GradientStop(Color.FromArgb(0, 19, 120, 216), 0.3),       // blue-bright
-                        new GradientStop(Color.FromArgb(0,255, 255, 255), 0)        // blue 
+                        new GradientStop(Color.FromArgb(50, 19, 120, 216), 0.3),       // blue-bright
+                        new GradientStop(Color.FromArgb(5,255, 255, 255), 0.1)        // blue 
                         }
                 }
             }
@@ -594,7 +594,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         var gapLineSeries = new LineSeries
         {
-
+            ToolTip = "RADAR BAND [NOT IN-USE FOR WIFI]",
             LineSmoothness = 0,
             Values = new ChartValues<ObservablePoint>
                     {
@@ -640,6 +640,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         var UNNI1LineSeries = new LineSeries
         {
+            ToolTip = "UNNI-1",
             LineSmoothness = 0,
             Values = new ChartValues<ObservablePoint>
                     {
@@ -684,7 +685,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         var UNNI2LineSeries = new LineSeries
         {
-
+            ToolTip = "UNNI-2",
             LineSmoothness = 0,
             Values = new ChartValues<ObservablePoint>
                     {
@@ -732,6 +733,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         var UNNI2ELineSeries = new LineSeries
         {
+            ToolTip = "UNNI-2 EXTENDED",
             LineSmoothness = 0,
             Values = new ChartValues<ObservablePoint>
                     {
@@ -779,6 +781,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         var UNNI3LineSeries = new LineSeries
         {
+            ToolTip = "UNNI-3",
             LineSmoothness = 0,
             Values = new ChartValues<ObservablePoint>
                     {
