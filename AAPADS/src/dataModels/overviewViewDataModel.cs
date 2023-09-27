@@ -617,8 +617,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 EndPoint = new Point(0, 0),
                 GradientStops = new GradientStopCollection
                         {
-                            new GradientStop(Color.FromRgb(239, 57, 69), 1),
-                           new GradientStop(Color.FromArgb(60,239, 57, 69), 0.5),
+                            new GradientStop(Color.FromArgb(60,239, 57, 69), 1),
+                           new GradientStop(Color.FromArgb(30,239, 57, 69), 0.5),
                             new GradientStop(Color.FromArgb(0,239, 57, 69), 0)
                         }
             },
@@ -663,8 +663,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 EndPoint = new Point(0, 0),
                 GradientStops = new GradientStopCollection
                         {
-                            new GradientStop(Color.FromRgb(255,224,0), 1),
-                            new GradientStop(Color.FromArgb(60,255,224,0), 0.5),
+                            new GradientStop(Color.FromArgb(60,255,224,0), 1),
+                            new GradientStop(Color.FromArgb(30,255,224,0), 0.5),
                             new GradientStop(Color.FromArgb(0,255,224,0), 0)
                         }
             },
@@ -708,8 +708,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 EndPoint = new Point(0, 0),
                 GradientStops = new GradientStopCollection
                         {
-                            new GradientStop(Color.FromRgb(255,156,0), 1),
-                            new GradientStop(Color.FromArgb(60,255,156,0), 0.5),
+                            new GradientStop(Color.FromArgb(60, 255,156,0), 1),
+                            new GradientStop(Color.FromArgb(30,255,156,0), 0.5),
                             new GradientStop(Color.FromArgb(0,255,156,0), 0)
                         }
             },
@@ -756,8 +756,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 EndPoint = new Point(0, 0),
                 GradientStops = new GradientStopCollection
                         {
-                            new GradientStop(Color.FromRgb(22,141,255), 1),
-                            new GradientStop(Color.FromArgb(60,22,141,255), 0.5),
+                            new GradientStop(Color.FromArgb(60,22,141,255), 1),
+                            new GradientStop(Color.FromArgb(30,22,141,255), 0.5),
                             new GradientStop(Color.FromArgb(0,22,141,255), 0)
                         }
             },
@@ -804,8 +804,8 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 EndPoint = new Point(0, 0),
                 GradientStops = new GradientStopCollection
                         {
-                            new GradientStop(Color.FromRgb(194, 3, 252), 1),
-                            new GradientStop(Color.FromArgb(60,194, 3, 252), 0.5),
+                            new GradientStop(Color.FromArgb(60,194, 3, 252), 1),
+                            new GradientStop(Color.FromArgb(30,194, 3, 252), 0.5),
                             new GradientStop(Color.FromArgb(0,194, 3, 252), 0)
                         }
             },
