@@ -133,7 +133,7 @@
                             Margin="30,30,30,30"
                             Canvas.ZIndex="0">
                             <!--  Access Points  -->
-                            <ItemsControl Canvas.ZIndex="1" ItemsSource="{Binding AccessPoints}">
+                            <ItemsControl Canvas.ZIndex="1" ItemsSource="{Binding ACCESS_POINTS}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <Canvas />

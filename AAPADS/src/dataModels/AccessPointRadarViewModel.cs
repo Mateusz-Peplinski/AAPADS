@@ -33,12 +33,12 @@ namespace AAPADS
         private Dictionary<string, Ellipse> accessPoints = new Dictionary<string, Ellipse>();
         private Random rand = new Random();
 
-        public ObservableCollection<UIElement> AccessPoints { get; set; } = new ObservableCollection<UIElement>();
+        public ObservableCollection<UIElement> ACCESS_POINTS { get; set; } = new ObservableCollection<UIElement>();
 
         public void AddAccessPoint(string accessPointId, int RSSI)
         {
-            double normalizedRSSI = 1 - (RSSI + 100) / 100.0; // This will give 1 for -100 and 0 for 0
-            double r = normalizedRSSI * 200;
+            double normalizedRSSI = RSSI; 
+            double r = normalizedRSSI;
 
             double theta = rand.NextDouble() * 2 * Math.PI;
             double x = 200 + r * Math.Cos(theta);
@@ -64,10 +64,10 @@ namespace AAPADS
             };
             
             Canvas.SetLeft(ellipse, x - 2.5); // Adjusting for ellipse size
-            Canvas.SetTop(ellipse, y - 2.5);  // Adjusting for ellipse size
-            Canvas.SetZIndex(ellipse, 1);     // Ensure the ellipse is on top
+            Canvas.SetTop(ellipse, y - 2.5);  
+            //Canvas.SetZIndex(ellipse, 1);     // ellipse is on top
 
-            AccessPoints.Add(ellipse);
+            ACCESS_POINTS.Add(ellipse);
         }
 
 
@@ -75,7 +75,7 @@ namespace AAPADS
         {
             // Assuming you have a way to identify which ellipse corresponds to which access point
             // For this example, I'm just removing the first ellipse
-            AccessPoints.Clear();
+            ACCESS_POINTS.Clear();
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -100,8 +100,8 @@ namespace AAPADS
                     AddAccessPoint(ssidListCopy[i], (dataIngestEngine.SIGNAL_STRENGTH_LIST[i] / 2) - 100);
                 }
 
-                RemoveAccessPoint();
-                await Task.Delay(1000); // Delay for 1 second or adjust as needed
+                await Task.Delay(5000); // Delay for 1 second or adjust as needed
+                //RemoveAccessPoint();
             }
         }
         public void StopRadarPopulation()
