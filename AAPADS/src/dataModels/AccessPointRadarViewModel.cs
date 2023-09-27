@@ -73,8 +73,6 @@ namespace AAPADS
 
         public void RemoveAccessPoint()
         {
-            // Assuming you have a way to identify which ellipse corresponds to which access point
-            // For this example, I'm just removing the first ellipse
             ACCESS_POINTS.Clear();
         }
 
@@ -101,7 +99,7 @@ namespace AAPADS
                 }
 
                 await Task.Delay(5000); // Delay for 1 second or adjust as needed
-                //RemoveAccessPoint();
+                RemoveAccessPoint();
             }
         }
         public void StopRadarPopulation()
