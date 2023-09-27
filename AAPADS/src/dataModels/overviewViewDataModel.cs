@@ -32,10 +32,12 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             Values = new ChartValues<int>()
         }
     };
+    private HashSet<LineSeries> lineSeriesHashSet = new HashSet<LineSeries>();
     public SeriesCollection ChannelAllocationSeries5GHz { get; set; } = new SeriesCollection();
     public SeriesCollection ChannelAllocationSeries24GHz { get; set; } = new SeriesCollection();
     public Func<double, string> YAxisFormatter { get; set; }
     public Func<double, string> DateTimeFormatter { get; set; }
+
     public event PropertyChangedEventHandler PropertyChanged;
     private int _totalDetectedAP;
     private int _totalSecureAP;
@@ -135,8 +137,9 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
 
-        createFrequencySeriesCollection();
-        updateBaseVisualsFor5GHzChart();
+        createFrequencySeriesCollection(); //Create the 2.4 v 5 GHz count chart
+
+        updateBaseVisualsFor5GHzChart(); //Update 5GHz chart visuals
 
     }
     public void createFrequencySeriesCollection()
@@ -377,7 +380,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     {161, (5795, 5805, 5815)},
                     {165, (5815, 5825, 5835)}
                 };
-    private HashSet<LineSeries> lineSeriesHashSet = new HashSet<LineSeries>();
+    
     private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
 

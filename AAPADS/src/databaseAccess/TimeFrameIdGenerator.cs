@@ -2,6 +2,14 @@
 
 public class TimeFrameIdGenerator
 {
+    // ###############################################################
+    // ####                         TASK                          ####
+    // ###############################################################
+    // Create a unique "timeFrameID" 
+    // EG: #A001 --> #A002 --> #A999 --> B001 --> Z999 --> AA001 --> AA002.....
+    // The goal with this timeFrameID is to group sets of data 
+
+
     private int number_ID;
     private string letter_ID;
 
