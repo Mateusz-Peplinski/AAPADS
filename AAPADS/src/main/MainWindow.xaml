@@ -8,6 +8,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:oxy="http://oxyplot.org/wpf"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="AAPADS - Advanced Access Point Anomaly Detection System"
     Width="1100"
     Height="800"
@@ -149,8 +150,12 @@
                                 <!--  SUMMARY  -->
 
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
+                            <Grid Grid.Row="0" Grid.Column="0">
                                 <Border
                                     Margin="5,5,5,0"
                                     Padding="2"
@@ -724,6 +729,69 @@
                                     </TabControl>
                                 </materialDesign:Card>
                             </StackPanel>
+                            <Expander
+                                x:Name="NotificationsExpander"
+                                Grid.RowSpan="3"
+                                Grid.Column="1"
+                                ExpandDirection="Left"
+                                Foreground="#d2d2d2">
+                                <Expander.Header>
+                                    <StackPanel VerticalAlignment="Top" Orientation="Vertical">
+                                        <materialDesign:PackIcon
+                                            Margin="0,0,0,10"
+                                            VerticalAlignment="Center"
+                                            Foreground="#d2d2d2"
+                                            Kind="Bell" />
+                                        <TextBlock Foreground="#d2d2d2" Text="Notifications">
+                                            <TextBlock.LayoutTransform>
+                                                <RotateTransform Angle="-90" />
+                                            </TextBlock.LayoutTransform>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Border
+                                    Margin="5"
+                                    Background="#424242"
+                                    BorderBrush="#424242"
+                                    CornerRadius="5">
+                                    <ListView>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border
+                                                    Padding="5"
+                                                    Background="#303030"
+                                                    BorderBrush="#303030"
+                                                    BorderThickness="1"
+                                                    CornerRadius="5">
+                                                    <StackPanel>
+                                                        <TextBlock Margin="5" Text="NEW DETECTION" />
+                                                        <Button
+                                                            Margin="5"
+                                                            HorizontalAlignment="Right"
+                                                            Background="#ef3945"
+                                                            Content="Delete"
+                                                            Foreground="White">
+                                                            <Button.ContentTemplate>
+                                                                <DataTemplate>
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Delete" />
+                                                                        <TextBlock VerticalAlignment="Center" Text="Delete" />
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </Button.ContentTemplate>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+
+                                        <!--  Hardcoded Item  -->
+                                        <sys:String>NOTIFICATION</sys:String>
+                                    </ListView>
+                                </Border>
+                            </Expander>
+
+
                         </Grid>
 
                     </TabItem>
@@ -1939,6 +2007,7 @@
                     </TabItem>
                 </TabControl>
             </materialDesign:Card>
+
         </Grid>
         <Expander
             x:Name="NetworkCardInfoExpander"
