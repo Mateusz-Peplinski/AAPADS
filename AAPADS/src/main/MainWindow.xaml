@@ -742,7 +742,7 @@
                                             VerticalAlignment="Center"
                                             Foreground="#d2d2d2"
                                             Kind="Bell" />
-                                        <TextBlock Foreground="#d2d2d2" Text="Notifications">
+                                        <TextBlock Foreground="#d2d2d2" Text="NOTIFICATIONS">
                                             <TextBlock.LayoutTransform>
                                                 <RotateTransform Angle="-90" />
                                             </TextBlock.LayoutTransform>
@@ -764,10 +764,10 @@
                                                     BorderThickness="1"
                                                     CornerRadius="5">
                                                     <StackPanel>
-                                                        <TextBlock Margin="5" Text="NEW DETECTION" />
+                                                        <TextBlock Margin="5" Text="NEW HIGH DETECTION" />
                                                         <Button
                                                             Margin="5"
-                                                            HorizontalAlignment="Right"
+                                                            HorizontalAlignment="Center"
                                                             Background="#ef3945"
                                                             Content="Delete"
                                                             Foreground="White">
@@ -785,7 +785,7 @@
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
 
-                                        <!--  Hardcoded Item  -->
+                                        <!--  Hardcoded  -->
                                         <sys:String>NOTIFICATION</sys:String>
                                     </ListView>
                                 </Border>
@@ -1760,6 +1760,20 @@
                             </Grid>
                         </Grid>
                     </TabItem>
+                    <TabItem Name="frameInspectorTab">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Margin="0,0,5,0"
+                                    Foreground="#ef3945"
+                                    Kind="SineWave" />
+                                <TextBlock HorizontalAlignment="Right" Text="802.11 FRAME INSPECTOR" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid>
+                            <DataGrid />
+                        </Grid>
+                    </TabItem>
                     <TabItem Name="DetectionSetupTab">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -2016,7 +2030,8 @@
             Panel.ZIndex="1"
             Background="#424242"
             ExpandDirection="Up"
-            Foreground="#d2d2d2">
+            Foreground="#d2d2d2"
+            IsExpanded="{Binding IsExpanderExpanded, Mode=TwoWay}">
             <Expander.Header>
                 <StackPanel Orientation="Horizontal">
                     <!--  Status Box  -->
@@ -2040,15 +2055,22 @@
             </Expander.Header>
 
             <Border
-                Height="60"
+                Height="150"
                 Margin="2"
                 Background="#303030"
                 BorderBrush="#424242"
                 CornerRadius="5">
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="{Binding NETWORK_CARD_NAME}" />
+                <liveCharts:CartesianChart
+                    Height="150"
+                    LegendLocation="Right"
+                    Series="{Binding SeriesCollectionWLAN}">
+                    <liveCharts:CartesianChart.AxisY>
+                        <liveCharts:Axis Title="Bytes/sec" />
+                    </liveCharts:CartesianChart.AxisY>
+                    <liveCharts:CartesianChart.AxisX>
+                        <liveCharts:Axis Title="Seconds" />
+                    </liveCharts:CartesianChart.AxisX>
+                </liveCharts:CartesianChart>
             </Border>
         </Expander>
 
