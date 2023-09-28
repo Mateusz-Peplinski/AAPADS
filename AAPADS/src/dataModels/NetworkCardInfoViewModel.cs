@@ -1,10 +1,15 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -70,6 +75,11 @@ namespace AAPADS
         private ulong _DecryptSuccessCount;
         private ulong _DecryptFailureCount;
         private CancellationTokenSource _cts;
+
+
+        private PerformanceCounter _sendCounter;
+        private PerformanceCounter _receiveCounter;
+        public SeriesCollection SeriesCollectionWLAN { get; set; }
 
         public string NETWORK_CARD_NAME
         {
@@ -198,22 +208,140 @@ namespace AAPADS
             }
         }
 
+        private bool _isExpanderExpanded;
+        public bool IsExpanderExpanded
+        {
+            get { return _isExpanderExpanded; }
+            set
+            {
+                _isExpanderExpanded = value;
+                OnPropertyChanged(nameof(IsExpanderExpanded));
+            }
+        }
         public NetworkCardInfoViewModel()
         {
+            SeriesCollectionWLAN = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "SENT",
+                    Values = new ChartValues<double>(),
+                    LineSmoothness = 0
+                },
+                new LineSeries
+                {
+                    Title = "RECIVE",
+                    Values = new ChartValues<double>(),
+                    LineSmoothness = 0
+                }
+            };
+            
+
+
             _cts = new CancellationTokenSource();
             StartDataUpdateLoop(_cts.Token);
         }
+        //private async void StartDataUpdateLoop(CancellationToken token)
+        //{
+        //    while (!token.IsCancellationRequested)
+        //    {
+        //        if (IsExpanderExpanded)
+        //        {
+        //            // Update the series every second if the expander is expanded
+        //            UpdateSeries();
+        //            await Task.Delay(TimeSpan.FromSeconds(1), token);
+        //        }
+        //        else
+        //        {
+        //            // If the expander is not expanded, wait for 5 seconds before the next iteration
+        //            await Task.Delay(TimeSpan.FromSeconds(5), token);
+        //        }
+        //    }
+        //}
         private async void StartDataUpdateLoop(CancellationToken token)
         {
+            int counter = 0;
             while (!token.IsCancellationRequested)
             {
-                await UpdateDataAsync();
+                if (counter % 5 == 0) // Every 5 seconds
+                {
+                    await UpdateDataAsync();
+                }
 
-                // Wait for 5 seconds before the next iteration
-                await Task.Delay(TimeSpan.FromSeconds(5), token);
+                if (IsExpanderExpanded) // Every second if expanded
+                {
+                    UpdateSeries();
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(1), token);
+                counter = (counter + 1) % 5; // Reset counter every 5 seconds to avoid overflow
             }
         }
 
+
+        private void UpdateSeries()
+        {
+            NetworkInterface activeWifiInterface = null;
+
+            foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (nic.OperationalStatus == OperationalStatus.Up && nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
+                {
+                    activeWifiInterface = nic;
+                    break;
+                }
+            }
+            if (activeWifiInterface.OperationalStatus != OperationalStatus.Up)
+            {
+                Console.WriteLine("Network adapter is turned off. Cannot update series.");
+                return;
+            }
+            if (activeWifiInterface != null)
+            {
+                try
+                {
+                    // You may need to manually verify the correct property (e.g., Description, Name) to use as the instance name
+                    string instanceName = Regex.Replace(activeWifiInterface.Description, @"\(([^)]+)\)", "[$1]");
+                    _sendCounter = new PerformanceCounter("Network Interface", "Bytes Sent/sec", instanceName);
+                    _receiveCounter = new PerformanceCounter("Network Interface", "Bytes Received/sec", instanceName);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error initializing performance counters: {ex.Message}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("No active wireless adapter found.");
+            }
+
+            
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    if (_sendCounter != null && _receiveCounter != null && SeriesCollectionWLAN != null && SeriesCollectionWLAN.Count >= 2)
+                    {
+                        var sendValue = Convert.ToDouble(_sendCounter.NextValue());
+                        var receiveValue = Convert.ToDouble(_receiveCounter.NextValue());
+
+                        SeriesCollectionWLAN[0].Values.Add(sendValue);
+                        SeriesCollectionWLAN[1].Values.Add(receiveValue);
+
+                        // Optionally: Remove old data points to avoid memory issues
+                        if (SeriesCollectionWLAN[0].Values.Count > 100)
+                        {
+                            SeriesCollectionWLAN[0].Values.RemoveAt(0);
+                            SeriesCollectionWLAN[1].Values.RemoveAt(0);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error updating series collection: {ex.Message}");
+                }
+            });
+        }
         public async Task UpdateDataAsync()
         {
             try
@@ -233,14 +361,15 @@ namespace AAPADS
                 WEP_ICV_ERROR_COUNT = stats.WEPICVErrorCount;
                 DECRYPT_SUCCESS_COUNT = stats.DecryptSuccessCount;
                 DECRYPT_FAILURE_COUNT = stats.DecryptFailureCount;
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}");
             }
         }
+    
 
-       
         private async Task<NativeMethods.MyWLANStats> GetWlanStatsAsync()
         {
             return await Task.Run(() =>
