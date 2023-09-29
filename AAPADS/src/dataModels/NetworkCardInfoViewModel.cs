@@ -74,11 +74,11 @@ namespace AAPADS
         private ulong _WEPICVErrorCount;
         private ulong _DecryptSuccessCount;
         private ulong _DecryptFailureCount;
+        private bool _isExpanderExpanded;
         private CancellationTokenSource _cts;
-
-
         private PerformanceCounter _sendCounter;
         private PerformanceCounter _receiveCounter;
+
         public SeriesCollection SeriesCollectionWLAN { get; set; }
 
         public string NETWORK_CARD_NAME
@@ -208,7 +208,7 @@ namespace AAPADS
             }
         }
 
-        private bool _isExpanderExpanded;
+        
         public bool IsExpanderExpanded
         {
             get { return _isExpanderExpanded; }
@@ -241,36 +241,23 @@ namespace AAPADS
             _cts = new CancellationTokenSource();
             StartDataUpdateLoop(_cts.Token);
         }
-        //private async void StartDataUpdateLoop(CancellationToken token)
-        //{
-        //    while (!token.IsCancellationRequested)
-        //    {
-        //        if (IsExpanderExpanded)
-        //        {
-        //            // Update the series every second if the expander is expanded
-        //            UpdateSeries();
-        //            await Task.Delay(TimeSpan.FromSeconds(1), token);
-        //        }
-        //        else
-        //        {
-        //            // If the expander is not expanded, wait for 5 seconds before the next iteration
-        //            await Task.Delay(TimeSpan.FromSeconds(5), token);
-        //        }
-        //    }
-        //}
         private async void StartDataUpdateLoop(CancellationToken token)
         {
             int counter = 0;
             while (!token.IsCancellationRequested)
             {
                 if (counter % 5 == 0) // Every 5 seconds
-                {
+                {  
                     await UpdateDataAsync();
                 }
 
                 if (IsExpanderExpanded) // Every second if expanded
                 {
-                    UpdateSeries();
+                    if (ADAPTER_STATUS == "ACTIVE")
+                    {
+                        UpdateSeries();
+                    }
+                    
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(1), token);
@@ -291,36 +278,37 @@ namespace AAPADS
                     break;
                 }
             }
-            if (activeWifiInterface.OperationalStatus != OperationalStatus.Up)
+            if (activeWifiInterface == null || activeWifiInterface.OperationalStatus != OperationalStatus.Up)
             {
-                Console.WriteLine("Network adapter is turned off. Cannot update series.");
+                Console.WriteLine("Network adapter is turned off or not available. Cannot update series.");
                 return;
             }
-            if (activeWifiInterface != null)
+
+            try
             {
-                try
+                // Initialize the counters here if they are null or if they were disposed of due to a previous error.
+                if (_sendCounter == null || _receiveCounter == null)
                 {
-                    // You may need to manually verify the correct property (e.g., Description, Name) to use as the instance name
                     string instanceName = Regex.Replace(activeWifiInterface.Description, @"\(([^)]+)\)", "[$1]");
                     _sendCounter = new PerformanceCounter("Network Interface", "Bytes Sent/sec", instanceName);
                     _receiveCounter = new PerformanceCounter("Network Interface", "Bytes Received/sec", instanceName);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error initializing performance counters: {ex.Message}");
-                }
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("No active wireless adapter found.");
+                Console.WriteLine($"Error initializing performance counters: {ex.Message}");
+                // Optionally dispose of the counters so they can be reinitialized later.
+                _sendCounter?.Dispose();
+                _receiveCounter?.Dispose();
+                _sendCounter = _receiveCounter = null;
+                return;
             }
 
-            
             Application.Current.Dispatcher.Invoke(() =>
             {
                 try
                 {
-                    if (_sendCounter != null && _receiveCounter != null && SeriesCollectionWLAN != null && SeriesCollectionWLAN.Count >= 2)
+                    if (SeriesCollectionWLAN != null && SeriesCollectionWLAN.Count >= 2 && ADAPTER_STATUS == "ACTIVE")
                     {
                         var sendValue = Convert.ToDouble(_sendCounter.NextValue());
                         var receiveValue = Convert.ToDouble(_receiveCounter.NextValue());
@@ -328,7 +316,6 @@ namespace AAPADS
                         SeriesCollectionWLAN[0].Values.Add(sendValue);
                         SeriesCollectionWLAN[1].Values.Add(receiveValue);
 
-                        // Optionally: Remove old data points to avoid memory issues
                         if (SeriesCollectionWLAN[0].Values.Count > 100)
                         {
                             SeriesCollectionWLAN[0].Values.RemoveAt(0);
