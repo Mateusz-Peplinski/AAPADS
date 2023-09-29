@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace AAPADS
@@ -225,14 +226,22 @@ namespace AAPADS
                 new LineSeries
                 {
                     Title = "SENT",
+                    Stroke = new SolidColorBrush(Color.FromRgb(239, 57, 69)),
                     Values = new ChartValues<double>(),
-                    LineSmoothness = 0
+                    LineSmoothness = 0,
+                    PointGeometrySize = 0,
+                    PointForeground =  new SolidColorBrush(Color.FromRgb(239, 57, 69)),
+                    Fill = Brushes.Transparent
                 },
                 new LineSeries
                 {
                     Title = "RECIVE",
+                    Stroke = new SolidColorBrush(Color.FromRgb(22, 141, 255)),
                     Values = new ChartValues<double>(),
-                    LineSmoothness = 0
+                    LineSmoothness = 0,
+                    PointGeometrySize = 0,
+                    PointForeground =  new SolidColorBrush(Color.FromRgb(22, 141, 255)),
+                    Fill = Brushes.Transparent
                 }
             };
             
@@ -286,7 +295,6 @@ namespace AAPADS
 
             try
             {
-                // Initialize the counters here if they are null or if they were disposed of due to a previous error.
                 if (_sendCounter == null || _receiveCounter == null)
                 {
                     string instanceName = Regex.Replace(activeWifiInterface.Description, @"\(([^)]+)\)", "[$1]");
@@ -297,7 +305,6 @@ namespace AAPADS
             catch (Exception ex)
             {
                 Console.WriteLine($"Error initializing performance counters: {ex.Message}");
-                // Optionally dispose of the counters so they can be reinitialized later.
                 _sendCounter?.Dispose();
                 _receiveCounter?.Dispose();
                 _sendCounter = _receiveCounter = null;

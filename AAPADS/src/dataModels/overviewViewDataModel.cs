@@ -380,7 +380,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     {161, (5795, 5805, 5815)},
                     {165, (5815, 5825, 5835)}
                 };
-    
     private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
 
