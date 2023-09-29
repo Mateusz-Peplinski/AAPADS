@@ -141,60 +141,10 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         updateBaseVisualsFor5GHzChart(); //Update 5GHz chart visuals
 
+        CreatePreStyledLineSeries();
+
     }
-    public void createFrequencySeriesCollection()
-    {
-        FrequencySeriesCollection = new SeriesCollection
-        {
-
-            new LineSeries
-            {
-                Title = "2.4GHz",
-                Values = new ChartValues<int>(),
-                PointGeometrySize = 10,
-                Stroke = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
-                PointForeground = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
-                StrokeThickness = 2,
-                Fill = new LinearGradientBrush
-                {
-                        StartPoint = new Point(0, 1),
-                        EndPoint = new Point(0, 0),
-                        GradientStops = new GradientStopCollection
-                        {
-
-                        new GradientStop(Color.FromRgb(239, 57, 69), 1),
-                        new GradientStop(Color.FromArgb(50,239, 57, 69), 0.3),
-                        new GradientStop(Color.FromArgb(5,255, 255, 255), 0.1)
-                        }
-                }
-            },
-
-            new LineSeries
-            {
-                Title = "5GHz",
-                Values = new ChartValues<int>(),
-                PointGeometrySize = 10,
-                Stroke = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
-                PointForeground = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
-                StrokeThickness = 2,
-                Fill = new LinearGradientBrush
-                {
-                        StartPoint = new Point(0, 1),
-                        EndPoint = new Point(0, 0),
-                        GradientStops = new GradientStopCollection
-                        {
-
-                        new GradientStop(Color.FromRgb(19, 120, 216), 1),       // blue-bright
-                        new GradientStop(Color.FromArgb(50, 19, 120, 216), 0.3),       // blue-bright
-                        new GradientStop(Color.FromArgb(5,255, 255, 255), 0.1)        // blue 
-                        }
-                }
-            }
-
-        };
-        YAxisFormatter = value => value.ToString("N0");
-        DateTimeFormatter = value => DateTime.Now.ToString("hh:mm:ss");
-    }
+    
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -297,6 +247,34 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     //#####                            GRAPHS BELOW                                 #######            
     //#####################################################################################
     #region
+    private readonly SolidColorBrush strokeBrush = new SolidColorBrush(Color.FromRgb(66, 255, 192));
+    private readonly SolidColorBrush foregroundBrush = new SolidColorBrush(Color.FromRgb(210, 210, 210));
+    private readonly LinearGradientBrush fillBrush = new LinearGradientBrush
+    {
+        StartPoint = new Point(0, 1),
+        EndPoint = new Point(0, 0),
+        GradientStops = new GradientStopCollection
+    {
+        new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+        new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)   // Green 
+    }
+    };
+
+    private LineSeries CreatePreStyledLineSeries()
+    {
+        var lineSeries = new LineSeries
+        {
+            PointGeometrySize = 10,
+            StrokeThickness = 2,
+            Stroke = strokeBrush,
+            Foreground = foregroundBrush,
+            Fill = fillBrush,
+            DataLabels = true,
+            Values = new ChartValues<ObservablePoint>()
+        };
+        return lineSeries;
+    }
+
     public void RunOnUIThread(Action action)
     {
         if (Application.Current.Dispatcher.CheckAccess())
@@ -307,6 +285,59 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         {
             Application.Current.Dispatcher.Invoke(action);
         }
+    }
+    public void createFrequencySeriesCollection()
+    {
+        FrequencySeriesCollection = new SeriesCollection
+        {
+
+            new LineSeries
+            {
+                Title = "2.4GHz",
+                Values = new ChartValues<int>(),
+                PointGeometrySize = 10,
+                Stroke = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
+                PointForeground = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
+                StrokeThickness = 2,
+                Fill = new LinearGradientBrush
+                {
+                        StartPoint = new Point(0, 1),
+                        EndPoint = new Point(0, 0),
+                        GradientStops = new GradientStopCollection
+                        {
+
+                        new GradientStop(Color.FromRgb(239, 57, 69), 1),
+                        new GradientStop(Color.FromArgb(50,239, 57, 69), 0.3),
+                        new GradientStop(Color.FromArgb(5,255, 255, 255), 0.1)
+                        }
+                }
+            },
+
+            new LineSeries
+            {
+                Title = "5GHz",
+                Values = new ChartValues<int>(),
+                PointGeometrySize = 10,
+                Stroke = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
+                PointForeground = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
+                StrokeThickness = 2,
+                Fill = new LinearGradientBrush
+                {
+                        StartPoint = new Point(0, 1),
+                        EndPoint = new Point(0, 0),
+                        GradientStops = new GradientStopCollection
+                        {
+
+                        new GradientStop(Color.FromRgb(19, 120, 216), 1),       // blue-bright
+                        new GradientStop(Color.FromArgb(50, 19, 120, 216), 0.3),       // blue-bright
+                        new GradientStop(Color.FromArgb(5,255, 255, 255), 0.1)        // blue 
+                        }
+                }
+            }
+
+        };
+        YAxisFormatter = value => value.ToString("N0");
+        DateTimeFormatter = value => DateTime.Now.ToString("hh:mm:ss");
     }
     private void UpdateFrequencyGraph(int value24GHz, int value5GHz)
     {
@@ -403,43 +434,27 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
             foreach (var (rssi, ssid) in signalStrengthsOnChannel)
             {
-                var lineSeries = new LineSeries
-                {
-                    Title = $"5GHz Channel:",
-                    Values = new ChartValues<ObservablePoint>(),
-                    PointGeometrySize = 10,
-                    StrokeThickness = 2,
-                    Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                    Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-                    Fill = new LinearGradientBrush
-                    {
-                        StartPoint = new Point(0, 1),
-                        EndPoint = new Point(0, 0),
-                        GradientStops = new GradientStopCollection
-                        {
-
-                            new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
-                            new GradientStop(Color.FromArgb(60,110, 204, 37), 0)        // Green 
-                        }
-                    },
-                    DataLabels = true,
-                    
-                };
+                var lineSeries = CreatePreStyledLineSeries();
+                lineSeries.Title = $"5GHz Channel:";
 
 
                 if (channelFrequencies5GHz.ContainsKey(channel))
                 {
                     var freqRange = channelFrequencies5GHz[channel];
+                    var temporalCv = new ObservablePoint[3];
 
                     // Start Frequency, y-value is -100
-                    lineSeries.Values.Add(new ObservablePoint(freqRange.Start, -100));
+                    temporalCv[0] = new ObservablePoint(freqRange.Start, -100);
 
                     // Peak Frequency, y-value is RSSI
-                    lineSeries.Values.Add(new ObservablePoint(freqRange.Peak, rssi));
+                    temporalCv[1] = new ObservablePoint(freqRange.Peak, rssi);
 
                     // End Frequency, y-value is -100
-                    lineSeries.Values.Add(new ObservablePoint(freqRange.End, -100));
+                    temporalCv[2] = new ObservablePoint(freqRange.End, -100);
+
+                    lineSeries.Values.AddRange(temporalCv);
                 }
+
                 lineSeries.LabelPoint = point =>
                 {
                     var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
@@ -475,6 +490,23 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         return channelData;
     }
+    private Dictionary<int, (int Start, int Peak, int End)> channelFrequencies2GHz = new Dictionary<int, (int Start, int Peak, int End)>
+                        {
+                            {1, (2402, 2412, 2422)},
+                            {2, (2407, 2417, 2427)},
+                            {3, (2412, 2422, 2432)},
+                            {4, (2417, 2427, 2437)},
+                            {5, (2422, 2432, 2442)},
+                            {6, (2427, 2437, 2447)},
+                            {7, (2432, 2442, 2452)},
+                            {8, (2437, 2447, 2457)},
+                            {9, (2442, 2452, 2462)},
+                            {10, (2447, 2457, 2467)},
+                            {11, (2452, 2462, 2472)},
+                            {12, (2457, 2467, 2477)},
+                            {13, (2462, 2472, 2482)},
+                            {14, (2473, 2484, 2495)}
+                        };
     private void UpdateChannelAllocationChart24GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
 
@@ -494,57 +526,26 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
             foreach (var (rssi, ssid) in signalStrengthsOnChannel)
             {
-                var lineSeries = new LiveCharts.Wpf.LineSeries
-                {
-                    Title = $"2.4GHz Channel:",
-                    Values = new ChartValues<ObservablePoint>(),
-                    PointGeometrySize = 10,
-                    StrokeThickness = 2,
-                    Stroke = new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                    Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-                    Fill = new LinearGradientBrush
-                    {
-                        StartPoint = new Point(0, 1),
-                        EndPoint = new Point(0, 0),
-                        GradientStops = new GradientStopCollection
-                        {
+                var lineSeries = CreatePreStyledLineSeries();
+                lineSeries.Title = $"2.4GHz Channel:";
 
-                            new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
-                            new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)        // Green 
-                        }
-                    },
-                    DataLabels = true
-                };
-                Dictionary<int, (int Start, int Peak, int End)> channelFrequencies = new Dictionary<int, (int Start, int Peak, int End)>
-                        {
-                            {1, (2402, 2412, 2422)},
-                            {2, (2407, 2417, 2427)},
-                            {3, (2412, 2422, 2432)},
-                            {4, (2417, 2427, 2437)},
-                            {5, (2422, 2432, 2442)},
-                            {6, (2427, 2437, 2447)},
-                            {7, (2432, 2442, 2452)},
-                            {8, (2437, 2447, 2457)},
-                            {9, (2442, 2452, 2462)},
-                            {10, (2447, 2457, 2467)},
-                            {11, (2452, 2462, 2472)},
-                            {12, (2457, 2467, 2477)},
-                            {13, (2462, 2472, 2482)},
-                            {14, (2473, 2484, 2495)}
-                        };
-                if (channelFrequencies.ContainsKey(channel))
+                if (channelFrequencies2GHz.ContainsKey(channel))
                 {
-                    var freqRange = channelFrequencies[channel];
+                    var freqRange = channelFrequencies2GHz[channel];
+                    var temporalCv = new ObservablePoint[3];
 
                     // Start Frequency, y-value is -100
-                    lineSeries.Values.Add(new ObservablePoint(freqRange.Start, -100));
+                    temporalCv[0] = new ObservablePoint(freqRange.Start, -100);
 
                     // Peak Frequency, y-value is RSSI
-                    lineSeries.Values.Add(new ObservablePoint(freqRange.Peak, rssi));
+                    temporalCv[1] = new ObservablePoint(freqRange.Peak, rssi);
 
                     // End Frequency, y-value is -100
-                    lineSeries.Values.Add(new ObservablePoint(freqRange.End, -100));
+                    temporalCv[2] = new ObservablePoint(freqRange.End, -100);
+
+                    lineSeries.Values.AddRange(temporalCv);
                 }
+
                 lineSeries.LabelPoint = point =>
                 {
                     var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
