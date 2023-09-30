@@ -12,6 +12,15 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 ## Technical Overview 🖥️
 ### Platform & Development Environment:
 
+<p align="center">
+  <img src="AAPADS/res/graphics/screenshot1.png" alt="Screenshot 1" width="480">
+  <img src="AAPADS/res/graphics/screenshot2.png" alt="Screenshot 2" width="480">
+</p>
+
+<p align="center">
+  <sub><i>Note: The SSID and MAC addresses shown in the screenshots are samples.</i></sub>
+</p>
+
 * Primary Language: C#
 * Platform: x64 (64-bit) Windows operating system.
 * User Interface: Developed using Microsoft's WPF (Windows Presentation Foundation) to ensure an interactive front-end experience.
