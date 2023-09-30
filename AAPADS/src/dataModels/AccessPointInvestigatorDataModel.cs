@@ -268,6 +268,7 @@ namespace AAPADS
             PerformWifiScan();
 
             LoadWLANData();
+
         }
         public async Task LoadWLANData()
         {
@@ -316,12 +317,12 @@ namespace AAPADS
                 }
             });
         }
-        public void RefreshSSIDs()
+        public async void RefreshSSIDs()
         {
             try
             {
                 // Load the new WLAN - C library call 
-                LoadWLANData();
+                await LoadWLANData();
             }
             catch
             {
@@ -534,6 +535,44 @@ namespace AAPADS
         //#####                            GRAPHS BELOW                                 #######            
         //#####################################################################################
         #region
+        private LineSeries CreateStyledLineSeries(string bssid, string title)
+        {
+            var defaultGradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+        {
+            new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+            new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)   // Green 
+        }
+            };
+
+            var selectedGradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 1),
+                EndPoint = new Point(0, 0),
+                GradientStops = new GradientStopCollection
+        {
+            new GradientStop(Color.FromRgb(239, 57, 69), 1),        // Red
+            new GradientStop(Color.FromArgb(60, 239, 57, 69), 0)  // Transparent Red
+        }
+            };
+
+            return new LineSeries
+            {
+                Title = title,
+                Values = new ChartValues<ObservablePoint>(),
+                PointGeometrySize = 10,
+                StrokeThickness = 2,
+                Stroke = bssid == SELECTED_SSID_ITEM?.BSSID
+                    ? new SolidColorBrush(Color.FromRgb(239, 57, 69)) // Red for selected BSSID
+                    : new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+                Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+                Fill = bssid == SELECTED_SSID_ITEM?.BSSID ? selectedGradient : defaultGradient,
+                DataLabels = true
+            };
+        }
 
         public SeriesCollection CHANNEL_ALLOCATION_SERIES_5GHZ { get; set; } = new SeriesCollection();
         public SeriesCollection CHANNEL_ALLOCATION_SERIES_24GHZ { get; set; } = new SeriesCollection();
@@ -634,6 +673,51 @@ namespace AAPADS
 
             return channelData;
         }
+        private Dictionary<int, (int Start, int Peak, int End)> channelFrequencies5GHz = new Dictionary<int, (int Start, int Peak, int End)>
+                    {
+                    {36, (5170, 5180, 5190)},
+                    {40, (5190, 5200, 5210)},
+                    {44, (5210, 5220, 5230)},
+                    {48, (5230, 5240, 5250)},
+                    {52, (5250, 5260, 5270)},
+                    {56, (5270, 5280, 5290)},
+                    {60, (5290, 5300, 5310)},
+                    {64, (5310, 5320, 5330)},
+                    {100, (5490, 5500, 5510)},
+                    {104, (5510, 5520, 5530)},
+                    {108, (5530, 5540, 5550)},
+                    {112, (5550, 5560, 5570)},
+                    {116, (5570, 5580, 5590)},
+                    {120, (5590, 5600, 5610)},
+                    {124, (5610, 5620, 5630)},
+                    {128, (5630, 5640, 5650)},
+                    {132, (5650, 5660, 5670)},
+                    {136, (5670, 5680, 5690)},
+                    {140, (5690, 5700, 5710)},
+                    {144, (5710, 5720, 5730)},
+                    {149, (5735, 5745, 5755)},
+                    {153, (5755, 5765, 5775)},
+                    {157, (5775, 5785, 5795)},
+                    {161, (5795, 5805, 5815)},
+                    {165, (5815, 5825, 5835)}
+                    };
+        private Dictionary<int, (int Start, int Peak, int End)> channelFrequencies24GHz = new Dictionary<int, (int Start, int Peak, int End)>
+                        {
+                            {1, (2402, 2412, 2422)},
+                            {2, (2407, 2417, 2427)},
+                            {3, (2412, 2422, 2432)},
+                            {4, (2417, 2427, 2437)},
+                            {5, (2422, 2432, 2442)},
+                            {6, (2427, 2437, 2447)},
+                            {7, (2432, 2442, 2452)},
+                            {8, (2437, 2447, 2457)},
+                            {9, (2442, 2452, 2462)},
+                            {10, (2447, 2457, 2467)},
+                            {11, (2452, 2462, 2472)},
+                            {12, (2457, 2467, 2477)},
+                            {13, (2462, 2472, 2482)},
+                            {14, (2473, 2484, 2495)}
+                        };
         private void UpdateChannelAllocationChart5GHz(Dictionary<int, List<(double rssi, string bssid)>> data)
         {
 
@@ -688,34 +772,7 @@ namespace AAPADS
                         Fill = bssid == SELECTED_SSID_ITEM?.BSSID ? selectedGradient : defaultGradient,
                         DataLabels = true
                     };
-                    Dictionary<int, (int Start, int Peak, int End)> channelFrequencies5GHz = new Dictionary<int, (int Start, int Peak, int End)>
-                    {
-                    {36, (5170, 5180, 5190)},
-                    {40, (5190, 5200, 5210)},
-                    {44, (5210, 5220, 5230)},
-                    {48, (5230, 5240, 5250)},
-                    {52, (5250, 5260, 5270)},
-                    {56, (5270, 5280, 5290)},
-                    {60, (5290, 5300, 5310)},
-                    {64, (5310, 5320, 5330)},
-                    {100, (5490, 5500, 5510)},
-                    {104, (5510, 5520, 5530)},
-                    {108, (5530, 5540, 5550)},
-                    {112, (5550, 5560, 5570)},
-                    {116, (5570, 5580, 5590)},
-                    {120, (5590, 5600, 5610)},
-                    {124, (5610, 5620, 5630)},
-                    {128, (5630, 5640, 5650)},
-                    {132, (5650, 5660, 5670)},
-                    {136, (5670, 5680, 5690)},
-                    {140, (5690, 5700, 5710)},
-                    {144, (5710, 5720, 5730)},
-                    {149, (5735, 5745, 5755)},
-                    {153, (5755, 5765, 5775)},
-                    {157, (5775, 5785, 5795)},
-                    {161, (5795, 5805, 5815)},
-                    {165, (5815, 5825, 5835)}
-                    };
+                    
 
                     if (channelFrequencies5GHz.ContainsKey(channel))
                     {
@@ -799,27 +856,11 @@ namespace AAPADS
                         DataLabels = true
                     };
 
-                    Dictionary<int, (int Start, int Peak, int End)> channelFrequencies = new Dictionary<int, (int Start, int Peak, int End)>
-                        {
-                            {1, (2402, 2412, 2422)},
-                            {2, (2407, 2417, 2427)},
-                            {3, (2412, 2422, 2432)},
-                            {4, (2417, 2427, 2437)},
-                            {5, (2422, 2432, 2442)},
-                            {6, (2427, 2437, 2447)},
-                            {7, (2432, 2442, 2452)},
-                            {8, (2437, 2447, 2457)},
-                            {9, (2442, 2452, 2462)},
-                            {10, (2447, 2457, 2467)},
-                            {11, (2452, 2462, 2472)},
-                            {12, (2457, 2467, 2477)},
-                            {13, (2462, 2472, 2482)},
-                            {14, (2473, 2484, 2495)}
-                        };
+                    
 
-                    if (channelFrequencies.ContainsKey(channel))
+                    if (channelFrequencies24GHz.ContainsKey(channel))
                     {
-                        var freqRange = channelFrequencies[channel];
+                        var freqRange = channelFrequencies24GHz[channel];
 
                         // Start Frequency, y-value is -100
                         lineSeries.Values.Add(new ObservablePoint(freqRange.Start, -100));
