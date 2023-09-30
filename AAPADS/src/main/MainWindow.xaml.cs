@@ -163,12 +163,13 @@ namespace AAPADS
                 DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
             }
         }
-        private void UpdateOverviewTabUI(object sender, EventArgs e)
+        private async void UpdateOverviewTabUI(object sender, EventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            await this.Dispatcher.InvokeAsync(async () =>
             {
-                OVERVIEW_VIEW_MODEL_OBJECT.UpdateAccessPoints(DATA_INGESTION_ENGINE_OBJECT);
+                await OVERVIEW_VIEW_MODEL_OBJECT.UpdateAccessPoints(DATA_INGESTION_ENGINE_OBJECT);
             });
+
         }
         private void updateDetectionTabUI(object sender, EventArgs e)
         {
