@@ -648,8 +648,8 @@
                                                 <liveCharts:CartesianChart
                                                     Name="channelAllocation24GHz"
                                                     Grid.ColumnSpan="2"
+                                                    DisableAnimations="True"
                                                     Series="{Binding ChannelAllocationSeries24GHz}">
-
                                                     <liveCharts:CartesianChart.AxisX>
                                                         <liveCharts:Axis
                                                             Title="Frequency (MHz)"
@@ -691,6 +691,7 @@
                                                 <liveCharts:CartesianChart
                                                     Name="channelAllocation5GHz"
                                                     Grid.ColumnSpan="2"
+                                                    DisableAnimations="True"
                                                     Series="{Binding ChannelAllocationSeries5GHz}">
 
                                                     <liveCharts:CartesianChart.AxisX>

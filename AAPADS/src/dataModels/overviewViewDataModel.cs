@@ -425,18 +425,19 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             ChannelAllocationSeries5GHz.Remove(series);
         }
         lineSeriesHashSet.Clear();
+        var allSeries = new List<LineSeries>();
 
         foreach (var entry in data)
         {
             var channel = entry.Key;
             var signalStrengthsOnChannel = entry.Value;
-            string channelToolTip = channel.ToString();
+
+            var seriesForChannel = new List<LineSeries>();
 
             foreach (var (rssi, ssid) in signalStrengthsOnChannel)
             {
                 var lineSeries = CreatePreStyledLineSeries();
                 lineSeries.Title = $"5GHz Channel:";
-
 
                 if (channelFrequencies5GHz.ContainsKey(channel))
                 {
@@ -465,12 +466,16 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     return "";
                 };
 
-                ChannelAllocationSeries5GHz.Add(lineSeries);
-                lineSeriesHashSet.Add(lineSeries);
-
+                seriesForChannel.Add(lineSeries);
             }
+
+            allSeries.AddRange(seriesForChannel);
         }
-        
+
+        ChannelAllocationSeries5GHz.AddRange(allSeries);
+        lineSeriesHashSet.UnionWith(allSeries);
+
+
     }
     private Dictionary<int, List<(double rssi, string ssid)>> ChannelAllocationProcessData24GHz(List<SSIDInfoForCHAllocation24GHz> data)
     {
@@ -509,7 +514,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                         };
     private void UpdateChannelAllocationChart24GHz(Dictionary<int, List<(double rssi, string ssid)>> data)
     {
-
         if (!Application.Current.Dispatcher.CheckAccess())
         {
             Application.Current.Dispatcher.Invoke(() => UpdateChannelAllocationChart24GHz(data));
@@ -518,11 +522,14 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         ChannelAllocationSeries24GHz.Clear();
 
+        var allSeries = new List<LineSeries>();
+
         foreach (var entry in data)
         {
             var channel = entry.Key;
             var signalStrengthsOnChannel = entry.Value;
-            string channelToolTip = channel.ToString();
+
+            var seriesForChannel = new List<LineSeries>();
 
             foreach (var (rssi, ssid) in signalStrengthsOnChannel)
             {
@@ -555,10 +562,16 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     }
                     return "";
                 };
-                ChannelAllocationSeries24GHz.Add(lineSeries);
+
+                seriesForChannel.Add(lineSeries);
             }
+
+            allSeries.AddRange(seriesForChannel);
         }
+
+        ChannelAllocationSeries24GHz.AddRange(allSeries);
     }
+
     private (List<SSIDInfoForCHAllocation24GHz>, List<SSIDInfoForCHAllocation5GHz>) PopulateSSIDInfoList(DataIngestEngine dataIngestEngine)
     {
         var ssidInfoList24Ghz = new List<SSIDInfoForCHAllocation24GHz>();
