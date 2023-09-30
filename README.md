@@ -14,7 +14,7 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 
 <p align="center">
   <img src="AAPADS/res/graphics/screenshot1.png" alt="Screenshot 1" width="480">
-  <img src="AAPADS/res/graphics/screenshot1.png" alt="Screenshot 2" width="480">
+  <img src="AAPADS/res/graphics/screenshot2.png" alt="Screenshot 2" width="480">
 </p>
 
 <p align="center">
