@@ -17,19 +17,19 @@ namespace AAPADS
             {
                 if (rssi >= 0 && rssi <= 30)
                 {
-                    return Brushes.Red;
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ef3945"));
                 }
                 else if (rssi > 30 && rssi <= 60)
                 {
-                    return Brushes.Orange;
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ff9c00"));
                 }
                 else if (rssi > 60 && rssi <= 80)
                 {
-                    return Brushes.Yellow;
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffe000"));
                 }
                 else if (rssi > 80 && rssi <= 100)
                 {
-                    return Brushes.Green;
+                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00ee6c"));
                 }
             }
 
