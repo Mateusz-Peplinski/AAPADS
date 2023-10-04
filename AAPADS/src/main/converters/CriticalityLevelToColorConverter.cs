@@ -19,15 +19,15 @@ namespace AAPADS
                 switch (level)
                 {
                     case "LEVEL_5":
-                        return new SolidColorBrush(Colors.Red);
+                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ff002a"));
                     case "LEVEL_4":
-                        return Brushes.Orange;
+                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ff9c00"));
                     case "LEVEL_3":
-                        return Brushes.Yellow;
+                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffe000"));
                     case "LEVEL_2":
-                        return Brushes.LightGreen;
+                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6ecc25"));
                     case "LEVEL_1":
-                        return Brushes.LightBlue;
+                        return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#167dff"));
                     default:
                         return Brushes.Black;
                 }
