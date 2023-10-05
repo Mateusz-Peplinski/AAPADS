@@ -48,7 +48,7 @@ namespace AAPADS
                     var NormalizedData = Normalize(dataForTimeFrame);
 
                     // Insert the calculated values into the NE_DB table
-                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount, NormalizedData.knownSSIDs);
+                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount);
 
                     // Update the last processed TIME_FRAME_ID
                     _lastProcessedTimeFrameId = nextTimeFrameId;
@@ -57,7 +57,7 @@ namespace AAPADS
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("[ NORMALIZATION ENGINE ] No new data sleeping for 10 seconds");
+                    Console.WriteLine("[ NORMALIZATION ENGINE ] No new data. THREAD will sleep for 10 seconds");
                     System.Threading.Thread.Sleep(10000); 
                 }
             }
@@ -108,17 +108,17 @@ namespace AAPADS
         }
 
 
-        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount, string knownSSIDs) Normalize(List<WirelessData> data)
+        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount) Normalize(List<WirelessData> data)
         {
             int totalAPs = 0;
             int total24GHzAPs = 0;
             int total5GHzAPs = 0;
             string time = "NULL";
-            List<string> knownSSIDsList = new List<string>();
-            string commaSeparatedKnownSSIDS = "";  
 
             foreach (var accessPoint in data)
             {
+                _dbAccess.InsertSSIDAndBSSIDIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID);
+
                 if (((accessPoint.SignalStrength/2)-100) < 60) //Only care about SSID that have approx RSSI value of 60 or less
                 {
                     if (accessPoint.Band == "2.4 GHz")
@@ -132,13 +132,13 @@ namespace AAPADS
 
                     totalAPs++;
                     time = accessPoint.Time;
-                    knownSSIDsList.Add(accessPoint.SSID);
                 }
                 
             }
-            commaSeparatedKnownSSIDS = string.Join(",", knownSSIDsList);
-            return (totalAPs, time, total24GHzAPs, total5GHzAPs, commaSeparatedKnownSSIDS); 
+            return (totalAPs, time, total24GHzAPs, total5GHzAPs); 
         }
+        
+
     }
 
     public class WirelessData
