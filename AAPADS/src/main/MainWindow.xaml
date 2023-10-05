@@ -767,16 +767,16 @@
                                                     <StackPanel>
                                                         <TextBlock Margin="5" Text="NEW HIGH DETECTION" />
                                                         <Button
+                                                            Width="45"
                                                             Margin="5"
-                                                            HorizontalAlignment="Center"
+                                                            HorizontalAlignment="Right"
                                                             Background="#ef3945"
-                                                            Content="Delete"
                                                             Foreground="White">
                                                             <Button.ContentTemplate>
                                                                 <DataTemplate>
                                                                     <StackPanel Orientation="Horizontal">
                                                                         <materialDesign:PackIcon VerticalAlignment="Center" Kind="Delete" />
-                                                                        <TextBlock VerticalAlignment="Center" Text="Delete" />
+                                                                        <TextBlock VerticalAlignment="Center" Text="" />
                                                                     </StackPanel>
                                                                 </DataTemplate>
                                                             </Button.ContentTemplate>
