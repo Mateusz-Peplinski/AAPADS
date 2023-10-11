@@ -40,6 +40,8 @@ namespace AAPADS
                 ""ID"" INTEGER NOT NULL UNIQUE,
                 ""SSID"" TEXT,
                 ""BSSID"" TEXT,
+                ""FIRST_DETECTED_TIME"" TEXT,
+                ""FIRST_DETECTED_DATE"" TEXT,
                 UNIQUE(SSID, BSSID),
                 PRIMARY KEY(""ID"" AUTOINCREMENT)
                 );", connection);
@@ -47,6 +49,9 @@ namespace AAPADS
             knownSsidsCommand.ExecuteNonQuery();
             command.ExecuteNonQuery();
         }
+        // ###############################################################
+        // ############          TABLE NormVals           ##############
+        // ###############################################################
         public void InsertNormalizationEngineData(string timeFrameID, string timeFRAMEIDTime, int AccessPointCount, int AP24GHzCount, int AP5GHzCount)
         {
             var normalizedData = new
@@ -60,14 +65,18 @@ namespace AAPADS
             connection.Execute("INSERT INTO NormVals (TIME_FRAME_ID, TIME, AP_COUNT, AP2_4GHZ_AP_COUNT, AP5_GHZ_AP_COUNT) VALUES (@TIME_FRAME_ID, @TIME, @AP_COUNT, @AP2_4GHZ_AP_COUNT, @AP5_GHZ_AP_COUNT)", normalizedData);
         }
 
+        // ###############################################################
+        // ############          TABLE KnownSsids           ##############
+        // ###############################################################
         public void InsertSSIDAndBSSIDIfDoesNotExist(string ssid, string bssid)
         {
             var ssidBssidExists =connection.ExecuteScalar<int>("SELECT COUNT(*) FROM KnownSsids WHERE SSID = @SSID AND BSSID = @BSSID", new { SSID = ssid, BSSID = bssid });
 
             if (ssidBssidExists == 0)
             {
-                connection.Execute("INSERT INTO KnownSsids (SSID, BSSID) VALUES (@SSID, @BSSID)", new { SSID = ssid, BSSID = bssid });
+                connection.Execute("INSERT INTO KnownSsids (SSID, BSSID, FIRST_DETECTED_TIME, FIRST_DETECTED_DATE) VALUES (@SSID, @BSSID, @FIRST_DETECTED_TIME, @FIRST_DETECTED_DATE )", new { SSID = ssid, BSSID = bssid, FIRST_DETECTED_TIME = DateTime.Now.ToString("hh:mm:ss tt"), FIRST_DETECTED_DATE = DateTime.Now.ToShortDateString() } );
             }
+            
         }
 
 

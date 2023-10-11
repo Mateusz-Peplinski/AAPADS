@@ -115,9 +115,9 @@ namespace AAPADS
             int total5GHzAPs = 0;
             string time = "NULL";
 
-            foreach (var accessPoint in data)
+            foreach (var accessPoint in data) // All the colleced data --> 
             {
-                _dbAccess.InsertSSIDAndBSSIDIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID);
+                _dbAccess.InsertSSIDAndBSSIDIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID); // If new data add it TABLE knownSsids-->
 
                 if (((accessPoint.SignalStrength/2)-100) < 60) //Only care about SSID that have approx RSSI value of 60 or less
                 {
@@ -135,7 +135,7 @@ namespace AAPADS
                 }
                 
             }
-            return (totalAPs, time, total24GHzAPs, total5GHzAPs); 
+            return (totalAPs, time, total24GHzAPs, total5GHzAPs); // Retunt counts that are used as Avgs 
         }
         
 
