@@ -2,8 +2,6 @@
 using System;
 using System.Data.SQLite;
 using System.IO;
-using System.IO.Packaging;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace AAPADS
 {
@@ -70,13 +68,13 @@ namespace AAPADS
         // ###############################################################
         public void InsertSSIDAndBSSIDIfDoesNotExist(string ssid, string bssid)
         {
-            var ssidBssidExists =connection.ExecuteScalar<int>("SELECT COUNT(*) FROM KnownSsids WHERE SSID = @SSID AND BSSID = @BSSID", new { SSID = ssid, BSSID = bssid });
+            var ssidBssidExists = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM KnownSsids WHERE SSID = @SSID AND BSSID = @BSSID", new { SSID = ssid, BSSID = bssid });
 
             if (ssidBssidExists == 0)
             {
-                connection.Execute("INSERT INTO KnownSsids (SSID, BSSID, FIRST_DETECTED_TIME, FIRST_DETECTED_DATE) VALUES (@SSID, @BSSID, @FIRST_DETECTED_TIME, @FIRST_DETECTED_DATE )", new { SSID = ssid, BSSID = bssid, FIRST_DETECTED_TIME = DateTime.Now.ToString("hh:mm:ss tt"), FIRST_DETECTED_DATE = DateTime.Now.ToShortDateString() } );
+                connection.Execute("INSERT INTO KnownSsids (SSID, BSSID, FIRST_DETECTED_TIME, FIRST_DETECTED_DATE) VALUES (@SSID, @BSSID, @FIRST_DETECTED_TIME, @FIRST_DETECTED_DATE )", new { SSID = ssid, BSSID = bssid, FIRST_DETECTED_TIME = DateTime.Now.ToString("hh:mm:ss tt"), FIRST_DETECTED_DATE = DateTime.Now.ToShortDateString() });
             }
-            
+
         }
 
 
