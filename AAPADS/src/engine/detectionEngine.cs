@@ -27,12 +27,12 @@ namespace AAPADS.src.engine
         
         public event EventHandler DetectionDiscovered;
 
-        public void startdetection()
+        public void START_DETECTION_ENGINE()
         {
 
             populateDetectionViewModelStaticDataTest();
 
-           
+            // when detection is done invoke event so UI can update            
             DetectionDiscovered?.Invoke(this, EventArgs.Empty);
         }
 

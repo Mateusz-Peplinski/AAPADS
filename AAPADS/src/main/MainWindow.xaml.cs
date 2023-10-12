@@ -1,5 +1,4 @@
 ﻿using AAPADS.src.engine;
-using LiveCharts.Wpf;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -7,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 
 namespace AAPADS
 {
@@ -26,7 +24,7 @@ namespace AAPADS
         private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL_OBJECT;
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL_OBJECT;
         private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
-        private  AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+        private AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
         public NetworkCardInfoViewModel NetworkCardInfoVM { get; set; }
 
         private double _originalWidth;
@@ -53,13 +51,13 @@ namespace AAPADS
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
             DETECTION_VIEW_MODEL_OBJECT = new detectionsViewDataModel();
             DETECTION_ENGINE_OBJECT.DetectionDiscovered += updateDetectionTabUI;
-            DETECTION_ENGINE_OBJECT.startdetection();
+            DETECTION_ENGINE_OBJECT.START_DETECTION_ENGINE();
 
             WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new detectionSetUpViewDataModel();
 
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
             NetworkCardInfoExpander.DataContext = NetworkCardInfoVM;
-            
+
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
 
@@ -98,8 +96,8 @@ namespace AAPADS
 
             DataContext = OVERVIEW_VIEW_MODEL_OBJECT;
 
-            
-            
+
+
         }
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
