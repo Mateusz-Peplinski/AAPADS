@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace AAPADS
                     var NormalizedData = Normalize(dataForTimeFrame);
 
                     // Insert the calculated values into the NE_DB table
-                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount, NormalizedData.knownSSIDs);
+                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount);
 
                     // Update the last processed TIME_FRAME_ID
                     _lastProcessedTimeFrameId = nextTimeFrameId;
@@ -104,18 +104,24 @@ namespace AAPADS
         }
 
 
-        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount, string knownSSIDs) Normalize(List<WirelessData> data)
+        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount) Normalize(List<WirelessData> data)
         {
             int totalAPs = 0;
             int total24GHzAPs = 0;
             int total5GHzAPs = 0;
             string time = "NULL";
+
             List<string> knownSSIDsList = new List<string>();
             string commaSeparatedKnownSSIDS = "";
 
-            foreach (var accessPoint in data)
+            foreach (var accessPoint in data) // All the colleced data --> 
             {
+
                 if (((accessPoint.SignalStrength / 2) - 100) < 60) //Only care about SSID that have approx RSSI value of 60 or less
+
+                _dbAccess.InsertSSIDAndBSSIDIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID); // If new data add it TABLE knownSsids-->
+
+
                 {
                     if (accessPoint.Band == "2.4 GHz")
                     {
@@ -128,13 +134,17 @@ namespace AAPADS
 
                     totalAPs++;
                     time = accessPoint.Time;
-                    knownSSIDsList.Add(accessPoint.SSID);
                 }
 
             }
+
             commaSeparatedKnownSSIDS = string.Join(",", knownSSIDsList);
             return (totalAPs, time, total24GHzAPs, total5GHzAPs, commaSeparatedKnownSSIDS);
+
+            return (totalAPs, time, total24GHzAPs, total5GHzAPs); // Retunt counts that are used as Avgs 
         }
+        
+
     }
 
     public class WirelessData

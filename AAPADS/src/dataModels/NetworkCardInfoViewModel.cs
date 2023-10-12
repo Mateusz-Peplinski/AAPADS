@@ -289,7 +289,7 @@ namespace AAPADS
             }
             if (activeWifiInterface == null || activeWifiInterface.OperationalStatus != OperationalStatus.Up)
             {
-                Console.WriteLine("Network adapter is turned off or not available. Cannot update series.");
+                Console.WriteLine("[NETOWORK ERROR] Network adapter is turned off or not available. Cannot update series.");
                 return;
             }
 
@@ -304,7 +304,7 @@ namespace AAPADS
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error initializing performance counters: {ex.Message}");
+                Console.WriteLine($"[NETOWORK ERROR] Error initializing performance counters: {ex.Message}");
                 _sendCounter?.Dispose();
                 _receiveCounter?.Dispose();
                 _sendCounter = _receiveCounter = null;
@@ -332,7 +332,7 @@ namespace AAPADS
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error updating series collection: {ex.Message}");
+                    Debug.WriteLine($"[NETOWORK ERROR] Error updating read/write series collection: {ex.Message}");
                 }
             });
         }

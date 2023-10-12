@@ -17,7 +17,7 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 </p>
 
 <p align="center">
-  <sub><i>Note: The SSID and MAC addresses shown in the screenshots are samples.</i></sub>
+  <sub><i>Note: The SSID and MAC addresses shown in the screenshots are samples. And product is MVP</i></sub>
 </p>
 
 * Primary Language: C#
