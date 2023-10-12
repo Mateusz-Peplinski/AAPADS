@@ -92,7 +92,7 @@ namespace AAPADS
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool PerformWifiScan();
 
-        public void Start()
+        public void START_DATA_INGEST_ENGINE()
         {
             //liveLogDataModelConsole = new overviewViewDataModel();
 
@@ -148,6 +148,9 @@ namespace AAPADS
                         Console.WriteLine($"[ DATA INGEST ENGINE ] Collected {SSID_LIST.Count} access points data");
 
                         SSIDDataCollected?.Invoke(this, EventArgs.Empty);
+
+
+                        //ADD START_DATA_INGEST_ENGINE_WRITE --> Only need to write if Detection has started
                         InsertDataToDatabase();
                     }
                     else
