@@ -1,11 +1,7 @@
 ﻿using Dapper;
 using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AAPADS
 {
@@ -19,11 +15,11 @@ namespace AAPADS
         {
             dbPath = Path.Combine(Directory.GetCurrentDirectory(), dbFileName);
 
-            
+
             connection = new SQLiteConnection($"Data Source={dbPath};Version=3;");
             connection.Open();
 
-            
+
             CreateTablesIfNotExists();
         }
         private void CreateTablesIfNotExists()
@@ -69,7 +65,7 @@ namespace AAPADS
         public string GetLastTimeFrameId()
         {
             var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM WirelessProfile ORDER BY ID DESC LIMIT 1");
-            return result ?? "A0"; 
+            return result ?? "A0";
         }
         public void Dispose()
         {
