@@ -48,7 +48,7 @@ namespace AAPADS
             DATA_INGESTION_ENGINE_OBJECT = new DataIngestEngine();
             OVERVIEW_VIEW_MODEL_OBJECT = new overviewViewDataModel();
             DATA_INGESTION_ENGINE_OBJECT.SSIDDataCollected += UpdateOverviewTabUI;
-            DATA_INGESTION_ENGINE_OBJECT.Start();
+            DATA_INGESTION_ENGINE_OBJECT.START_DATA_INGEST_ENGINE();
 
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
             DETECTION_VIEW_MODEL_OBJECT = new detectionsViewDataModel();
