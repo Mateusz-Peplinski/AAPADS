@@ -150,7 +150,8 @@ namespace AAPADS
                         SSIDDataCollected?.Invoke(this, EventArgs.Empty);
 
 
-                        //ADD START_DATA_INGEST_ENGINE_WRITE --> Only need to write if Detection has started
+                        //ADD START_DATA_INGEST_ENGINE_WRITE --> Only need to write if Detection has started --> need to add bool value that
+                        //will be set when user selected detection start 
                         InsertDataToDatabase();
                     }
                     else
