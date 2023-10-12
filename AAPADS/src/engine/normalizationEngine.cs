@@ -112,7 +112,6 @@ namespace AAPADS
             string time = "NULL";
 
             List<string> knownSSIDsList = new List<string>();
-            string commaSeparatedKnownSSIDS = "";
 
             foreach (var accessPoint in data) // All the colleced data --> 
             {
@@ -137,9 +136,6 @@ namespace AAPADS
                 }
 
             }
-
-            commaSeparatedKnownSSIDS = string.Join(",", knownSSIDsList);
-            return (totalAPs, time, total24GHzAPs, total5GHzAPs, commaSeparatedKnownSSIDS);
 
             return (totalAPs, time, total24GHzAPs, total5GHzAPs); // Retunt counts that are used as Avgs 
         }
