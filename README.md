@@ -59,7 +59,7 @@ Upon detection of an anomaly, the system flags it as a cyber incident. Users are
 3. Monitor the notifications and take action as necessary.
 
 ## ⚙️ Setup & Installation
-Will be released with the first official program release 
+Will be released with the first official program release, soon... 
 
 
 
