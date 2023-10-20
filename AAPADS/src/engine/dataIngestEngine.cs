@@ -96,6 +96,16 @@ namespace AAPADS
         {
             //liveLogDataModelConsole = new overviewViewDataModel();
 
+            INIT_DATA_INGEST_ENGINE_LIST();
+
+            _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
+
+            _normalizationEngine = new NormalizationEngine(); // Start the normalization engine
+
+            Task.Run(SCAN_FOR_ACCESS_POINTS); // main thread for constanly scanning and parsing output from netsh
+        }
+        private void INIT_DATA_INGEST_ENGINE_LIST()
+        {
             SSID_LIST = new List<string>();
             ENCRYPTION_TYPE_LIST = new List<string>();
             BSSID_LIST = new List<string>();
@@ -105,12 +115,7 @@ namespace AAPADS
             CHANNEL_LIST = new List<int>();
             FREQUENCY_LIST = new List<string>();
             AUTH_LIST = new List<string>();
-
-            _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
-            _normalizationEngine = new NormalizationEngine();
-            Task.Run(SCAN_FOR_ACCESS_POINTS);
         }
-
         private async Task SCAN_FOR_ACCESS_POINTS()
         {
             while (isRunning)

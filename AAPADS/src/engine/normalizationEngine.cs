@@ -15,7 +15,7 @@ namespace AAPADS
         {
             _dbAccess = new normalizationEngineDatabaseAccess("wireless_profile.db");
             INITIALIZE_NORMALIZATION_ENGINE_DATABASE();
-            Task.Run(() => START_NORMALIZATION_ENGINE());
+            Task.Run(() => START_NORMALIZATION_ENGINE()); // main thread for pulling from the SQL database and normalizing data for a given TIME_FRAME_ID
         }
 
         private void INITIALIZE_NORMALIZATION_ENGINE_DATABASE()
