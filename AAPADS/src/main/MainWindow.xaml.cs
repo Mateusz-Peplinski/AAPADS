@@ -21,10 +21,10 @@ namespace AAPADS
         private readonly DataIngestEngine DATA_INGESTION_ENGINE_OBJECT;
         private readonly DetectionEngine DETECTION_ENGINE_OBJECT;
 
-        private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL_OBJECT;
-        private readonly detectionsViewDataModel DETECTION_VIEW_MODEL_OBJECT;
-        private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
-        private AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+        private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL;
+        private readonly detectionsViewDataModel DETECTION_VIEW_MODEL;
+        private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL;
+        private AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL;
         public NetworkCardInfoViewModel NetworkCardInfoVM { get; set; }
 
         private double _originalWidth;
@@ -44,19 +44,20 @@ namespace AAPADS
             };
 
             DATA_INGESTION_ENGINE_OBJECT = new DataIngestEngine();
-            OVERVIEW_VIEW_MODEL_OBJECT = new overviewViewDataModel();
+            OVERVIEW_VIEW_MODEL = new overviewViewDataModel();
             DATA_INGESTION_ENGINE_OBJECT.SSIDDataCollected += UpdateOverviewTabUI;
-            DATA_INGESTION_ENGINE_OBJECT.START_DATA_INGEST_ENGINE();
 
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
-            DETECTION_VIEW_MODEL_OBJECT = new detectionsViewDataModel();
+            DETECTION_VIEW_MODEL = new detectionsViewDataModel();
             DETECTION_ENGINE_OBJECT.DetectionDiscovered += updateDetectionTabUI;
-            DETECTION_ENGINE_OBJECT.START_DETECTION_ENGINE();
 
-            WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT = new detectionSetUpViewDataModel();
+
+            AAPADS_GLOBAL_START();
+
+            WLAN_NETWORK_ADAPTER_VIEW_MODEL = new detectionSetUpViewDataModel(); //View model for detection set-up
 
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
-            NetworkCardInfoExpander.DataContext = NetworkCardInfoVM;
+            NetworkCardInfoExpander.DataContext = NetworkCardInfoVM; // This has its own data context because is should run no matter which tab is selected
 
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
@@ -71,7 +72,7 @@ namespace AAPADS
                     _originalLeft = Left;
                     _originalTop = Top;
 
-                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 500;
+                    OVERVIEW_VIEW_MODEL.SummarySectionHeight = 500;
                     WindowState = WindowState.Normal;
                     Left = 0;
                     Top = 0;
@@ -82,7 +83,7 @@ namespace AAPADS
                 }
                 else
                 {
-                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 300;
+                    OVERVIEW_VIEW_MODEL.SummarySectionHeight = 300;
                     Width = _originalWidth;
                     Height = _originalHeight;
                     Left = _originalLeft;
@@ -94,11 +95,17 @@ namespace AAPADS
 
             CloseButton.Click += (s, e) => Application.Current.Shutdown();
 
-            DataContext = OVERVIEW_VIEW_MODEL_OBJECT;
+            DataContext = OVERVIEW_VIEW_MODEL;
 
 
 
         }
+        private void AAPADS_GLOBAL_START()
+        {
+            DATA_INGESTION_ENGINE_OBJECT.START_DATA_INGEST_ENGINE();
+            DETECTION_ENGINE_OBJECT.START_DETECTION_ENGINE();
+        }
+
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
@@ -106,12 +113,12 @@ namespace AAPADS
                 if (WindowState == WindowState.Normal)
                 {
                     WindowState = WindowState.Maximized;
-                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 500;
+                    OVERVIEW_VIEW_MODEL.SummarySectionHeight = 500;
                 }
                 else
                 {
                     WindowState = WindowState.Normal;
-                    OVERVIEW_VIEW_MODEL_OBJECT.SummarySectionHeight = 300;
+                    OVERVIEW_VIEW_MODEL.SummarySectionHeight = 300;
                 }
             }
             else
@@ -145,27 +152,27 @@ namespace AAPADS
 
             if (tab == OverviewTab)
             {
-                DataContext = OVERVIEW_VIEW_MODEL_OBJECT;
+                DataContext = OVERVIEW_VIEW_MODEL;
             }
             else if (tab == DetectionsTab)
             {
-                DataContext = DETECTION_VIEW_MODEL_OBJECT;
+                DataContext = DETECTION_VIEW_MODEL;
             }
             else if (tab == AccessPointInvestigateTab)
             {
-                ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT = new AccessPointInvestigatorDataModel();
-                DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL_OBJECT;
+                ACCESS_POINT_INVESTIGATOR_VIEW_MODEL = new AccessPointInvestigatorDataModel();
+                DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL;
             }
             else if (tab == DetectionSetupTab)
             {
-                DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL_OBJECT;
+                DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL;
             }
         }
         private async void UpdateOverviewTabUI(object sender, EventArgs e)
         {
             await this.Dispatcher.InvokeAsync(async () =>
             {
-                await OVERVIEW_VIEW_MODEL_OBJECT.UpdateAccessPoints(DATA_INGESTION_ENGINE_OBJECT);
+                await OVERVIEW_VIEW_MODEL.UpdateAccessPoints(DATA_INGESTION_ENGINE_OBJECT);
             });
 
         }
@@ -173,7 +180,7 @@ namespace AAPADS
         {
             this.Dispatcher.Invoke(() =>
             {
-                DETECTION_VIEW_MODEL_OBJECT.updateDetections(DETECTION_ENGINE_OBJECT);
+                DETECTION_VIEW_MODEL.updateDetections(DETECTION_ENGINE_OBJECT);
             });
         }
 
