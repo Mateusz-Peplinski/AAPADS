@@ -2017,7 +2017,14 @@
                             </StackPanel>
                         </TabItem.Header>
                         <Grid>
-                            <DataGrid />
+                            <StackPanel>
+                                <CheckBox
+                                    Name="DebugConsoleCheckBox"
+                                    Content="Debug Console Enabled"
+                                    Foreground="#d2d2d2"
+                                    IsChecked="{Binding IsDebugConsoleEnabled, Mode=TwoWay}" />
+                            </StackPanel>
+
                         </Grid>
                     </TabItem>
                 </TabControl>

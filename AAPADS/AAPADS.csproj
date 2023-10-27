@@ -148,6 +148,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\databaseAccess\SettingsDatabaseAccess.cs" />
+    <Compile Include="src\dataModels\SettingsViewModel.cs" />
     <Compile Include="src\dataModels\NetworkCardInfoViewModel.cs" />
     <Compile Include="src\main\loadingScreen.xaml.cs">
       <DependentUpon>loadingScreen.xaml</DependentUpon>

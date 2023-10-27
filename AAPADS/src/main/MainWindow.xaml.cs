@@ -25,6 +25,7 @@ namespace AAPADS
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL;
         private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL;
         private AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL;
+        private SettingsViewModel SETTINGS_VIEW_MODEL;
         public NetworkCardInfoViewModel NetworkCardInfoVM { get; set; }
 
         private double _originalWidth;
@@ -55,6 +56,10 @@ namespace AAPADS
             AAPADS_GLOBAL_START();
 
             WLAN_NETWORK_ADAPTER_VIEW_MODEL = new detectionSetUpViewDataModel(); //View model for detection set-up
+
+
+            SETTINGS_VIEW_MODEL = new SettingsViewModel(); // Settings view model --> needed for lunch to load settings
+            SETTINGS_VIEW_MODEL.LoadSettings();
 
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
             NetworkCardInfoExpander.DataContext = NetworkCardInfoVM; // This has its own data context because is should run no matter which tab is selected
@@ -166,6 +171,11 @@ namespace AAPADS
             else if (tab == DetectionSetupTab)
             {
                 DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL;
+            }
+            else if (tab == SettingsTab)
+            {
+                
+                DataContext = SETTINGS_VIEW_MODEL;
             }
         }
         private async void UpdateOverviewTabUI(object sender, EventArgs e)
