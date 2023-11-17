@@ -12,18 +12,18 @@ namespace AAPADS
         public loadingScreen()
         {
             InitializeComponent();
-            StartLoadingProcess();
+            START_AAPADS();
         }
 
         private DispatcherTimer _timer;
         private MainWindow _mainWindow;
 
-        private void StartLoadingProcess()
+        private void START_AAPADS()
         {
 
             _mainWindow = new MainWindow();
 
-
+            //currently a time --> needs to map to an event in data ingest engine to say the scan has been preformed so the program does not load blank data
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(4);
             _timer.Tick += Timer_Tick;
@@ -32,7 +32,6 @@ namespace AAPADS
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-
             _timer.Stop();
 
             _mainWindow.Show();

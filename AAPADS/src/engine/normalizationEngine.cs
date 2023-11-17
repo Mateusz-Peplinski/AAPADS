@@ -14,15 +14,15 @@ namespace AAPADS
         public NormalizationEngine()
         {
             _dbAccess = new normalizationEngineDatabaseAccess("wireless_profile.db");
-            INITIALIZE_NORMALIZATION_ENGINE_DATABASE();
+            InitializeNormalizationEngineDatabase();
             Task.Run(() => START_NORMALIZATION_ENGINE()); // main thread for pulling from the SQL database and normalizing data for a given TIME_FRAME_ID
         }
 
-        private void INITIALIZE_NORMALIZATION_ENGINE_DATABASE()
+        private void InitializeNormalizationEngineDatabase()
         {
             _lastProcessedTimeFrameId = _dbAccess.GetLastTimeFrameID();
 
-            if (string.IsNullOrEmpty(_lastProcessedTimeFrameId) || !CHECK_DATA_EXISTS_FOR_TIME_FRAME_ID("#A001"))
+            if (string.IsNullOrEmpty(_lastProcessedTimeFrameId) || !CheckDataExistsForTimeFrameID("#A001"))
             {
                 _lastProcessedTimeFrameId = "#A001";
             }
@@ -33,15 +33,15 @@ namespace AAPADS
         {
             while (true)
             {
-                var nextTimeFrameId = FETCH_NEXT_TIME_FRAME_ID(_lastProcessedTimeFrameId);
+                var nextTimeFrameId = FetchNextTimeFrameID(_lastProcessedTimeFrameId);
 
                 if (!string.IsNullOrEmpty(nextTimeFrameId))
                 {
                     // Fetch the data for the nextTimeFrameId
-                    var dataForTimeFrame = FETCH_DATA_FOR_TIME_FRAME(nextTimeFrameId);
+                    var dataForTimeFrame = FetchDataForTimeFrame(nextTimeFrameId);
 
                     // Calculate averages or other statistical measures
-                    var NormalizedData = NORMALIZE_DATA_FOR_TIME_FRAME_ID(dataForTimeFrame);
+                    var NormalizedData = NormalizeDataForTimeFrameID(dataForTimeFrame);
 
                     // Insert the calculated values into the NE_DB table
                     _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount);
@@ -59,13 +59,13 @@ namespace AAPADS
             }
         }
 
-        private string FETCH_NEXT_TIME_FRAME_ID(string currentId)
+        private string FetchNextTimeFrameID(string currentId)
         {
             var idGenerator = new TimeFrameIdGenerator(currentId);
             var nextId = idGenerator.GenerateNextId();
 
             // Check if data exists for the next ID
-            var dataExists = CHECK_DATA_EXISTS_FOR_TIME_FRAME_ID(nextId);
+            var dataExists = CheckDataExistsForTimeFrameID(nextId);
 
             if (dataExists)
             {
@@ -77,7 +77,7 @@ namespace AAPADS
             }
         }
 
-        private bool CHECK_DATA_EXISTS_FOR_TIME_FRAME_ID(string timeFrameId)
+        private bool CheckDataExistsForTimeFrameID(string timeFrameId)
         {
             string query = "SELECT COUNT(*) FROM WirelessProfile WHERE TIME_FRAME_ID = @TIME_FRAME_ID";
             var parameters = new { TIME_FRAME_ID = timeFrameId };
@@ -89,7 +89,7 @@ namespace AAPADS
 
 
 
-        private List<DOT11_ACCESS_POINT_DATA> FETCH_DATA_FOR_TIME_FRAME(string timeFrameId)
+        private List<DOT11_ACCESS_POINT_DATA> FetchDataForTimeFrame(string timeFrameId)
         {
 
             string query = "SELECT * FROM WirelessProfile WHERE TIME_FRAME_ID = @TIME_FRAME_ID";
@@ -104,7 +104,7 @@ namespace AAPADS
         }
 
 
-        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount) NORMALIZE_DATA_FOR_TIME_FRAME_ID(List<DOT11_ACCESS_POINT_DATA> data)
+        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount) NormalizeDataForTimeFrameID(List<DOT11_ACCESS_POINT_DATA> data)
         {
             int totalAPs = 0;
             int total24GHzAPs = 0;

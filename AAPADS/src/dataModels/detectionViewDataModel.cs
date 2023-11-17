@@ -17,7 +17,7 @@ public class detectionsViewDataModel : baseDataModel, INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-
+    
     public void updateDetections(DetectionEngine detectionEngine)
     {
         DETECTIONS.Clear();

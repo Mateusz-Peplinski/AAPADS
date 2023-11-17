@@ -137,7 +137,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
     {
         AccessPoints = new ObservableCollection<dataModelStructure>();
 
-        createFrequencySeriesCollection(); //Create the 2.4 v 5 GHz count chart
+        CreateFrequencySeriesCollection(); //Create the 2.4 v 5 GHz count chart
 
         updateBaseVisualsFor5GHzChart(); //Update 5GHz chart visuals
 
@@ -259,7 +259,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)   // Green 
     }
     };
-
     private LineSeries CreatePreStyledLineSeries()
     {
         var lineSeries = new LineSeries
@@ -274,7 +273,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         };
         return lineSeries;
     }
-
     public void RunOnUIThread(Action action)
     {
         if (Application.Current.Dispatcher.CheckAccess())
@@ -286,7 +284,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
             Application.Current.Dispatcher.Invoke(action);
         }
     }
-    public void createFrequencySeriesCollection()
+    public void CreateFrequencySeriesCollection()
     {
         FrequencySeriesCollection = new SeriesCollection
         {
@@ -571,7 +569,6 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         ChannelAllocationSeries24GHz.AddRange(allSeries);
     }
-
     private (List<SSIDInfoForCHAllocation24GHz>, List<SSIDInfoForCHAllocation5GHz>) PopulateSSIDInfoList(DataIngestEngine dataIngestEngine)
     {
         var ssidInfoList24Ghz = new List<SSIDInfoForCHAllocation24GHz>();

@@ -51,8 +51,6 @@ namespace AAPADS
             }
         }
 
-
-
         public void LoadSettings()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
