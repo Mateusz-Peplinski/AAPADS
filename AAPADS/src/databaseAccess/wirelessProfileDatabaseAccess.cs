@@ -43,7 +43,7 @@ namespace AAPADS
             command.ExecuteNonQuery();
         }
 
-        public void DATA_INGEST_ENGINE_INSERT_ACCESS_POINT_DATA(string ssid, string bssid, int signalStrength,
+        public void DataIngestEngineInsertAccessPointData(string ssid, string bssid, int signalStrength,
                                    string wifiStandard, string band, int channel, string frequency, string auth, string timeFrameID)
         {
             var wifiData = new

@@ -50,7 +50,7 @@ namespace AAPADS
         // ###############################################################
         // ############          TABLE NormVals           ##############
         // ###############################################################
-        public void INSERT_NORMALIZATION_ENGINE_DATA(string timeFrameID, string timeFRAMEIDTime, int AccessPointCount, int AP24GHzCount, int AP5GHzCount)
+        public void InsertNormalizationEngineData(string timeFrameID, string timeFRAMEIDTime, int AccessPointCount, int AP24GHzCount, int AP5GHzCount)
         {
             var normalizedData = new
             {
@@ -66,7 +66,7 @@ namespace AAPADS
         // ###############################################################
         // ############          TABLE KnownSsids           ##############
         // ###############################################################
-        public void INSERT_SSID_AND_BSSID_IF_DOES_NOT_EXIST(string ssid, string bssid)
+        public void InsertSsidBssiIfDoesNotExist(string ssid, string bssid)
         {
             var ssidBssidExists = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM KnownSsids WHERE SSID = @SSID AND BSSID = @BSSID", new { SSID = ssid, BSSID = bssid });
 
@@ -78,7 +78,7 @@ namespace AAPADS
         }
 
 
-        public string GET_LAST_TIME_FRAME_ID()
+        public string GetLastTimeFrameID()
         {
             var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM NormVals ORDER BY ID DESC LIMIT 1");
             return result ?? "A0";
