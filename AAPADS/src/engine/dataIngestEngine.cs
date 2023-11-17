@@ -96,15 +96,15 @@ namespace AAPADS
         {
             //liveLogDataModelConsole = new overviewViewDataModel();
 
-            INIT_DATA_INGEST_ENGINE_LIST();
+            InitializeDataIngestEngineList();
 
             _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
 
             _normalizationEngine = new NormalizationEngine(); // Start the normalization engine
 
-            Task.Run(SCAN_FOR_ACCESS_POINTS); // main thread for constanly scanning and parsing output from netsh
+            Task.Run(PreformWLANScanThread); // main thread for constanly scanning and parsing output from netsh
         }
-        private void INIT_DATA_INGEST_ENGINE_LIST()
+        private void InitializeDataIngestEngineList()
         {
             SSID_LIST = new List<string>();
             ENCRYPTION_TYPE_LIST = new List<string>();
@@ -116,14 +116,14 @@ namespace AAPADS
             FREQUENCY_LIST = new List<string>();
             AUTH_LIST = new List<string>();
         }
-        private async Task SCAN_FOR_ACCESS_POINTS()
+        private async Task PreformWLANScanThread()
         {
             while (isRunning)
             {
                 await semaphore.WaitAsync();
 
                 // Clear lists at the beginning of each iteration.
-                CLEAR_DATA_INGEST_ENGINE_LISTS();   
+                ClearDataIngestEngineList();   
                 
                 
 
@@ -141,7 +141,7 @@ namespace AAPADS
                     if (PerformWifiScan())//Call WLANLibrary to refresh the access point information that windows has cached
                     {
                         await Task.Delay(TimeSpan.FromSeconds(5)); // Wait for 5 seconds. Adjust as needed.
-                        RUN_NETSH_COMMAND();
+                        SystemRunNETSHCommand();
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"[ DATA INGEST ENGINE ] Collected {SSID_LIST.Count} access points data");
@@ -151,7 +151,7 @@ namespace AAPADS
 
                         //ADD START_DATA_INGEST_ENGINE_WRITE --> Only need to write if Detection has started --> need to add bool value that
                         //will be set when user selected detection start 
-                        INSERT_PARSED_DATA_TO_DATABASE();
+                        InsertParsedDataToDatabase();
                     }
                     else
                     {
@@ -173,7 +173,7 @@ namespace AAPADS
             }
         }
 
-        private void CLEAR_DATA_INGEST_ENGINE_LISTS()
+        private void ClearDataIngestEngineList()
         {
             SSID_LIST.Clear();
             ENCRYPTION_TYPE_LIST.Clear();
@@ -186,7 +186,7 @@ namespace AAPADS
             AUTH_LIST.Clear();
         }
 
-        private void RUN_NETSH_COMMAND()
+        private void SystemRunNETSHCommand()
         {
             //liveLogDataModelConsole.AppendToLog("init netsh");
 
@@ -201,7 +201,7 @@ namespace AAPADS
 
             using (Process process = new Process { StartInfo = processInfo })
             {
-                process.OutputDataReceived += PROCESS_NETSH_RECEIVED_DATA;
+                process.OutputDataReceived += ProcessNETSHReciveData;
 
                 process.Start();
                 process.BeginOutputReadLine();
@@ -210,17 +210,17 @@ namespace AAPADS
             }
         }
 
-        private void PROCESS_NETSH_RECEIVED_DATA(object sender, DataReceivedEventArgs e)
+        private void ProcessNETSHReciveData(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                PARSE_NETSH_ACCESS_POINT_INFORMATION(e.Data);
+                ParseNETSHReciveData(e.Data);
 
             }
         }
 
 
-        private void PARSE_NETSH_ACCESS_POINT_INFORMATION(string output)
+        private void ParseNETSHReciveData(string output)
         {
             output = output.Trim();
             int index = output.IndexOf(":");
@@ -329,7 +329,7 @@ namespace AAPADS
         }
         //connection.Execute("INSERT INTO WirelessProfile (Time, SSID, BSSID, SIGNAL_STRENGTH, WIFI_STANDARD, BAND, CHANNEL, FREQUENCY, AUTHENTICATION) VALUES (@Time, @SSID, @BSSID, @SIGNAL_STRENGTH, @WIFI_STANDARD, @BAND, @CHANNEL, @FREQUENCY, @AUTHENTICATION)", wifiData);
 
-        private void INSERT_PARSED_DATA_TO_DATABASE()
+        private void InsertParsedDataToDatabase()
         {
             string LAST_TIME_FRAME_ID = _dbAccess.GetLastTimeFrameId();
             var idGenerator = new TimeFrameIdGenerator(LAST_TIME_FRAME_ID);

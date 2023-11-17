@@ -44,8 +44,9 @@ namespace AAPADS
                 HwndSource.FromHwnd(handle).AddHook(new HwndSourceHook(WindowProc));
             };
 
-            DATA_INGESTION_ENGINE_OBJECT = new DataIngestEngine();
             OVERVIEW_VIEW_MODEL = new overviewViewDataModel();
+
+            DATA_INGESTION_ENGINE_OBJECT = new DataIngestEngine();
             DATA_INGESTION_ENGINE_OBJECT.SSIDDataCollected += UpdateOverviewTabUI;
 
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
@@ -53,7 +54,7 @@ namespace AAPADS
             DETECTION_ENGINE_OBJECT.DetectionDiscovered += UpdateDetectionTabUI;
 
 
-            AAPADS_GLOBAL_START();
+            AAPADS_GLOBAL_ENGINES_START();
 
             WLAN_NETWORK_ADAPTER_VIEW_MODEL = new detectionSetUpViewDataModel(); //View model for detection set-up
 
@@ -105,7 +106,7 @@ namespace AAPADS
 
 
         }
-        private void AAPADS_GLOBAL_START()
+        private void AAPADS_GLOBAL_ENGINES_START()
         {
             DATA_INGESTION_ENGINE_OBJECT.START_DATA_INGEST_ENGINE();
             DETECTION_ENGINE_OBJECT.START_DETECTION_ENGINE();

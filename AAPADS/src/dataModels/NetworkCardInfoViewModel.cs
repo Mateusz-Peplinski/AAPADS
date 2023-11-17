@@ -273,8 +273,6 @@ namespace AAPADS
                 counter = (counter + 1) % 5; // Reset counter every 5 seconds to avoid overflow
             }
         }
-
-
         private void UpdateSeries()
         {
             NetworkInterface activeWifiInterface = null;
@@ -342,7 +340,7 @@ namespace AAPADS
             {
                 var stats = await GetWlanStatsAsync();
                 NETWORK_CARD_NAME = stats.AdapterName;
-                ADAPTER_STATUS = mapWLANInterfaceStatus(stats.AdapterStatus);
+                ADAPTER_STATUS = EnumWLANInterfaceStatus(stats.AdapterStatus);
                 TRANSMITTED_FRAME_COUNT = stats.TransmittedFrameCount;
                 RECEIVED_FRAME_COUNT = stats.ReceivedFrameCount;
                 WEP_EXCLUDED_COUNT = stats.WEPExcludedCount;
@@ -381,7 +379,7 @@ namespace AAPADS
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        internal string mapWLANInterfaceStatus(NativeMethods.WLAN_INTERFACE_STATE status)
+        internal string EnumWLANInterfaceStatus(NativeMethods.WLAN_INTERFACE_STATE status)
         {
             switch (status)
             {
