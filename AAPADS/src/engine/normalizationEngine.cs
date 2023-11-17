@@ -20,7 +20,7 @@ namespace AAPADS
 
         private void INITIALIZE_NORMALIZATION_ENGINE_DATABASE()
         {
-            _lastProcessedTimeFrameId = _dbAccess.GET_LAST_TIME_FRAME_ID();
+            _lastProcessedTimeFrameId = _dbAccess.GetLastTimeFrameID();
 
             if (string.IsNullOrEmpty(_lastProcessedTimeFrameId) || !CHECK_DATA_EXISTS_FOR_TIME_FRAME_ID("#A001"))
             {
@@ -44,7 +44,7 @@ namespace AAPADS
                     var NormalizedData = NORMALIZE_DATA_FOR_TIME_FRAME_ID(dataForTimeFrame);
 
                     // Insert the calculated values into the NE_DB table
-                    _dbAccess.INSERT_NORMALIZATION_ENGINE_DATA(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount);
+                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount);
 
                     // Update the last processed TIME_FRAME_ID
                     _lastProcessedTimeFrameId = nextTimeFrameId;
@@ -118,7 +118,7 @@ namespace AAPADS
 
                 if (((accessPoint.SignalStrength / 2) - 100) < 60) //Only care about SSID that have approx RSSI value of 60 or less
 
-                _dbAccess.INSERT_SSID_AND_BSSID_IF_DOES_NOT_EXIST(accessPoint.SSID, accessPoint.BSSID); // If new data add it TABLE knownSsids-->
+                _dbAccess.InsertSsidBssiIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID); // If new data add it TABLE knownSsids-->
 
 
                 {

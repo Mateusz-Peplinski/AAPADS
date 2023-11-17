@@ -342,7 +342,7 @@ namespace AAPADS
 
             for (int i = 0; i < SSID_LIST.Count; i++)
             {
-                _dbAccess.DATA_INGEST_ENGINE_INSERT_ACCESS_POINT_DATA(
+                _dbAccess.DataIngestEngineInsertAccessPointData(
                     SSID_LIST[i],
                     BSSID_LIST[i],
                     SIGNAL_STRENGTH_LIST[i],

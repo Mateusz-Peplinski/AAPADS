@@ -16,7 +16,7 @@ using System.Windows.Media;
 
 namespace AAPADS
 {
-    public class ACCESS_POINT_DATA
+    public class AccessPointData
     {
         public string DISPLAY_SSID { get; set; }
         public string ORIGNAL_SSID { get; set; }
@@ -90,8 +90,8 @@ namespace AAPADS
         #region
         private CancellationTokenSource _cancellationTokenSource;
         public event PropertyChangedEventHandler PropertyChanged;
-        private ObservableCollection<ACCESS_POINT_DATA> _ssids = new ObservableCollection<ACCESS_POINT_DATA>();
-        public ObservableCollection<ACCESS_POINT_DATA> SSIDs
+        private ObservableCollection<AccessPointData> _ssids = new ObservableCollection<AccessPointData>();
+        public ObservableCollection<AccessPointData> SSIDs
         {
             get => _ssids;
             set
@@ -101,7 +101,7 @@ namespace AAPADS
             }
         }
         private double _rssiValueForGuage;
-        private ACCESS_POINT_DATA _selectedSSIDItem;
+        private AccessPointData _selectedBSSIDItem;
 
         private string _manufacturerName;
         public string ManufacturerName
@@ -123,34 +123,34 @@ namespace AAPADS
             }
         }
 
-        public ACCESS_POINT_DATA SELECTED_SSID_ITEM
+        public AccessPointData SELECTED_SSID_ITEM
         {
-            get => _selectedSSIDItem;
+            get => _selectedBSSIDItem;
             set
             {
-                if (_selectedSSIDItem?.BSSID == value?.BSSID)
+                if (_selectedBSSIDItem?.BSSID == value?.BSSID)
                     return; // If selected BSSID has not changed continue
 
-                _selectedSSIDItem = value;
+                _selectedBSSIDItem = value;
                 OnPropertyChanged(nameof(SELECTED_SSID_ITEM));
 
                 // Only clear the graph if the SSID has changed
                 ClearGraphData();
 
                 // Start collecting data for the new SSID
-                StartDataCollectionForSSID(_selectedSSIDItem?.BSSID);
+                StartDataCollectionForBSSID(_selectedBSSIDItem?.BSSID);
                 var (data24GHz, data5GHz) = PopulateSSIDInfoList(SSIDs.ToList());
                 RefreshChannelAllocationChartsAsync(data24GHz, data5GHz);
-                fetchImageForSelectedBSSID();
+                FetchOUIDataForBSSID();
             }
         }
-        private void fetchImageForSelectedBSSID()
+        private void FetchOUIDataForBSSID()
         {
 
-            if (_selectedSSIDItem != null)
+            if (_selectedBSSIDItem != null)
             {
                 var ouiToManufacturer = ParseFilteredOUIFile();
-                string oui = _selectedSSIDItem.BSSID.Replace(":", "").Substring(0, 6).ToUpper();
+                string oui = _selectedBSSIDItem.BSSID.Replace(":", "").Substring(0, 6).ToUpper();
 
                 if (ouiToManufacturer.TryGetValue(oui, out string manufacturer))
                 {
@@ -209,7 +209,7 @@ namespace AAPADS
         {
             RSSIDataForGraphSignalStrengthOverTime[0].Values.Clear();
         }
-        private void StartDataCollectionForSSID(string ssid)
+        private void StartDataCollectionForBSSID(string ssid)
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
@@ -276,20 +276,20 @@ namespace AAPADS
 
             int count = GetVisibleNetworks(networkInfos, networkInfos.Length);
 
-            var newSSIDs = new List<ACCESS_POINT_DATA>();
+            var newSSIDs = new List<AccessPointData>();
 
             foreach (var network in networkInfos.Take(count))
             {
-                var ssidItem = new ACCESS_POINT_DATA
+                var ssidItem = new AccessPointData
                 {
                     BSSID = network.bssid,
                     DISPLAY_SSID = string.IsNullOrWhiteSpace(network.ssid) ? "[HIDDEN NETWORK]" : network.ssid,
                     AUTH_METHOD = network.authMethod,
                     ENCRYPTION_TYPE = network.encryptionType,
                     CHANNEL = network.channel,
-                    BSSID_DOT11_TYPE = mapBSSPHYType(network.bssidPhyType),
-                    BSSID_DOT11_TYPE_DESC = mapBSSPHYTypeDesc(network.bssidPhyType),
-                    BSS_TYPE = mapBssType(network.bssType),
+                    BSSID_DOT11_TYPE = EnumBSSPHYType(network.bssidPhyType),
+                    BSSID_DOT11_TYPE_DESC = EnumBSSPHYTypeDesc(network.bssidPhyType),
+                    BSS_TYPE = EnumBssType(network.bssType),
                     BEACON_PERIOD = network.beaconPeriod,
                     FREQUENCY = network.frequency,
                 };
@@ -387,7 +387,7 @@ namespace AAPADS
                 await Task.Delay(TimeSpan.FromSeconds(3));
             }
         }
-        private string mapBssType(int value)
+        private string EnumBssType(int value)
         {
             string BSSType;
 
@@ -408,7 +408,7 @@ namespace AAPADS
             }
             return BSSType;
         }
-        private string mapBSSPHYType(int value)
+        private string EnumBSSPHYType(int value)
         {
             //dot11_phy_type_unknown = 0,
             //dot11_phy_type_any = 0,
@@ -475,7 +475,7 @@ namespace AAPADS
 
             return BSSPHYType;
         }
-        private string mapBSSPHYTypeDesc(int value)
+        private string EnumBSSPHYTypeDesc(int value)
         {
             string BSSPHYTypeDesc;
 
@@ -535,44 +535,44 @@ namespace AAPADS
         //#####                            GRAPHS BELOW                                 #######            
         //#####################################################################################
         #region
-        private LineSeries CreateStyledLineSeries(string bssid, string title)
-        {
-            var defaultGradient = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 1),
-                EndPoint = new Point(0, 0),
-                GradientStops = new GradientStopCollection
-        {
-            new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
-            new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)   // Green 
-        }
-            };
+        //private LineSeries CreateStyledLineSeries(string bssid, string title)
+        //{
+        //    var defaultGradient = new LinearGradientBrush
+        //    {
+        //        StartPoint = new Point(0, 1),
+        //        EndPoint = new Point(0, 0),
+        //        GradientStops = new GradientStopCollection
+        //{
+        //    new GradientStop(Color.FromRgb(61, 235, 154), 1),       // blue-green
+        //    new GradientStop(Color.FromArgb(60, 110, 204, 37), 0)   // Green 
+        //}
+        //    };
 
-            var selectedGradient = new LinearGradientBrush
-            {
-                StartPoint = new Point(0, 1),
-                EndPoint = new Point(0, 0),
-                GradientStops = new GradientStopCollection
-        {
-            new GradientStop(Color.FromRgb(239, 57, 69), 1),        // Red
-            new GradientStop(Color.FromArgb(60, 239, 57, 69), 0)  // Transparent Red
-        }
-            };
+        //    var selectedGradient = new LinearGradientBrush
+        //    {
+        //        StartPoint = new Point(0, 1),
+        //        EndPoint = new Point(0, 0),
+        //        GradientStops = new GradientStopCollection
+        //{
+        //    new GradientStop(Color.FromRgb(239, 57, 69), 1),        // Red
+        //    new GradientStop(Color.FromArgb(60, 239, 57, 69), 0)  // Transparent Red
+        //}
+        //    };
 
-            return new LineSeries
-            {
-                Title = title,
-                Values = new ChartValues<ObservablePoint>(),
-                PointGeometrySize = 10,
-                StrokeThickness = 2,
-                Stroke = bssid == SELECTED_SSID_ITEM?.BSSID
-                    ? new SolidColorBrush(Color.FromRgb(239, 57, 69)) // Red for selected BSSID
-                    : new SolidColorBrush(Color.FromRgb(66, 255, 192)),
-                Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
-                Fill = bssid == SELECTED_SSID_ITEM?.BSSID ? selectedGradient : defaultGradient,
-                DataLabels = true
-            };
-        }
+        //    return new LineSeries
+        //    {
+        //        Title = title,
+        //        Values = new ChartValues<ObservablePoint>(),
+        //        PointGeometrySize = 10,
+        //        StrokeThickness = 2,
+        //        Stroke = bssid == SELECTED_SSID_ITEM?.BSSID
+        //            ? new SolidColorBrush(Color.FromRgb(239, 57, 69)) // Red for selected BSSID
+        //            : new SolidColorBrush(Color.FromRgb(66, 255, 192)),
+        //        Foreground = new SolidColorBrush(Color.FromRgb(210, 210, 210)),
+        //        Fill = bssid == SELECTED_SSID_ITEM?.BSSID ? selectedGradient : defaultGradient,
+        //        DataLabels = true
+        //    };
+        //}
 
         public SeriesCollection CHANNEL_ALLOCATION_SERIES_5GHZ { get; set; } = new SeriesCollection();
         public SeriesCollection CHANNEL_ALLOCATION_SERIES_24GHZ { get; set; } = new SeriesCollection();
@@ -587,7 +587,7 @@ namespace AAPADS
                 Application.Current.Dispatcher.Invoke(action);
             }
         }
-        private (List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ>, List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ>) PopulateSSIDInfoList(List<ACCESS_POINT_DATA> accessPointDataList)
+        private (List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ>, List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ>) PopulateSSIDInfoList(List<AccessPointData> accessPointDataList)
         {
             var ssidInfoList24Ghz = new List<SSID_INFO_FOR_CH_ALLOCATION_24GHZ>();
             var ssidInfoList5Ghz = new List<SSID_INFO_FOR_CH_ALLOCATION5_GHZ>();

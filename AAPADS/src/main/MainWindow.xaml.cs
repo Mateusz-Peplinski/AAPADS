@@ -50,7 +50,7 @@ namespace AAPADS
 
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
             DETECTION_VIEW_MODEL = new detectionsViewDataModel();
-            DETECTION_ENGINE_OBJECT.DetectionDiscovered += updateDetectionTabUI;
+            DETECTION_ENGINE_OBJECT.DetectionDiscovered += UpdateDetectionTabUI;
 
 
             AAPADS_GLOBAL_START();
@@ -186,7 +186,7 @@ namespace AAPADS
             });
 
         }
-        private void updateDetectionTabUI(object sender, EventArgs e)
+        private void UpdateDetectionTabUI(object sender, EventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
