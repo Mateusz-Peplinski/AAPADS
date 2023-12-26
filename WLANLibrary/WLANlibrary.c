@@ -241,7 +241,7 @@ typedef struct {
     char AdapterName[256]; 
     WLAN_INTERFACE_STATE AdapterStatus;
 } MyWLANStats;
-
+//// program crashed here.. It tryed to wirte to protected memeory
 __declspec(dllexport) int GetWLANStatistics(MyWLANStats* stats) {
     DWORD negotiatedVersion;
     HANDLE clientHandle;
