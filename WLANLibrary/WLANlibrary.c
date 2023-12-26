@@ -316,6 +316,44 @@ __declspec(dllexport) int GetRSSIForSSID(const char* targetSSID) {
 
     return rssi;
 }
+typedef struct {
+    char AdapterName[256]; 
+    WLAN_INTERFACE_STATE AdapterStatus;
+} WLANAdapterStatus;
+//// Net version for windows 11
+__declspec(dllexport) int WLANGetAdapterStatus(WLANAdapterStatus* stats) {
+    DWORD negotiatedVersion;
+    HANDLE clientHandle;
+
+    memset(stats, 0, sizeof(WLANAdapterStatus));
+
+
+    WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
+
+    WLAN_INTERFACE_INFO_LIST* pInterfaceList;
+    WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
+
+    DWORD result;
+    result = WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
+    if (result != ERROR_SUCCESS) {
+        printf("Error\n");
+    }
+
+    WLAN_STATISTICS wlanStats;
+    DWORD dataSize = sizeof(WLAN_STATISTICS);
+    WlanQueryInterface(clientHandle, &pInterfaceList->InterfaceInfo[0].InterfaceGuid, wlan_intf_opcode_statistics, NULL, &dataSize, (PVOID*)&wlanStats, NULL);
+
+    WCHAR* interfaceName = pInterfaceList->InterfaceInfo[0].strInterfaceDescription;
+    WideCharToMultiByte(CP_UTF8, 0, interfaceName, -1, stats->AdapterName, sizeof(stats->AdapterName), NULL, NULL);
+
+    stats->AdapterStatus = pInterfaceList->InterfaceInfo[0].isState;
+   
+
+    WlanFreeMemory(pInterfaceList);
+    WlanCloseHandle(clientHandle, NULL);
+
+    return 0;
+}
 
 
 // ###############################################################################
