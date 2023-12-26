@@ -89,7 +89,7 @@ namespace AAPADS
 
 
 
-        private List<DOT11_ACCESS_POINT_DATA> FetchDataForTimeFrame(string timeFrameId)
+        private List<dot11DataIngestDataForTimeFrameID> FetchDataForTimeFrame(string timeFrameId)
         {
 
             string query = "SELECT * FROM WirelessProfile WHERE TIME_FRAME_ID = @TIME_FRAME_ID";
@@ -98,13 +98,13 @@ namespace AAPADS
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"[ NORMALIZATION ENGINE ] SQL READ from {timeFrameId}");
 
-            var data = _dbAccess.Connection.Query<DOT11_ACCESS_POINT_DATA>(query, parameters).ToList();
+            var data = _dbAccess.Connection.Query<dot11DataIngestDataForTimeFrameID>(query, parameters).ToList();
 
             return data;
         }
 
 
-        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount) NormalizeDataForTimeFrameID(List<DOT11_ACCESS_POINT_DATA> data)
+        private (int AccessPointCount, string timeFRAMEIDTime, int AP24GHzCount, int AP5GHzCount) NormalizeDataForTimeFrameID(List<dot11DataIngestDataForTimeFrameID> data)
         {
             int totalAPs = 0;
             int total24GHzAPs = 0;
@@ -143,7 +143,7 @@ namespace AAPADS
 
     }
 
-    public class DOT11_ACCESS_POINT_DATA
+    public class dot11DataIngestDataForTimeFrameID
     {
         public int ID { get; set; }
         public string Time { get; set; }
