@@ -55,30 +55,31 @@ namespace AAPADS
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
-                var setting = db.GetSetting("DebugConsoleEnabled");
-                if (setting != null)
+                // GetSetting should return the string representation of the setting.
+                var settingValue = db.GetSetting("DebugConsoleEnabled");
+
+                // Parse the returned value to a boolean.
+                if (settingValue != null)
                 {
-                    IsDebugConsoleEnabled = setting == "true";
+                    IsDebugConsoleEnabled = settingValue.Equals("true", StringComparison.OrdinalIgnoreCase);
                 }
             }
 
+            // Based on the boolean value, show or hide the console.
             if (IsDebugConsoleEnabled)
                 ShowConsole();
             else
                 HideConsole();
         }
 
-
         public void SaveSettings()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
+                // Convert the boolean to a string representation and save it.
                 db.SaveSetting("DebugConsoleEnabled", IsDebugConsoleEnabled ? "true" : "false");
             }
         }
-
-
-
 
         public void ShowConsole()
         {

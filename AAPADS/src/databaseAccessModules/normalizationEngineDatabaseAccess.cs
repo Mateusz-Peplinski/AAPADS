@@ -23,7 +23,7 @@ namespace AAPADS
         private void CreateTablesIfNotExists()
         {
             var command = new SQLiteCommand(
-                @"CREATE TABLE IF NOT EXISTS ""NormVals"" (
+                @"CREATE TABLE IF NOT EXISTS ""NormWirelessProfile"" (
             ""ID"" INTEGER NOT NULL UNIQUE,
             ""TIME_FRAME_ID"" TEXT,
             ""TIME"" TEXT,
@@ -33,8 +33,8 @@ namespace AAPADS
             PRIMARY KEY(""ID"" AUTOINCREMENT)
             );", connection);
 
-            var knownSsidsCommand = new SQLiteCommand(
-                @"CREATE TABLE IF NOT EXISTS ""KnownSsids"" (
+            var knownBSSIDSCommand = new SQLiteCommand(
+                @"CREATE TABLE IF NOT EXISTS ""KnownBSSIDS"" (
                 ""ID"" INTEGER NOT NULL UNIQUE,
                 ""SSID"" TEXT,
                 ""BSSID"" TEXT,
@@ -44,11 +44,11 @@ namespace AAPADS
                 PRIMARY KEY(""ID"" AUTOINCREMENT)
                 );", connection);
 
-            knownSsidsCommand.ExecuteNonQuery();
+            knownBSSIDSCommand.ExecuteNonQuery();
             command.ExecuteNonQuery();
         }
         // ###############################################################
-        // ############          TABLE NormVals           ##############
+        // ############     TABLE NormWirelessProfile       ##############
         // ###############################################################
         public void InsertNormalizationEngineData(string timeFrameID, string timeFRAMEIDTime, int AccessPointCount, int AP24GHzCount, int AP5GHzCount)
         {
@@ -60,19 +60,19 @@ namespace AAPADS
                 AP2_4GHZ_AP_COUNT = AP24GHzCount,
                 AP5_GHZ_AP_COUNT = AP5GHzCount,
             };
-            connection.Execute("INSERT INTO NormVals (TIME_FRAME_ID, TIME, AP_COUNT, AP2_4GHZ_AP_COUNT, AP5_GHZ_AP_COUNT) VALUES (@TIME_FRAME_ID, @TIME, @AP_COUNT, @AP2_4GHZ_AP_COUNT, @AP5_GHZ_AP_COUNT)", normalizedData);
+            connection.Execute("INSERT INTO NormWirelessProfile (TIME_FRAME_ID, TIME, AP_COUNT, AP2_4GHZ_AP_COUNT, AP5_GHZ_AP_COUNT) VALUES (@TIME_FRAME_ID, @TIME, @AP_COUNT, @AP2_4GHZ_AP_COUNT, @AP5_GHZ_AP_COUNT)", normalizedData);
         }
 
         // ###############################################################
-        // ############          TABLE KnownSsids           ##############
+        // ############          TABLE KnownBSSIDS          ##############
         // ###############################################################
         public void InsertSsidBssiIfDoesNotExist(string ssid, string bssid)
         {
-            var ssidBssidExists = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM KnownSsids WHERE SSID = @SSID AND BSSID = @BSSID", new { SSID = ssid, BSSID = bssid });
+            var ssidBssidExists = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM KnownBSSIDS WHERE SSID = @SSID AND BSSID = @BSSID", new { SSID = ssid, BSSID = bssid });
 
             if (ssidBssidExists == 0)
             {
-                connection.Execute("INSERT INTO KnownSsids (SSID, BSSID, FIRST_DETECTED_TIME, FIRST_DETECTED_DATE) VALUES (@SSID, @BSSID, @FIRST_DETECTED_TIME, @FIRST_DETECTED_DATE )", new { SSID = ssid, BSSID = bssid, FIRST_DETECTED_TIME = DateTime.Now.ToString("hh:mm:ss tt"), FIRST_DETECTED_DATE = DateTime.Now.ToShortDateString() });
+                connection.Execute("INSERT INTO KnownBSSIDS (SSID, BSSID, FIRST_DETECTED_TIME, FIRST_DETECTED_DATE) VALUES (@SSID, @BSSID, @FIRST_DETECTED_TIME, @FIRST_DETECTED_DATE )", new { SSID = ssid, BSSID = bssid, FIRST_DETECTED_TIME = DateTime.Now.ToString("hh:mm:ss tt"), FIRST_DETECTED_DATE = DateTime.Now.ToShortDateString() });
             }
 
         }
@@ -80,7 +80,7 @@ namespace AAPADS
 
         public string GetLastTimeFrameID()
         {
-            var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM NormVals ORDER BY ID DESC LIMIT 1");
+            var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM NormWirelessProfile ORDER BY ID DESC LIMIT 1");
             return result ?? "A0";
         }
         public void Dispose()
