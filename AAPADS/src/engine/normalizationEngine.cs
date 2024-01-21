@@ -117,11 +117,13 @@ namespace AAPADS
             {
 
                 if (((accessPoint.SignalStrength / 2) - 100) < 60) //Only care about SSID that have approx RSSI value of 60 or less
-
-                _dbAccess.InsertSsidBssiIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID); // If new data add it TABLE knownSsids-->
-
-
                 {
+                    _dbAccess.InsertSsidBssiIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID); // If new data add it TABLE knownSsids--> (Need to update so this is  only updated during the training stage)
+                    // step 1 -  add all to KnowBSSIDS (TRAIN)
+                    // step 2 -  stop TRAINING 
+                    // step 3 -  add all APs to AllKnownBSSIDS (This is so user can white / black list by moving an AP to KnownBSSID)
+
+                
                     if (accessPoint.Band == "2.4 GHz")
                     {
                         total24GHzAPs++;
