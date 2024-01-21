@@ -170,6 +170,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
 
         }
         TOTAL_DETECTED_AP = dataIngestEngine.SSID_LIST.Count;
+        // NOTE: Maybe move Avg calculation to DIE or NE for to do the maths on anoter thread
         TOTAL_SECURE_AP = calculateTotalSecureAccessPoints(dataIngestEngine);
         TOTAL_2_4_GHz_AP = calculateTotal24GHzAccessPoints(dataIngestEngine);
         TOTAL_5_GHz_AP = calculateTotal5GHzAccessPoints(dataIngestEngine);

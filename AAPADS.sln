@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAPADS", "AAPADS\AAPADS.csproj", "{5469C7E9-EC3A-4169-9BB5-D8D0253D8931}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9BF1E1D0-5F16-4402-BF4B-4E44F0D5A3EC} = {9BF1E1D0-5F16-4402-BF4B-4E44F0D5A3EC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WLANLibrary", "WLANLibrary\WLANLibrary.vcxproj", "{9BF1E1D0-5F16-4402-BF4B-4E44F0D5A3EC}"
 EndProject

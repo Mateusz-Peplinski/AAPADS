@@ -7,6 +7,9 @@ using System.Windows.Media;
 
 namespace AAPADS
 {
+    //#####################################################################################
+    //#####                Converts channels to a certain colour                    #######            
+    //#####################################################################################
     public class ChannelColorConverter : IValueConverter
     {
         private static readonly HashSet<int> twoGhzChannels = new HashSet<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
