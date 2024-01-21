@@ -148,7 +148,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="src\databaseAccess\SettingsDatabaseAccess.cs" />
+    <Compile Include="src\databaseAccessModules\SettingsDatabaseAccess.cs" />
     <Compile Include="src\dataModels\SettingsViewModel.cs" />
     <Compile Include="src\dataModels\NetworkCardInfoViewModel.cs" />
     <Compile Include="src\main\loadingScreen.xaml.cs">
@@ -158,10 +158,10 @@
     <Compile Include="src\main\AccessPointRadarWindow.xaml.cs">
       <DependentUpon>AccessPointRadarWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="src\databaseAccess\normalizationEngineDatabaseAccess.cs" />
+    <Compile Include="src\databaseAccessModules\normalizationEngineDatabaseAccess.cs" />
     <Compile Include="src\engine\normalizationEngine.cs" />
     <Compile Include="src\dataModels\AccessPointInvestigatorDataModel.cs" />
-    <Compile Include="src\databaseAccess\wirelessProfileDatabaseAccess.cs" />
+    <Compile Include="src\databaseAccessModules\wirelessProfileDatabaseAccess.cs" />
     <Compile Include="src\dataModels\detectionSetUpViewDataModel.cs" />
     <Compile Include="src\engine\data\detectionDictionary.cs" />
     <Compile Include="src\main\converters\DetectionStatusToColorConverter.cs" />
@@ -182,7 +182,7 @@
     <Compile Include="src\dataModels\dataModelStructure.cs" />
     <Compile Include="src\dataModels\baseDataModel.cs" />
     <Compile Include="src\WLANScanInvoker\WifiScanner.cs" />
-    <Compile Include="src\databaseAccess\TimeFrameIdGenerator.cs" />
+    <Compile Include="src\databaseAccessModules\TimeFrameIdGenerator.cs" />
     <Compile Include="src\main\converters\StatusToColorConverter.cs" />
     <Page Include="src\main\loadingScreen.xaml">
       <SubType>Designer</SubType>
