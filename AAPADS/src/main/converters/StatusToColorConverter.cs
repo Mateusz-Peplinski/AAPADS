@@ -9,6 +9,9 @@ using System.Windows.Media;
 
 namespace AAPADS
 {
+    //#####################################################################################
+    //#####                       Converts WNIC status to a colour                  #######            
+    //#####################################################################################
     public class StatusToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

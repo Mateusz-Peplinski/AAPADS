@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace AAPADS
 {
+    //#####################################################################################
+    //#####           Converts detection criticality to a certain colour            #######            
+    //#####################################################################################
     public class CriticalityLevelToTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
