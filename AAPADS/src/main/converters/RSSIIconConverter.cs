@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace AAPADS
 {
+    //#####################################################################################
+    //#####              Converts RSSI Value to a certain icon type                 #######            
+    //#####################################################################################
     public class RSSIIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

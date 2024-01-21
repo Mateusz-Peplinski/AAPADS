@@ -9,6 +9,9 @@ using System.Windows.Media;
 
 namespace AAPADS
 {
+    //#####################################################################################
+    //#####             Converts WiFi RSSI Value to a certain colour                #######            
+    //#####################################################################################
     public class RSSIColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
