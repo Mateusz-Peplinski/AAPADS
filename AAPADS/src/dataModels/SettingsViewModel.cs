@@ -29,7 +29,7 @@ namespace AAPADS
         const int SW_SHOW = 5;
 
 
-        private bool _isDebugConsoleEnabled;
+        private bool _isDebugConsoleEnabled; 
 
         public bool IsDebugConsoleEnabled
         {
@@ -52,7 +52,7 @@ namespace AAPADS
         }
 
         public void LoadSettings()
-        {
+        { 
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
                 // GetSetting should return the string representation of the setting.
