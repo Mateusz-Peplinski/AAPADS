@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media.Animation;
 
 namespace AAPADS
 {
@@ -101,8 +102,11 @@ namespace AAPADS
 
             CloseButton.Click += (s, e) => Application.Current.Shutdown();
 
-            DataContext = OVERVIEW_VIEW_MODEL;
+            Storyboard flashingAnimation = (Storyboard)FindResource("FlashingAnimation");
+            Storyboard.SetTarget(flashingAnimation, flashingIcon);
+            flashingAnimation.Begin();
 
+            DataContext = OVERVIEW_VIEW_MODEL;
 
 
         }
