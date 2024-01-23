@@ -1,20 +1,17 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace AAPADS
 {
@@ -49,6 +46,7 @@ namespace AAPADS
     {
         private string _networkCardName;
         private string _adapterStatus;
+        private string _connectedWLANSSID;
         private bool _isExpanderExpanded;
         private CancellationTokenSource _cts;
         private PerformanceCounter _sendCounter;
@@ -72,6 +70,15 @@ namespace AAPADS
             {
                 _adapterStatus = value;
                 OnPropertyChanged(nameof(ADAPTER_STATUS));
+            }
+        }
+        public string CONNECTED_WLAN_SSID
+        {
+            get { return _connectedWLANSSID; }
+            set
+            {
+                _connectedWLANSSID = value;
+                OnPropertyChanged(nameof(CONNECTED_WLAN_SSID));
             }
         }
 
@@ -109,7 +116,7 @@ namespace AAPADS
                     Fill = Brushes.Transparent
                 }
             };
-            
+
 
 
             _cts = new CancellationTokenSource();
@@ -121,8 +128,9 @@ namespace AAPADS
             while (!token.IsCancellationRequested)
             {
                 if (counter % 5 == 0) // Every 5 seconds
-                {  
+                {
                     await UpdateDataAsync();
+                    GetConnectedWLANSSID();
                 }
 
                 if (IsExpanderExpanded) // Every second if expanded
@@ -131,7 +139,7 @@ namespace AAPADS
                     {
                         UpdateSeries();
                     }
-                    
+
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(1), token);
@@ -206,14 +214,13 @@ namespace AAPADS
                 var stats = await GetWlanStatsAsync();
                 NETWORK_CARD_NAME = stats.AdapterName;
                 ADAPTER_STATUS = EnumWLANInterfaceStatus(stats.AdapterStatus);
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"[NETWORK ERROR] An error occurred: {ex.Message}");
             }
         }
-    
+
 
         private async Task<NativeMethods.WLANAdapterStatus> GetWlanStatsAsync()
         {
@@ -254,7 +261,53 @@ namespace AAPADS
                     return "UNKNOWN";
             }
         }
+        public void GetConnectedWLANSSID()
+        {
+            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            {
+                FileName = "netsh",
+                Arguments = "wlan show interfaces",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
 
+            string ssid = string.Empty;
+            bool isConnected = false;
+            using (Process process = Process.Start(processStartInfo))
+            {
+                using (StreamReader reader = process.StandardOutput)
+                {
+                    string output = reader.ReadToEnd();
+                    string stateLine = output.Split('\n').FirstOrDefault(line => line.TrimStart().StartsWith("State"));
+                    if (!string.IsNullOrEmpty(stateLine))
+                    {
+                        string state = stateLine.Split(':').Last().Trim();
+                        if (state.Equals("connected", StringComparison.OrdinalIgnoreCase))
+                        {
+                            isConnected = true;
+                            string ssidLine = output.Split('\n').FirstOrDefault(line => line.TrimStart().StartsWith("SSID"));
+                            if (!string.IsNullOrEmpty(ssidLine))
+                            {
+                                ssid = ssidLine.Split(':').Last().Trim();
+                                if (string.IsNullOrEmpty(ssid))
+                                {
+                                    ssid = "HIDDEN NETWORK";
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            if (!isConnected)
+            {
+                ssid = "NOT CONNECTED";
+            }
+
+            CONNECTED_WLAN_SSID = ssid;
+        }
 
 
     }

@@ -2057,8 +2057,16 @@
                         Foreground="{Binding ADAPTER_STATUS, Converter={StaticResource StatusToColorConverter}}"
                         Text="{Binding ADAPTER_STATUS, StringFormat='[{0}]'}" />
 
-                    <!--  Interface Name  -->
-                    <TextBlock Text="{Binding NETWORK_CARD_NAME, StringFormat='[ {0} ]'}" />
+                    <!--  Interface and WLAN Name  -->
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="[{0}] Connected to: {1}">
+                                <Binding Path="NETWORK_CARD_NAME" />
+                                <Binding Path="CONNECTED_WLAN_SSID" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
                 </StackPanel>
             </Expander.Header>
 
