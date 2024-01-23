@@ -44,6 +44,16 @@
 
         <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#ef3945" />
 
+        <Storyboard x:Key="FlashingAnimation">
+            <DoubleAnimation
+                AutoReverse="True"
+                RepeatBehavior="Forever"
+                Storyboard.TargetProperty="Opacity"
+                From="1.0"
+                To="0.0"
+                Duration="0:0:2" />
+        </Storyboard>
+
     </Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" />
@@ -2059,12 +2069,20 @@
 
                     <!--  Interface and WLAN Name  -->
                     <TextBlock>
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="[{0}] Connected to: {1}">
-                                <Binding Path="NETWORK_CARD_NAME" />
-                                <Binding Path="CONNECTED_WLAN_SSID" />
-                            </MultiBinding>
-                        </TextBlock.Text>
+                        <InlineUIContainer>
+                            <materialDesign:PackIcon Kind="Antenna" />
+                        </InlineUIContainer>
+                        <Run Text="{Binding NETWORK_CARD_NAME}" />
+                        <InlineUIContainer>
+                            <materialDesign:PackIcon
+                                x:Name="flashingIcon"
+                                Foreground="#6ecc25"
+                                Kind="Waveform" />
+                        </InlineUIContainer>
+                        <InlineUIContainer>
+                            <materialDesign:PackIcon Kind="RouterWirelessSettings" />
+                        </InlineUIContainer>
+                        <Run Text="{Binding CONNECTED_WLAN_SSID}" />
                     </TextBlock>
 
                 </StackPanel>
