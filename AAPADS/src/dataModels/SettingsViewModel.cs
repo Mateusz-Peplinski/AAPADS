@@ -13,9 +13,6 @@ namespace AAPADS
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
-
-
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr GetConsoleWindow();
 
@@ -72,7 +69,7 @@ namespace AAPADS
                 HideConsole();
         }
 
-        public void SaveIsDebugConsoleEnabled()
+        private void SaveIsDebugConsoleEnabled()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
@@ -81,12 +78,12 @@ namespace AAPADS
             }
         }
 
-        public void ShowConsole()
+        private void ShowConsole()
         {
             ShowWindow(GetConsoleWindow(), SW_SHOW);
         }
 
-        public void HideConsole()
+        private void HideConsole()
         {
             ShowWindow(GetConsoleWindow(), SW_HIDE);
         }
