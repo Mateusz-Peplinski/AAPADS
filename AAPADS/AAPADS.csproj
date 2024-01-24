@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5469C7E9-EC3A-4169-9BB5-D8D0253D8931}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>AAPADS</RootNamespace>
     <AssemblyName>AAPADS</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>

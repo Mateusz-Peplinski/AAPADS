@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -9,9 +10,13 @@ namespace AAPADS
     /// </summary>
     public partial class loadingScreen : Window
     {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool AllocConsole();
+
         public loadingScreen()
         {
             InitializeComponent();
+            AllocConsole(); // The debug console is created now to give the console window time to initialize before calling the Console.Writeline();
             START_AAPADS();
         }
 
@@ -20,7 +25,6 @@ namespace AAPADS
 
         private void START_AAPADS()
         {
-
             _mainWindow = new MainWindow();
 
             //currently a time --> needs to map to an event in data ingest engine to say the scan has been preformed so the program does not load blank data

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SQLite;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AAPADS
 {
@@ -19,17 +14,19 @@ namespace AAPADS
         }
 
 
-        [DllImport("kernel32.dll")]
+
+
+        [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr GetConsoleWindow();
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
 
 
-        private bool _isDebugConsoleEnabled; 
+        private bool _isDebugConsoleEnabled;
 
         public bool IsDebugConsoleEnabled
         {
@@ -46,13 +43,17 @@ namespace AAPADS
                         HideConsole();
 
                     OnPropertyChanged(nameof(IsDebugConsoleEnabled));
-                    SaveSettings();
+                    SaveIsDebugConsoleEnabled();
                 }
             }
         }
 
         public void LoadSettings()
-        { 
+        {
+            LoadIsDebugConsoleEnabled();
+        }
+        private void LoadIsDebugConsoleEnabled()
+        {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
                 // GetSetting should return the string representation of the setting.
@@ -65,14 +66,13 @@ namespace AAPADS
                 }
             }
 
-            // Based on the boolean value, show or hide the console.
             if (IsDebugConsoleEnabled)
                 ShowConsole();
             else
                 HideConsole();
         }
 
-        public void SaveSettings()
+        public void SaveIsDebugConsoleEnabled()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
