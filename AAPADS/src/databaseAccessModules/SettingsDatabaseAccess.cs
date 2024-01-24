@@ -31,8 +31,6 @@ namespace AAPADS
             command.ExecuteNonQuery();
         }
 
-
-
         public string GetSetting(string key)
         {
             return connection.QueryFirstOrDefault<string>("SELECT Value FROM settings WHERE Key = @Key", new { Key = key });
