@@ -1889,7 +1889,8 @@
                                             Style="{StaticResource MaterialDesignDiscreteSlider}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
-                                            Value="40" />
+                                            Value="{Binding DetectionTrainingTime, Mode=TwoWay}" />
+
                                         <StackPanel
                                             Grid.Row="5"
                                             Margin="24,8,24,0"
