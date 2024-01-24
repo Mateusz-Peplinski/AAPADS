@@ -9,13 +9,27 @@ namespace AAPADS
     {
         public ObservableCollection<NETWORK_ADAPTER_INFO> NETWORK_80211_ADAPTERS { get; set; }
 
+        private int _detectionTrainingTime;
+        public int DetectionTrainingTime
+        {
+            get { return _detectionTrainingTime; }
+            set
+            {
+                if (_detectionTrainingTime != value)
+                {
+                    _detectionTrainingTime = value;
+                    OnPropertyChanged(nameof(DetectionTrainingTime));
+                    SaveDetectionTrainingTimeToDatabase(value);
+                }
+            }
+        }
+
         public detectionSetUpViewDataModel()
         {
             NETWORK_80211_ADAPTERS = new ObservableCollection<NETWORK_ADAPTER_INFO>();
             NETWORK_ADAPTER_INFO.AdapterCollection = NETWORK_80211_ADAPTERS;
             LoadAdapters();
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
@@ -29,6 +43,14 @@ namespace AAPADS
             foreach (var adapter in adapters)
             {
                 NETWORK_80211_ADAPTERS.Add(adapter);
+            }
+        }
+        private void SaveDetectionTrainingTimeToDatabase(int hours)
+        {
+            string timeValue = $"{hours:00}:00:00";
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                db.SaveSetting("DetectionTrainingTime", timeValue);
             }
         }
 
@@ -75,15 +97,27 @@ namespace AAPADS
                     _isAdapterActive = value;
                     OnPropertyChanged("IsAdapterActive");
 
-                    if (value && AdapterCollection != null)
+                    if (value)
                     {
-                        foreach (var adapter in AdapterCollection)
+                        SaveSelectedAdapterSetting(NETWORK_ADAPTER_DESCRIPTION);
+                        // Deactivate other adapters in the collection
+                        if (AdapterCollection != null)
                         {
-                            if (adapter != this)
-                                adapter.IsAdapterActive = false;
+                            foreach (var adapter in AdapterCollection)
+                            {
+                                if (adapter != this)
+                                    adapter.IsAdapterActive = false;
+                            }
                         }
                     }
                 }
+            }
+        }
+        private void SaveSelectedAdapterSetting(string adapterName)
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                db.SaveSetting("DefaultWNICName", adapterName);
             }
         }
 

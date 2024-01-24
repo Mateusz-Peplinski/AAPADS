@@ -307,8 +307,16 @@ namespace AAPADS
             }
 
             CONNECTED_WLAN_SSID = ssid;
-        }
+            SaveConnectedWLANSSID(ssid);
 
+        }
+        private void SaveConnectedWLANSSID(string WLANName)
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                db.SaveSetting("DefaultWLANName", WLANName);
+            }
+        }
 
     }
 
