@@ -61,7 +61,7 @@ namespace AAPADS
 
 
             SETTINGS_VIEW_MODEL = new SettingsViewModel(); // Settings view model --> needed for lunch to load settings
-            SETTINGS_VIEW_MODEL.LoadSettings();
+            SETTINGS_VIEW_MODEL.LoadSettings(); // Load settings
 
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
             NetworkCardInfoExpander.DataContext = NetworkCardInfoVM; // This has its own data context because is should run no matter which tab is selected
