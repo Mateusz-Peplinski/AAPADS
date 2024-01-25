@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Windows;
 
 namespace AAPADS
 {
@@ -110,6 +111,8 @@ namespace AAPADS
             ControlsEnabled = IsWLANConfirmed;
             OnPropertyChanged(nameof(ControlsEnabled));
         }
+        
+
         private void LoadAdapters()
         {
             var adapters = GetNetworkAdapters();
@@ -184,6 +187,8 @@ namespace AAPADS
         public long NETWORK_ADAPTER_SPEED_BYTES { get; set; }
         public string NETWORK_ADAPTER_MAC_ADDRESS { get; set; }
 
+
+        // THis can soon be removed (remember to remove also the binding in the XAML)
         private bool _isAdapterActive;
         //private string _DefaultWNICName;
         public bool IsAdapterActive
