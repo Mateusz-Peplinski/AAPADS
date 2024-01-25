@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net.NetworkInformation;
 
 namespace AAPADS
@@ -11,10 +12,13 @@ namespace AAPADS
         public ObservableCollection<NETWORK_ADAPTER_INFO> NETWORK_80211_ADAPTERS { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private NETWORK_ADAPTER_INFO _selectedAdapter;
         private int _detectionTrainingTime;
         private bool _isWLANConfirmed;
         private string _defaultWLANName;
         private bool _controlsEnabled;
+        private string _defaultWNICName;
+
         public int DetectionTrainingTime
         {
             get { return _detectionTrainingTime; }
@@ -65,25 +69,47 @@ namespace AAPADS
                 }
             }
         }
-
+        public NETWORK_ADAPTER_INFO SelectedAdapter
+        {
+            get { return _selectedAdapter; }
+            set
+            {
+                if (_selectedAdapter != value)
+                {
+                    _selectedAdapter = value;
+                    OnPropertyChanged(nameof(SelectedAdapter));
+                    // When the selection changes, update DefaultWNICName
+                    DefaultWNICName = value?.NETWORK_ADAPTER_DESCRIPTION;
+                }
+            }
+        }
+        public string DefaultWNICName
+        {
+            get { return _defaultWNICName; }
+            set
+            {
+                if (_defaultWNICName != value)
+                {
+                    _defaultWNICName = value;
+                    OnPropertyChanged(nameof(DefaultWNICName));
+                    SaveSelectedAdapterSetting(DefaultWNICName);
+                }
+            }
+        }
         public detectionSetUpViewDataModel()
         {
             NETWORK_80211_ADAPTERS = new ObservableCollection<NETWORK_ADAPTER_INFO>();
             NETWORK_ADAPTER_INFO.AdapterCollection = NETWORK_80211_ADAPTERS;
             LoadAdapters();
             LoadConnectedWLANNameFromDatabase();
+
         }
-
-        
-
-        
         private void CheckStartButtonEnabled()
         {
             // Enable the Start button only if WLAN is confirmed
             ControlsEnabled = IsWLANConfirmed;
             OnPropertyChanged(nameof(ControlsEnabled));
         }
-
         private void LoadAdapters()
         {
             var adapters = GetNetworkAdapters();
@@ -92,18 +118,24 @@ namespace AAPADS
                 NETWORK_80211_ADAPTERS.Add(adapter);
             }
         }
+        
         public void LoadConnectedWLANNameFromDatabase()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
-                // GetSetting should return the string representation of the setting.
                 var settingValue = db.GetSetting("DefaultWLANName");
 
-                // Parse the returned value to a boolean.
                 if (settingValue != null)
                 {
                     DefaultWLANName = settingValue;
                 }
+            }
+        }
+        private void SaveSelectedAdapterSetting(string adapterName)
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                db.SaveSetting("DefaultWNICName", adapterName);
             }
         }
         private void SaveDetectionTrainingTimeToDatabase(int hours)
@@ -137,7 +169,6 @@ namespace AAPADS
 
             return adapterList;
         }
-
         
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -154,6 +185,7 @@ namespace AAPADS
         public string NETWORK_ADAPTER_MAC_ADDRESS { get; set; }
 
         private bool _isAdapterActive;
+        //private string _DefaultWNICName;
         public bool IsAdapterActive
         {
             get { return _isAdapterActive; }
@@ -166,7 +198,8 @@ namespace AAPADS
 
                     if (value)
                     {
-                        SaveSelectedAdapterSetting(NETWORK_ADAPTER_DESCRIPTION);
+                        //SaveSelectedAdapterSetting(NETWORK_ADAPTER_DESCRIPTION);
+                        //DefaultWNICName = NETWORK_ADAPTER_DESCRIPTION;
                         // Deactivate other adapters in the collection
                         if (AdapterCollection != null)
                         {
@@ -180,13 +213,28 @@ namespace AAPADS
                 }
             }
         }
-        private void SaveSelectedAdapterSetting(string adapterName)
-        {
-            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
-            {
-                db.SaveSetting("DefaultWNICName", adapterName);
-            }
-        }
+
+        //public string DefaultWNICName
+        //{
+        //    get { return _DefaultWNICName; }
+        //    set
+        //    {
+        //        if (_DefaultWNICName != value)
+        //        {
+        //            _DefaultWNICName = value;
+        //            OnPropertyChanged(nameof(DefaultWNICName));
+        //        }
+        //    }
+        //}
+
+
+        //private void SaveSelectedAdapterSetting(string adapterName)
+        //{
+        //    using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+        //    {
+        //        db.SaveSetting("DefaultWNICName", adapterName);
+        //    }
+        //}
 
 
         public static ObservableCollection<NETWORK_ADAPTER_INFO> AdapterCollection { get; set; }

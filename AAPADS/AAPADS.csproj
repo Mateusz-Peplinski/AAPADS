@@ -149,6 +149,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="HoursToTimeSpanConverter.cs" />
     <Compile Include="src\databaseAccessModules\SettingsDatabaseAccess.cs" />
     <Compile Include="src\dataModels\SettingsViewModel.cs" />
     <Compile Include="src\dataModels\NetworkCardInfoViewModel.cs" />
