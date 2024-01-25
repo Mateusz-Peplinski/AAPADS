@@ -1890,6 +1890,22 @@
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             Value="{Binding DetectionTrainingTime, Mode=TwoWay}" />
+                                        <StackPanel
+                                            Grid.Row="8"
+                                            Margin="24,8,24,0"
+                                            Orientation="Horizontal"
+                                            TextBlock.Foreground="#d2d2d2">
+                                            <TextBlock FontWeight="Bold" Text="WLAN Name: " />
+                                            <TextBlock
+                                                Margin="0,0,10,0"
+                                                FontWeight="Bold"
+                                                Text="{Binding DefaultWLANName}" />
+                                            <CheckBox
+                                                x:Name="confirmWLANCheckBox"
+                                                Content="Confirm WLAN Connection"
+                                                FontWeight="Bold"
+                                                IsChecked="{Binding IsWLANConfirmed, Mode=TwoWay}" />
+                                        </StackPanel>
 
                                         <StackPanel
                                             Grid.Row="5"

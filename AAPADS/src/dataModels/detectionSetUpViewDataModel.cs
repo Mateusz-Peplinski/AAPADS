@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net.NetworkInformation;
@@ -8,8 +9,12 @@ namespace AAPADS
     public class detectionSetUpViewDataModel : baseDataModel, INotifyPropertyChanged
     {
         public ObservableCollection<NETWORK_ADAPTER_INFO> NETWORK_80211_ADAPTERS { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private int _detectionTrainingTime;
+        private bool _isWLANConfirmed;
+        private string _defaultWLANName;
+        private bool _controlsEnabled;
         public int DetectionTrainingTime
         {
             get { return _detectionTrainingTime; }
@@ -22,6 +27,43 @@ namespace AAPADS
                     SaveDetectionTrainingTimeToDatabase(value);
                 }
             }
+        }    
+        public bool IsWLANConfirmed
+        {
+            get { return _isWLANConfirmed; }
+            set
+            {
+                if (_isWLANConfirmed != value)
+                {
+                    _isWLANConfirmed = value;
+                    OnPropertyChanged(nameof(IsWLANConfirmed));
+                    CheckStartButtonEnabled();
+                }
+            }
+        }     
+        public string DefaultWLANName
+        {
+            get { return _defaultWLANName; }
+            set
+            {
+                if (_defaultWLANName != value)
+                {
+                    _defaultWLANName = value;
+                    OnPropertyChanged(nameof(DefaultWLANName));
+                }
+            }
+        }  
+        public bool ControlsEnabled
+        {
+            get { return _controlsEnabled; }
+            set
+            {
+                if (_controlsEnabled != value)
+                {
+                    _controlsEnabled = value;
+                    OnPropertyChanged(nameof(ControlsEnabled));
+                }
+            }
         }
 
         public detectionSetUpViewDataModel()
@@ -29,12 +71,17 @@ namespace AAPADS
             NETWORK_80211_ADAPTERS = new ObservableCollection<NETWORK_ADAPTER_INFO>();
             NETWORK_ADAPTER_INFO.AdapterCollection = NETWORK_80211_ADAPTERS;
             LoadAdapters();
+            LoadConnectedWLANNameFromDatabase();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        
+
+        
+        private void CheckStartButtonEnabled()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            // Enable the Start button only if WLAN is confirmed
+            ControlsEnabled = IsWLANConfirmed;
+            OnPropertyChanged(nameof(ControlsEnabled));
         }
 
         private void LoadAdapters()
@@ -43,6 +90,20 @@ namespace AAPADS
             foreach (var adapter in adapters)
             {
                 NETWORK_80211_ADAPTERS.Add(adapter);
+            }
+        }
+        public void LoadConnectedWLANNameFromDatabase()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // GetSetting should return the string representation of the setting.
+                var settingValue = db.GetSetting("DefaultWLANName");
+
+                // Parse the returned value to a boolean.
+                if (settingValue != null)
+                {
+                    DefaultWLANName = settingValue;
+                }
             }
         }
         private void SaveDetectionTrainingTimeToDatabase(int hours)
@@ -75,6 +136,12 @@ namespace AAPADS
             }
 
             return adapterList;
+        }
+
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
     public class NETWORK_ADAPTER_INFO : INotifyPropertyChanged
