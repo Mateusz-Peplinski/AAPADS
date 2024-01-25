@@ -198,7 +198,6 @@ namespace AAPADS
             // Currently not in use
         }
 
-        // Make sure to call this when the countdown is paused or when the application exits
         private void SaveRemainingTimeToDatabase()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
