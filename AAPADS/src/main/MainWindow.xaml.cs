@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace AAPADS
 {
@@ -34,6 +35,9 @@ namespace AAPADS
         private double _originalLeft;
         private double _originalTop;
         private bool _wasMaximized = false;
+
+        private DispatcherTimer _detectionLearningTimer; //This time is started when the detecion configuration is ran
+        private TimeSpan _timeRemaining;
 
         public MainWindow()
         {
@@ -137,7 +141,82 @@ namespace AAPADS
             }
         }
 
+        private void StartDetectionLearning_Click(object sender, RoutedEventArgs e)
+        {
+            // STEP 1: Fetch the remaining time from the database
+            _timeRemaining = FetchDetectionTrainingTimeFromDatabase();
 
+            // STEP 2: Start the timer
+            _detectionLearningTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _detectionLearningTimer.Tick += DetectionTimer_Tick;
+            _detectionLearningTimer.Start();
+
+            // STEP 3: Start all engines to write to the database
+            
+        }
+
+        private void DetectionTimer_Tick(object sender, EventArgs e)
+        {
+            if (_timeRemaining.TotalSeconds > 0)
+            {
+                _timeRemaining = _timeRemaining.Add(TimeSpan.FromSeconds(-1));
+                SaveRemainingTimeToDatabase();
+                //UpdateUITimer(_timeRemaining);
+            }
+            else
+            {
+                _detectionLearningTimer.Stop();
+                // Handle the countdown completion
+                DetectionLearningStageComplete();
+            }
+        }
+
+        private TimeSpan FetchDetectionTrainingTimeFromDatabase()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                string timeValue = db.GetSetting("DetectionTrainingTime");
+                if (TimeSpan.TryParse(timeValue, out TimeSpan trainingTime))
+                {
+                    return trainingTime;
+                }
+                // Default value if not set or parse fails: 0 hours.
+                return TimeSpan.Zero;
+            }
+        }
+
+        private void DetectionLearningStageComplete()
+        {
+            // Actions to take when countdown finishes
+        }
+
+        private void UpdateUITimer(TimeSpan time)
+        {
+            // Currently not in use
+        }
+
+        // Make sure to call this when the countdown is paused or when the application exits
+        private void SaveRemainingTimeToDatabase()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                string timeValue = _timeRemaining.ToString(@"hh\:mm\:ss");
+                db.SaveSetting("DetectionTrainingTime", timeValue);
+            }
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            if (_detectionLearningTimer.IsEnabled)
+            {
+                _detectionLearningTimer.Stop();
+                SaveRemainingTimeToDatabase(); 
+            }
+        }
         private void About_Click(object sender, RoutedEventArgs e)
         {
             about AboutPage = new about();
@@ -319,5 +398,9 @@ namespace AAPADS
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

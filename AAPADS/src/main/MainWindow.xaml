@@ -1931,15 +1931,17 @@
                                                             Margin="24,8,24,0"
                                                             Orientation="Horizontal"
                                                             TextBlock.Foreground="#d2d2d2">
-                                                            <TextBlock FontWeight="Bold" Text="WLAN Name: " />
+                                                            <TextBlock FontWeight="Bold" Text="CONNECTED WIFI NETWORK NAME: " />
                                                             <TextBlock
                                                                 Margin="0,0,10,0"
                                                                 FontWeight="Bold"
+                                                                Foreground="#6ecc25"
                                                                 Text="{Binding DefaultWLANName}" />
                                                             <CheckBox
                                                                 x:Name="confirmWLANCheckBox"
-                                                                Content="Confirm WLAN Connection"
-                                                                FontWeight="Bold"
+                                                                Content="CHECK THE BOX TO CONFIRM THIS IS YOUR NETWORK"
+                                                                FontStyle="Italic"
+                                                                FontWeight="Normal"
                                                                 IsChecked="{Binding IsWLANConfirmed, Mode=TwoWay}" />
                                                         </StackPanel>
                                                     </StackPanel>
@@ -1955,47 +1957,62 @@
                                                     Background="#424242"
                                                     CornerRadius="5">
                                                     <StackPanel>
-                                                        <TextBlock FontWeight="Bold" Text="STEP 4: PRESS START TO BEGIN STAGE 1 OF DETECTION" />
-                                                        <StackPanel>
-                                                            <StackPanel
-                                                                Margin="24,8,24,0"
-                                                                Orientation="Horizontal"
-                                                                TextBlock.Foreground="#d2d2d2">
-                                                                <TextBlock FontWeight="Bold" Text="NETWORK ADAPTER: " />
-                                                                <TextBlock FontWeight="Bold" Text="{Binding DefaultWNICName}" />
+                                                        <TextBlock FontWeight="Bold" Text="STEP 4: CONFIRM OPTIONS AND PRESS START TO BEGIN STAGE 1 OF DETECTION" />
+                                                        <Border
+                                                            Margin="0,5,0,0"
+                                                            Padding="5"
+                                                            HorizontalAlignment="Left"
+                                                            Background="#303030"
+                                                            CornerRadius="5">
 
-                                                            </StackPanel>
-                                                            <StackPanel
-                                                                Margin="24,8,24,0"
-                                                                Orientation="Horizontal"
-                                                                TextBlock.Foreground="#d2d2d2">
-                                                                <TextBlock FontWeight="Bold" Text="TRAINING TIME: " />
+                                                            <StackPanel HorizontalAlignment="Left">
                                                                 <TextBlock
-                                                                    Margin="0,0,10,0"
-                                                                    FontWeight="Bold"
-                                                                    Text="{Binding DetectionTrainingTime, Converter={StaticResource HoursToTimeSpanConverter}}" />
+                                                                    FontStyle="Italic"
+                                                                    FontWeight="DemiBold"
+                                                                    Text="SELECTED OPTIONS" />
+                                                                <StackPanel
+                                                                    Margin="0,5,0,0"
+                                                                    Orientation="Horizontal"
+                                                                    TextBlock.Foreground="#d2d2d2">
+                                                                    <TextBlock FontWeight="Bold" Text="NETWORK ADAPTER: " />
+                                                                    <TextBlock
+                                                                        FontWeight="Normal"
+                                                                        Foreground="#6ecc25"
+                                                                        Text="{Binding DefaultWNICName}" />
+                                                                </StackPanel>
+                                                                <StackPanel
+                                                                    Margin="0,5,0,0"
+                                                                    Orientation="Horizontal"
+                                                                    TextBlock.Foreground="#d2d2d2">
+                                                                    <TextBlock FontWeight="Bold" Text="TRAINING TIME: " />
+                                                                    <TextBlock
+                                                                        FontWeight="Normal"
+                                                                        Foreground="#6ecc25"
+                                                                        Text="{Binding DetectionTrainingTime, Converter={StaticResource HoursToTimeSpanConverter}}" />
+                                                                </StackPanel>
+                                                                <StackPanel
+                                                                    Margin="0,5,0,0"
+                                                                    Orientation="Horizontal"
+                                                                    TextBlock.Foreground="#d2d2d2">
+                                                                    <TextBlock FontWeight="Bold" Text="WLAN NAME: " />
+                                                                    <TextBlock
+                                                                        FontWeight="Normal"
+                                                                        Foreground="#6ecc25"
+                                                                        Text="{Binding DefaultWLANName}" />
+                                                                </StackPanel>
                                                             </StackPanel>
-                                                            <StackPanel
-                                                                Margin="24,8,24,0"
-                                                                Orientation="Horizontal"
-                                                                TextBlock.Foreground="#d2d2d2">
-                                                                <TextBlock FontWeight="Bold" Text="WLAN NAME: " />
-                                                                <TextBlock
-                                                                    Margin="0,0,10,0"
-                                                                    FontWeight="Bold"
-                                                                    Text="{Binding DefaultWLANName}" />
-                                                            </StackPanel>
-                                                        </StackPanel>
+                                                        </Border>
 
                                                         <Button
                                                             Width="100"
                                                             Margin="0,21,0,31"
                                                             materialDesign:RippleAssist.Feedback="#DD000000"
-                                                            Background="Green"
-                                                            BorderBrush="Green"
+                                                            Background="#6ecc25"
+                                                            BorderBrush="#6ecc25"
+                                                            Click="StartDetectionLearning_Click"
                                                             Content="START"
                                                             FontWeight="Bold"
-                                                            Foreground="White"
+                                                            Foreground="#303030"
                                                             IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                                                             ToolTip="Resource name: MaterialDesignRaisedASecondaryButton" />
                                                         <StackPanel
