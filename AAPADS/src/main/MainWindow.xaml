@@ -31,6 +31,7 @@
         <local:CriticalityLevelToTextConverter x:Key="CriticalityTextConverter" />
         <local:DetectionStatusToColorConverter x:Key="DetectionStatusToColorConverter" />
         <local:StatusToColorConverter x:Key="StatusToColorConverter" />
+        <local:HoursToTimeSpanConverter x:Key="HoursToTimeSpanConverter" />
 
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
 
@@ -1796,241 +1797,317 @@
                             </StackPanel>
                         </TabItem.Header>
                         <materialDesign:Card>
-                            <StackPanel>
-                                <Expander HorizontalAlignment="Stretch">
-                                    <Expander.Header>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
-                                            <materialDesign:PackIcon
-                                                Margin="0,0,5,0"
-                                                Foreground="Green"
-                                                Kind="Numeric1Box" />
-                                            <!--  Change Icon1 to your desired icon  -->
-                                            <TextBlock Foreground="#d2d2d2" Text="INITIAL DETECTION CONFIGURATION " />
-                                        </StackPanel>
-                                    </Expander.Header>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="60" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
+                            <ScrollViewer>
+                                <StackPanel>
+                                    <Expander HorizontalAlignment="Stretch">
+                                        <Expander.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
+                                                <materialDesign:PackIcon
+                                                    Margin="0,0,5,0"
+                                                    Foreground="Green"
+                                                    Kind="Numeric1Box" />
+                                                <TextBlock Foreground="#d2d2d2" Text="INITIAL DETECTION CONFIGURATION " />
+                                            </StackPanel>
+                                        </Expander.Header>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="60" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel
+                                                Grid.Row="0"
+                                                Margin="24,8,24,8"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <Border
+                                                    Padding="5"
+                                                    Background="#424242"
+                                                    CornerRadius="5">
+                                                    <StackPanel>
+                                                        <TextBlock FontStyle="Italic" Text="NOTE: This is the first stage of the detection system." />
+                                                        <TextBlock FontStyle="Italic" Text="Here you can start the detection configuration process. This process will run for 24hrs (default) to create the wireless profile environment" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <StackPanel
+                                                Grid.Row="1"
+                                                Margin="24,8,24,0"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <Border
+                                                    Padding="5"
+                                                    Background="#424242"
+                                                    CornerRadius="5">
+                                                    <StackPanel>
+                                                        <TextBlock FontWeight="Bold" Text="STEP 1: SELECT NETWORK ADAPTER" />
+                                                        <Grid>
+                                                            <DataGrid
+                                                                Margin="20"
+                                                                HorizontalAlignment="Stretch"
+                                                                VerticalAlignment="Top"
+                                                                materialDesign:DataGridAssist.CellPadding="16 8"
+                                                                materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
+                                                                AutoGenerateColumns="False"
+                                                                BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                                                                CanUserAddRows="False"
+                                                                IsReadOnly="True"
+                                                                ItemsSource="{Binding NETWORK_80211_ADAPTERS}"
+                                                                RowHeight="40"
+                                                                SelectedItem="{Binding SelectedAdapter}">
+                                                                <DataGrid.Columns>
+                                                                    <DataGridTemplateColumn Header="SELECT">
+                                                                        <DataGridTemplateColumn.CellTemplate>
+                                                                            <DataTemplate>
+                                                                                <ToggleButton
+                                                                                    Width="22"
+                                                                                    Height="22"
+                                                                                    IsChecked="{Binding IsAdapterActive, UpdateSourceTrigger=PropertyChanged}"
+                                                                                    Style="{StaticResource MaterialDesignFlatToggleButton}"
+                                                                                    ToolTip="MaterialDesignFlatToggleButton">
+                                                                                    <materialDesign:PackIcon
+                                                                                        Width="21"
+                                                                                        Height="21"
+                                                                                        Kind="Antenna" />
+                                                                                </ToggleButton>
+                                                                            </DataTemplate>
+                                                                        </DataGridTemplateColumn.CellTemplate>
+                                                                    </DataGridTemplateColumn>
+                                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_NAME}" Header="NAME" />
+                                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_DESCRIPTION}" Header="DESCRIPTION" />
+                                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_STATUS}" Header="STATUS" />
+                                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_MAC_ADDRESS}" Header="MAC ADDRESS" />
+                                                                </DataGrid.Columns>
+                                                            </DataGrid>
+                                                        </Grid>
+
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+                                            <StackPanel
+                                                Grid.Row="2"
+                                                Margin="24,8,24,0"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <Border
+                                                    Padding="5"
+                                                    Background="#424242"
+                                                    CornerRadius="5">
+                                                    <StackPanel>
+                                                        <TextBlock FontWeight="Bold" Text="STEP 2: SELECT TIME FRAME FOR CREATING A WIRELESS PROFILE (LONGER = MORE ACCURACY)" />
+                                                        <Slider
+                                                            Width="500"
+                                                            Margin="0,8,0,10"
+                                                            Foreground="#ef3945"
+                                                            Maximum="24"
+                                                            Minimum="0"
+                                                            Style="{StaticResource MaterialDesignDiscreteSlider}"
+                                                            TickFrequency="1"
+                                                            TickPlacement="BottomRight"
+                                                            Value="{Binding DetectionTrainingTime, Mode=TwoWay}" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <StackPanel
+                                                Grid.Row="3"
+                                                Margin="24,8,24,0"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <Border
+                                                    Padding="5"
+                                                    Background="#424242"
+                                                    CornerRadius="5">
+                                                    <StackPanel>
+                                                        <TextBlock FontWeight="Bold" Text="STEP 3: CONFIRM THE WIFI NETWORK CONNECTION" />
+                                                        <StackPanel
+                                                            Margin="24,8,24,0"
+                                                            Orientation="Horizontal"
+                                                            TextBlock.Foreground="#d2d2d2">
+                                                            <TextBlock FontWeight="Bold" Text="WLAN Name: " />
+                                                            <TextBlock
+                                                                Margin="0,0,10,0"
+                                                                FontWeight="Bold"
+                                                                Text="{Binding DefaultWLANName}" />
+                                                            <CheckBox
+                                                                x:Name="confirmWLANCheckBox"
+                                                                Content="Confirm WLAN Connection"
+                                                                FontWeight="Bold"
+                                                                IsChecked="{Binding IsWLANConfirmed, Mode=TwoWay}" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+                                            <StackPanel
+                                                Grid.Row="4"
+                                                Margin="24,8,24,0"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <Border
+                                                    Padding="5"
+                                                    Background="#424242"
+                                                    CornerRadius="5">
+                                                    <StackPanel>
+                                                        <TextBlock FontWeight="Bold" Text="STEP 4: PRESS START TO BEGIN STAGE 1 OF DETECTION" />
+                                                        <StackPanel>
+                                                            <StackPanel
+                                                                Margin="24,8,24,0"
+                                                                Orientation="Horizontal"
+                                                                TextBlock.Foreground="#d2d2d2">
+                                                                <TextBlock FontWeight="Bold" Text="NETWORK ADAPTER: " />
+                                                                <TextBlock FontWeight="Bold" Text="{Binding DefaultWNICName}" />
+
+                                                            </StackPanel>
+                                                            <StackPanel
+                                                                Margin="24,8,24,0"
+                                                                Orientation="Horizontal"
+                                                                TextBlock.Foreground="#d2d2d2">
+                                                                <TextBlock FontWeight="Bold" Text="TRAINING TIME: " />
+                                                                <TextBlock
+                                                                    Margin="0,0,10,0"
+                                                                    FontWeight="Bold"
+                                                                    Text="{Binding DetectionTrainingTime, Converter={StaticResource HoursToTimeSpanConverter}}" />
+                                                            </StackPanel>
+                                                            <StackPanel
+                                                                Margin="24,8,24,0"
+                                                                Orientation="Horizontal"
+                                                                TextBlock.Foreground="#d2d2d2">
+                                                                <TextBlock FontWeight="Bold" Text="WLAN NAME: " />
+                                                                <TextBlock
+                                                                    Margin="0,0,10,0"
+                                                                    FontWeight="Bold"
+                                                                    Text="{Binding DefaultWLANName}" />
+                                                            </StackPanel>
+                                                        </StackPanel>
+
+                                                        <Button
+                                                            Width="100"
+                                                            Margin="0,21,0,31"
+                                                            materialDesign:RippleAssist.Feedback="#DD000000"
+                                                            Background="Green"
+                                                            BorderBrush="Green"
+                                                            Content="START"
+                                                            FontWeight="Bold"
+                                                            Foreground="White"
+                                                            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                            ToolTip="Resource name: MaterialDesignRaisedASecondaryButton" />
+                                                        <StackPanel
+                                                            Margin="24,0,24,0"
+                                                            HorizontalAlignment="Center"
+                                                            Orientation="Vertical"
+                                                            TextBlock.Foreground="#d2d2d2">
+                                                            <TextBlock FontWeight="Bold" Text="AFTER START BUTTON IS PRESSED A TIMER WILL BEGIN" />
+                                                            <TextBlock FontStyle="Italic" Text="PLEASE COME BACK TO STAGE 2 TO CONFIRM DATA " />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+
+
+                                        </Grid>
+                                    </Expander>
+                                    <Expander HorizontalAlignment="Stretch">
+                                        <Expander.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
+                                                <materialDesign:PackIcon
+                                                    Margin="0,0,5,0"
+                                                    Foreground="Orange"
+                                                    Kind="Numeric2Box" />
+                                                <TextBlock Foreground="#d2d2d2" Text="CONFIGURATION CONFIRMATION" />
+                                            </StackPanel>
+                                        </Expander.Header>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="60" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel
+                                                Grid.Row="0"
+                                                Margin="24,8,24,0"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <TextBlock FontStyle="Italic" Text="NOTE: This is the second stage of the configuration of the detection system." />
+                                                <TextBlock FontStyle="Italic" Text="Here you can start the detection process. The detections will be added to the detection tab." />
+                                                <TextBlock FontStyle="Italic" Text="It is important that you correctly whitelist and blacklist item to mimimise false positives." />
+                                            </StackPanel>
+                                            <StackPanel
+                                                Grid.Row="1"
+                                                Margin="24,8,24,5"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <TextBlock FontWeight="Bold" Text="STEP 1: SELECTING BLACKLIST" />
+                                            </StackPanel>
+                                            <Grid Grid.Row="2" />
+                                            <StackPanel
+                                                Grid.Row="3"
+                                                Margin="24,8,24,0"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <TextBlock FontWeight="Bold" Text="STEP 2: CONFIRMATION OF BLACKLIST AND WHITE LIST" />
+                                            </StackPanel>
+
+                                            <StackPanel
+                                                Grid.Row="4"
+                                                Margin="24,8,24,0"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <TextBlock FontWeight="Bold" Text="STEP 3: BEGIN DETECTIONS" />
+                                            </StackPanel>
+                                            <Button
+                                                Grid.Row="5"
+                                                Margin="400,20,400,0"
+                                                materialDesign:RippleAssist.Feedback="#DD000000"
+                                                Background="Green"
+                                                BorderBrush="Green"
+                                                Content="START DETECTION ENGINE"
+                                                FontWeight="Bold"
+                                                Foreground="White"
+                                                IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                ToolTip="Resource name: MaterialDesignRaisedSecondaryButton" />
+                                            <StackPanel
+                                                Grid.Row="6"
+                                                Margin="24,5,24,0"
+                                                HorizontalAlignment="Center"
+                                                Orientation="Vertical"
+                                                TextBlock.Foreground="#d2d2d2">
+                                                <TextBlock FontWeight="Bold" Text="WHEN DETECTIONS ARE DISCOVERED THEY WILL BE VISABLE IN THE DETECTIONS TAB" />
+                                                <TextBlock FontStyle="Italic" Text="STAGE 3: RUNTIME CONFIGURATION CAN BE USED TO MAKE CHANGES TO THE DETECTION ENGINE" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Expander>
+                                    <Expander HorizontalAlignment="Stretch">
+                                        <Expander.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
+                                                <materialDesign:PackIcon
+                                                    Margin="0,0,5,0"
+                                                    Foreground="Red"
+                                                    Kind="Numeric3Box" />
+                                                <TextBlock Foreground="#d2d2d2" Text="RUNTIME CONFIGURATION" />
+                                            </StackPanel>
+                                        </Expander.Header>
                                         <StackPanel
-                                            Grid.Row="0"
                                             Margin="24,8,24,16"
                                             Orientation="Vertical"
                                             TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontStyle="Italic" Text="NOTE: This is the first stage of the detection system." />
-                                            <TextBlock FontStyle="Italic" Text="Here you can start the detection configuration process. This process will run for 24hrs (default) to create the wireless profile enviroment" />
+                                            <TextBlock Text="Content" />
                                         </StackPanel>
-                                        <StackPanel
-                                            Grid.Row="1"
-                                            Margin="24,8,24,0"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="STEP 1: SELECT NETWORK ADAPTER" />
-                                        </StackPanel>
-                                        <Grid Grid.Row="2">
-                                            <DataGrid
-                                                Margin="20"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Top"
-                                                materialDesign:DataGridAssist.CellPadding="16 8"
-                                                materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
-                                                AutoGenerateColumns="False"
-                                                BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-                                                CanUserAddRows="False"
-                                                IsReadOnly="True"
-                                                ItemsSource="{Binding NETWORK_80211_ADAPTERS}"
-                                                RowHeight="40">
-                                                <DataGrid.Columns>
-                                                    <DataGridTemplateColumn Header="SELECT">
-                                                        <DataGridTemplateColumn.CellTemplate>
-                                                            <DataTemplate>
-                                                                <ToggleButton
-                                                                    Width="22"
-                                                                    Height="22"
-                                                                    IsChecked="{Binding IsAdapterActive, UpdateSourceTrigger=PropertyChanged}"
-                                                                    Style="{StaticResource MaterialDesignFlatToggleButton}"
-                                                                    ToolTip="MaterialDesignFlatToggleButton">
-                                                                    <materialDesign:PackIcon
-                                                                        Width="21"
-                                                                        Height="21"
-                                                                        Kind="Antenna" />
-                                                                </ToggleButton>
-                                                            </DataTemplate>
-                                                        </DataGridTemplateColumn.CellTemplate>
-                                                    </DataGridTemplateColumn>
-                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_NAME}" Header="NAME" />
-                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_DESCRIPTION}" Header="DESCRIPTION" />
-                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_STATUS}" Header="STATUS" />
-                                                    <DataGridTextColumn Binding="{Binding NETWORK_ADAPTER_MAC_ADDRESS}" Header="MAC ADDRESS" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </Grid>
-                                        <StackPanel
-                                            Grid.Row="3"
-                                            Margin="24,8,24,0"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="STEP 2: SELECT TIME FRAME FOR CREATING A WIRELESS PROFILE (LONGER = MORE ACCURACY)" />
-                                        </StackPanel>
-                                        <Slider
-                                            Grid.Row="4"
-                                            Width="500"
-                                            Margin="0,8,0,10"
-                                            Foreground="Orange"
-                                            Maximum="24"
-                                            Minimum="0"
-                                            Style="{StaticResource MaterialDesignDiscreteSlider}"
-                                            TickFrequency="1"
-                                            TickPlacement="BottomRight"
-                                            Value="{Binding DetectionTrainingTime, Mode=TwoWay}" />
-                                        <StackPanel
-                                            Grid.Row="8"
-                                            Margin="24,8,24,0"
-                                            Orientation="Horizontal"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="WLAN Name: " />
-                                            <TextBlock
-                                                Margin="0,0,10,0"
-                                                FontWeight="Bold"
-                                                Text="{Binding DefaultWLANName}" />
-                                            <CheckBox
-                                                x:Name="confirmWLANCheckBox"
-                                                Content="Confirm WLAN Connection"
-                                                FontWeight="Bold"
-                                                IsChecked="{Binding IsWLANConfirmed, Mode=TwoWay}" />
-                                        </StackPanel>
-
-                                        <StackPanel
-                                            Grid.Row="5"
-                                            Margin="24,8,24,0"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="STEP 3: PRESS START TO BEGIN STAGE 1 OF DETECTION" />
-                                        </StackPanel>
-                                        <Button
-                                            Grid.Row="6"
-                                            Width="100"
-                                            Margin="500,21,500,31"
-                                            materialDesign:RippleAssist.Feedback="#DD000000"
-                                            Background="Green"
-                                            BorderBrush="Green"
-                                            Content="START"
-                                            FontWeight="Bold"
-                                            Foreground="White"
-                                            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                            ToolTip="Resource name: MaterialDesignRaisedSecondaryButton" />
-                                        <StackPanel
-                                            Grid.Row="7"
-                                            Margin="24,70,24,0"
-                                            HorizontalAlignment="Center"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="AFTER START BUTTON IS PRESSED A TIMER WILL BEGIN" />
-                                            <TextBlock FontStyle="Italic" Text="PLEASE COME BACK TO STAGE 2 TO CONFIRM DATA " />
-                                        </StackPanel>
-                                    </Grid>
-                                </Expander>
-                                <Expander HorizontalAlignment="Stretch">
-                                    <Expander.Header>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
-                                            <materialDesign:PackIcon
-                                                Margin="0,0,5,0"
-                                                Foreground="Orange"
-                                                Kind="Numeric2Box" />
-                                            <TextBlock Foreground="#d2d2d2" Text="CONFIGURATION CONFIRMATION" />
-                                        </StackPanel>
-                                    </Expander.Header>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="60" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-                                        <StackPanel
-                                            Grid.Row="0"
-                                            Margin="24,8,24,0"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontStyle="Italic" Text="NOTE: This is the second stage of the configuration of the detection system." />
-                                            <TextBlock FontStyle="Italic" Text="Here you can start the detection process. The detections will be added to the detection tab." />
-                                            <TextBlock FontStyle="Italic" Text="It is important that you correctly whitelist and blacklist item to mimimise false positives." />
-                                        </StackPanel>
-                                        <StackPanel
-                                            Grid.Row="1"
-                                            Margin="24,8,24,5"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="STEP 1: SELECTING BLACKLIST" />
-                                        </StackPanel>
-                                        <Grid Grid.Row="2" />
-                                        <StackPanel
-                                            Grid.Row="3"
-                                            Margin="24,8,24,0"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="STEP 2: CONFIRMATION OF BLACKLIST AND WHITE LIST" />
-                                        </StackPanel>
-
-                                        <StackPanel
-                                            Grid.Row="4"
-                                            Margin="24,8,24,0"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="STEP 3: BEGIN DETECTIONS" />
-                                        </StackPanel>
-                                        <Button
-                                            Grid.Row="5"
-                                            Margin="400,20,400,0"
-                                            materialDesign:RippleAssist.Feedback="#DD000000"
-                                            Background="Green"
-                                            BorderBrush="Green"
-                                            Content="START DETECTION ENGINE"
-                                            FontWeight="Bold"
-                                            Foreground="White"
-                                            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                            ToolTip="Resource name: MaterialDesignRaisedSecondaryButton" />
-                                        <StackPanel
-                                            Grid.Row="6"
-                                            Margin="24,5,24,0"
-                                            HorizontalAlignment="Center"
-                                            Orientation="Vertical"
-                                            TextBlock.Foreground="#d2d2d2">
-                                            <TextBlock FontWeight="Bold" Text="WHEN DETECTIONS ARE DISCOVERED THEY WILL BE VISABLE IN THE DETECTIONS TAB" />
-                                            <TextBlock FontStyle="Italic" Text="STAGE 3: RUNTIME CONFIGURATION CAN BE USED TO MAKE CHANGES TO THE DETECTION ENGINE" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Expander>
-                                <Expander HorizontalAlignment="Stretch">
-                                    <Expander.Header>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="#d2d2d2" Text="STAGE: " />
-                                            <materialDesign:PackIcon
-                                                Margin="0,0,5,0"
-                                                Foreground="Red"
-                                                Kind="Numeric3Box" />
-                                            <TextBlock Foreground="#d2d2d2" Text="RUNTIME CONFIGURATION" />
-                                        </StackPanel>
-                                    </Expander.Header>
-                                    <StackPanel
-                                        Margin="24,8,24,16"
-                                        Orientation="Vertical"
-                                        TextBlock.Foreground="#d2d2d2">
-                                        <TextBlock Text="Content" />
-                                    </StackPanel>
-                                </Expander>
-                            </StackPanel>
+                                    </Expander>
+                                </StackPanel>
+                            </ScrollViewer>
                         </materialDesign:Card>
                     </TabItem>
                     <TabItem Name="SettingsTab">
