@@ -183,7 +183,7 @@ namespace AAPADS
                 {
                     return trainingTime;
                 }
-                // Default value if not set or parse fails: 0 hours.
+                // Default value if not set 0 hours.
                 return TimeSpan.Zero;
             }
         }

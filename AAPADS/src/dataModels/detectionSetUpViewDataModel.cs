@@ -187,10 +187,8 @@ namespace AAPADS
         public long NETWORK_ADAPTER_SPEED_BYTES { get; set; }
         public string NETWORK_ADAPTER_MAC_ADDRESS { get; set; }
 
-
         // THis can soon be removed (remember to remove also the binding in the XAML)
         private bool _isAdapterActive;
-        //private string _DefaultWNICName;
         public bool IsAdapterActive
         {
             get { return _isAdapterActive; }
@@ -218,29 +216,6 @@ namespace AAPADS
                 }
             }
         }
-
-        //public string DefaultWNICName
-        //{
-        //    get { return _DefaultWNICName; }
-        //    set
-        //    {
-        //        if (_DefaultWNICName != value)
-        //        {
-        //            _DefaultWNICName = value;
-        //            OnPropertyChanged(nameof(DefaultWNICName));
-        //        }
-        //    }
-        //}
-
-
-        //private void SaveSelectedAdapterSetting(string adapterName)
-        //{
-        //    using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
-        //    {
-        //        db.SaveSetting("DefaultWNICName", adapterName);
-        //    }
-        //}
-
 
         public static ObservableCollection<NETWORK_ADAPTER_INFO> AdapterCollection { get; set; }
 
