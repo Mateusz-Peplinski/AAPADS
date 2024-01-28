@@ -155,7 +155,7 @@ namespace AAPADS
             _detectionLearningTimer.Start();
 
             // STEP 3: Start all engines to write to the database
-            
+            SetDetectionTrainingFlag(true); // Sets the DetectionTrainingFlag true. This will cause the engines to start writing to the DB.
         }
 
         private void DetectionTimer_Tick(object sender, EventArgs e)
@@ -187,10 +187,20 @@ namespace AAPADS
                 return TimeSpan.Zero;
             }
         }
-
+        private void SetDetectionTrainingFlag(bool FlagStatus)
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // Convert the boolean to a string representation and save it.
+                db.SaveSetting("TrainingFlag", FlagStatus.ToString());
+            }
+        }
         private void DetectionLearningStageComplete()
         {
             // Actions to take when countdown finishes
+            SetDetectionTrainingFlag(false); // Sets the DetectionTrainingFlag false. This will cause the engines to stop writing "traningData" to the DB.
+            // Next step pass over control to the configuration to finialize the detection configuration.
+
         }
 
         private void UpdateUITimer(TimeSpan time)
