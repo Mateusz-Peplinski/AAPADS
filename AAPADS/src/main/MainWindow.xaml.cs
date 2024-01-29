@@ -36,7 +36,7 @@ namespace AAPADS
         private double _originalTop;
         private bool _wasMaximized = false;
 
-        private DispatcherTimer _detectionLearningTimer; //This time is started when the detecion configuration is ran
+        private DispatcherTimer _detectionLearningTimer; //This time is started when the detecion configuration starts
         private TimeSpan _timeRemaining;
 
         public MainWindow()
@@ -59,7 +59,7 @@ namespace AAPADS
             DETECTION_ENGINE_OBJECT.DetectionDiscovered += UpdateDetectionTabUI;
 
 
-            AAPADS_GLOBAL_ENGINES_START();
+            AAPADS_GLOBAL_ENGINES_START(); // start the engines, however if detection has not been enabled the classes are just initilized and sit idle 
 
             WLAN_NETWORK_ADAPTER_VIEW_MODEL = new detectionSetUpViewDataModel(); //View model for detection set-up
 
@@ -220,12 +220,14 @@ namespace AAPADS
         {
             base.OnClosing(e);
 
-            if (_detectionLearningTimer.IsEnabled)
+            // Check if the timer is not null and then if it's enabled before stopping it and saving time
+            if (_detectionLearningTimer != null && _detectionLearningTimer.IsEnabled)
             {
                 _detectionLearningTimer.Stop();
-                SaveRemainingTimeToDatabase(); 
+                SaveRemainingTimeToDatabase();
             }
         }
+
         private void About_Click(object sender, RoutedEventArgs e)
         {
             about AboutPage = new about();

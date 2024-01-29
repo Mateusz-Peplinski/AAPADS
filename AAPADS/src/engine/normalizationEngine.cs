@@ -10,7 +10,7 @@ namespace AAPADS
     {
         private normalizationEngineDatabaseAccess _dbAccess;
         private string _lastProcessedTimeFrameId;
-
+        private bool TraningFlagStatus = false;
         public NormalizationEngine()
         {
             _dbAccess = new normalizationEngineDatabaseAccess("wireless_profile.db");
@@ -33,29 +33,42 @@ namespace AAPADS
         {
             while (true)
             {
-                var nextTimeFrameId = FetchNextTimeFrameID(_lastProcessedTimeFrameId);
 
-                if (!string.IsNullOrEmpty(nextTimeFrameId))
+                FetechTrainingFlagStatus();
+
+                if (TraningFlagStatus == true) // todo: add also detection flag == true
                 {
-                    // Fetch the data for the nextTimeFrameId
-                    var dataForTimeFrame = FetchDataForTimeFrame(nextTimeFrameId);
+                    var nextTimeFrameId = FetchNextTimeFrameID(_lastProcessedTimeFrameId);
 
-                    // Calculate averages or other statistical measures
-                    var NormalizedData = NormalizeDataForTimeFrameID(dataForTimeFrame);
+                    if (!string.IsNullOrEmpty(nextTimeFrameId))
+                    {
+                        // Fetch the data for the nextTimeFrameId
+                        var dataForTimeFrame = FetchDataForTimeFrame(nextTimeFrameId);
 
-                    // Insert the calculated values into the NE_DB table
-                    _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount);
+                        // Calculate averages or other statistical measures
+                        var NormalizedData = NormalizeDataForTimeFrameID(dataForTimeFrame);
 
-                    // Update the last processed TIME_FRAME_ID
-                    _lastProcessedTimeFrameId = nextTimeFrameId;
+                        // Insert the calculated values into the NE_DB table
+                        _dbAccess.InsertNormalizationEngineData(nextTimeFrameId, NormalizedData.timeFRAMEIDTime, NormalizedData.AccessPointCount, NormalizedData.AP24GHzCount, NormalizedData.AP5GHzCount);
 
+                        // Update the last processed TIME_FRAME_ID
+                        _lastProcessedTimeFrameId = nextTimeFrameId;
+
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("[ NORMALIZATION ENGINE ] No new data sleeping for 10 seconds");
+                        System.Threading.Thread.Sleep(10000);
+                    }
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("[ NORMALIZATION ENGINE ] No new data sleeping for 10 seconds");
-                    System.Threading.Thread.Sleep(10000);
+                    Console.WriteLine("[ NORMALIZATION ENGINE ] TRANING FLAG STATUS {0}", TraningFlagStatus);
+                    System.Threading.Thread.Sleep(5000);
                 }
+                
             }
         }
 
@@ -76,7 +89,20 @@ namespace AAPADS
                 return null;
             }
         }
+        private void FetechTrainingFlagStatus()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // GetSetting should return the string representation of the setting.
+                var settingValue = db.GetSetting("TrainingFlag");
 
+                // Parse the returned value to a boolean.
+                if (settingValue != null)
+                {
+                    TraningFlagStatus = settingValue.Equals("true", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+        }
         private bool CheckDataExistsForTimeFrameID(string timeFrameId)
         {
             string query = "SELECT COUNT(*) FROM WirelessProfile WHERE TIME_FRAME_ID = @TIME_FRAME_ID";
