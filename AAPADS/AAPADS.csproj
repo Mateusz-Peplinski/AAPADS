@@ -149,7 +149,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="HoursToTimeSpanConverter.cs" />
+    <Compile Include="src\main\DetectionTrainingWindow.xaml.cs">
+      <DependentUpon>DetectionTrainingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\main\converters\HoursToTimeSpanConverter.cs" />
     <Compile Include="src\databaseAccessModules\SettingsDatabaseAccess.cs" />
     <Compile Include="src\dataModels\SettingsViewModel.cs" />
     <Compile Include="src\dataModels\NetworkCardInfoViewModel.cs" />
@@ -186,6 +189,10 @@
     <Compile Include="src\WLANScanInvoker\WifiScanner.cs" />
     <Compile Include="src\databaseAccessModules\TimeFrameIdGenerator.cs" />
     <Compile Include="src\main\converters\StatusToColorConverter.cs" />
+    <Page Include="src\main\DetectionTrainingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\main\loadingScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
