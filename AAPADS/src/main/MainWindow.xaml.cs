@@ -30,6 +30,11 @@ namespace AAPADS
         private SettingsViewModel SETTINGS_VIEW_MODEL;
         public NetworkCardInfoViewModel NetworkCardInfoVM { get; set; }
 
+
+        //refactor
+        private DetectionTrainingWindow _detectionTrainingWindow;
+
+
         private double _originalWidth;
         private double _originalHeight;
         private double _originalLeft;
@@ -157,7 +162,9 @@ namespace AAPADS
                     // STEP 1: Fetch the remaining time from the database
                     _timeRemaining = FetchDetectionTrainingTimeFromDatabase();
 
-                    // Show window with timer
+                    // Show window with timer and a cancel button the file is called DetectionTraningWindow
+                    _detectionTrainingWindow = new DetectionTrainingWindow(); 
+                    _detectionTrainingWindow.Show();
 
                     // STEP 2: Start the timer
                     _detectionLearningTimer = new DispatcherTimer
@@ -184,7 +191,7 @@ namespace AAPADS
             {
                 _timeRemaining = _timeRemaining.Add(TimeSpan.FromSeconds(-1));
                 SaveRemainingTimeToDatabase();
-                //UpdateUITimer(_timeRemaining);
+                _detectionTrainingWindow.UpdateTimerDisplay(_timeRemaining);
             }
             else
             {
