@@ -68,7 +68,7 @@ namespace AAPADS
         };
 
         public bool isLoading = false;
-
+        private bool TraningFlagStatus = false;
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
         private bool isRunning = true;
@@ -124,8 +124,6 @@ namespace AAPADS
 
                 // Clear lists at the beginning of each iteration.
                 ClearDataIngestEngineList();   
-                
-                
 
                 if (programLoadCount == 0)
                 {
@@ -136,27 +134,36 @@ namespace AAPADS
                 try
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("[ DATA INGEST ENGINE ] Collecting wireless data...");
+                    Console.WriteLine("[ DATA INGEST ENGINE ] COLLECTING WLAN DATA...");
 
                     if (PerformWifiScan())//Call WLANLibrary to refresh the access point information that windows has cached
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(5)); // Wait for 5 seconds. Adjust as needed.
+                        await Task.Delay(TimeSpan.FromSeconds(5)); // Wait for 5 seconds between scans
                         SystemRunNETSHCommand();
 
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"[ DATA INGEST ENGINE ] Collected {SSID_LIST.Count} access points data");
+                        Console.WriteLine($"[ DATA INGEST ENGINE ] COLLECTED {SSID_LIST.Count} ACCESS POINTS DATA");
 
                         SSIDDataCollected?.Invoke(this, EventArgs.Empty);
 
 
-                        //ADD START_DATA_INGEST_ENGINE_WRITE --> Only need to write if Detection has started --> need to add bool value that
-                        //will be set when user selected detection start 
-                        InsertParsedDataToDatabase();
+                        
+
+                        FetechTrainingFlagStatus();
+
+                        if (TraningFlagStatus == true) // todo: add also detection flag == true
+                        {
+                            //Console.ForegroundColor = ConsoleColor.Red;
+                            //Console.WriteLine("[ DATA INGEST ENGINE ] Traning Flag Status {0}", TraningFlagStatus);
+                            //ADD START_DATA_INGEST_ENGINE_WRITE --> Only need to write if Detection has started --> need to add bool value that
+                            //will be set when user selected detection start 
+                            InsertParsedDataToDatabase();
+                        }
                     }
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("[ DATA INGEST ENGINE ] Failed to initiate Wi-Fi scan.");
+                        Console.WriteLine("[ DATA INGEST ENGINE ] FAILED TO INITIATE WI-FI SCAN.");
                     }
                 }
                 catch (Exception ex)
@@ -172,7 +179,20 @@ namespace AAPADS
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
         }
+        private void FetechTrainingFlagStatus()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // GetSetting should return the string representation of the setting.
+                var settingValue = db.GetSetting("TrainingFlag");
 
+                // Parse the returned value to a boolean.
+                if (settingValue != null)
+                {
+                    TraningFlagStatus = settingValue.Equals("true", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+        }
         private void ClearDataIngestEngineList()
         {
             SSID_LIST.Clear();
