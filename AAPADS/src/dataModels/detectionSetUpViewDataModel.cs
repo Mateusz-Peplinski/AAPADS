@@ -110,6 +110,7 @@ namespace AAPADS
             // Enable the Start button only if WLAN is confirmed
             ControlsEnabled = IsWLANConfirmed;
             OnPropertyChanged(nameof(ControlsEnabled));
+            LoadConnectedWLANNameFromDatabase();
         }
         
 

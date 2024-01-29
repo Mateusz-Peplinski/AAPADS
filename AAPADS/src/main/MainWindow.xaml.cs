@@ -106,6 +106,7 @@ namespace AAPADS
 
             CloseButton.Click += (s, e) => Application.Current.Shutdown();
 
+            //The flash to show a network connection if it is present
             Storyboard flashingAnimation = (Storyboard)FindResource("FlashingAnimation");
             Storyboard.SetTarget(flashingAnimation, flashingIcon);
             flashingAnimation.Begin();
@@ -143,19 +144,38 @@ namespace AAPADS
 
         private void StartDetectionLearning_Click(object sender, RoutedEventArgs e)
         {
-            // STEP 1: Fetch the remaining time from the database
-            _timeRemaining = FetchDetectionTrainingTimeFromDatabase();
+            // Need validation to check all information is present before starting else show message box 
+            PreformDetectionTraningValidation();
 
-            // STEP 2: Start the timer
-            _detectionLearningTimer = new DispatcherTimer
+            // Confirm with the user they want to start DetectionTraningPhase
+            var result = MessageBox.Show("Detection Traning is about to start\nPlease leave the process to run in the background\nAre you sure you want to continue ?", "AAPADS - CONFIRMATION", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+
+            switch (result)
             {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-            _detectionLearningTimer.Tick += DetectionTimer_Tick;
-            _detectionLearningTimer.Start();
+                case MessageBoxResult.Yes:
 
-            // STEP 3: Start all engines to write to the database
-            SetDetectionTrainingFlag(true); // Sets the DetectionTrainingFlag true. This will cause the engines to start writing to the DB.
+                    // STEP 1: Fetch the remaining time from the database
+                    _timeRemaining = FetchDetectionTrainingTimeFromDatabase();
+
+                    // Show window with timer
+
+                    // STEP 2: Start the timer
+                    _detectionLearningTimer = new DispatcherTimer
+                    {
+                        Interval = TimeSpan.FromSeconds(1)
+                    };
+                    _detectionLearningTimer.Tick += DetectionTimer_Tick;
+                    _detectionLearningTimer.Start();
+
+                    // STEP 3: Start all engines to write to the database
+                    SetDetectionTrainingFlag(true); // Sets the DetectionTrainingFlag true. This will cause the engines to start writing to the DB.
+
+                    break;
+                case MessageBoxResult.No:
+                    // User pressed No
+                    SetDetectionTrainingFlag(false);
+                    break;
+            }
         }
 
         private void DetectionTimer_Tick(object sender, EventArgs e)
@@ -202,7 +222,55 @@ namespace AAPADS
             // Next step pass over control to the configuration to finialize the detection configuration.
 
         }
+        private void PreformDetectionTraningValidation()
+        {
+            // Check network adapter is valid and selected this is done by fetching DefaultWNICName and checking it is not null
+            String DefaultWNICName = FetechDefaultWNICName();
 
+
+            // Check connected to WLAN network this is done by fetching DefaultWLANName from the database and making sure its is not "NOT CONNECTED"
+            String DefaultWLANName = FetechDefaultWLANName();
+
+            if (DefaultWLANName == "NOT CONNECTED")
+            {
+                MessageBox.Show("An error occured, the system is not connected to a wireless network", "AAPADS - ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+        private string FetechDefaultWLANName()
+        {
+            String DefaultWLANName;
+
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+
+                DefaultWLANName = db.GetSetting("DefaultWLANName").ToString();
+
+                if (DefaultWLANName == null)
+                {
+                    DefaultWLANName = "NOT CONNECTED";
+                }
+
+            }
+            return DefaultWLANName;
+        }
+        private string FetechDefaultWNICName()
+        {
+            String DefaultWNICName;
+
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+
+                DefaultWNICName = db.GetSetting("DefaultWNICName").ToString();
+
+                if (DefaultWNICName == null)
+                {
+                    DefaultWNICName = "NO ADAPTER";
+                }
+
+            }
+            return DefaultWNICName;
+        }
         private void UpdateUITimer(TimeSpan time)
         {
             // Currently not in use
@@ -269,7 +337,7 @@ namespace AAPADS
             }
             else if (tab == SettingsTab)
             {
-                
+
                 DataContext = SETTINGS_VIEW_MODEL;
             }
         }
