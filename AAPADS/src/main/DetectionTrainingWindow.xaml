@@ -8,47 +8,139 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="AAPADS"
-    Width="540"
-    Height="362"
+    Width="500"
+    Height="250"
     Icon="/icon.ico"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-
+    <Window.Resources>
+        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#555555" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" CornerRadius="20" />
+        <WindowChrome
+            CaptionHeight="10"
+            CornerRadius="8"
+            GlassFrameThickness="0"
+            ResizeBorderThickness="0"
+            UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
-    <Grid Background="#303030">
+
+    <!--  The Window  -->
+    <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border
-            Margin="20"
-            Background="#424242"
-            CornerRadius="20">
-            <TextBlock
-                x:Name="TimerTextBox"
-                Grid.Row="0"
-                Margin="10"
-                HorizontalAlignment="Stretch"
+        <!--  Custom title bar  -->
+        <Grid Grid.Row="0" Background="#333">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                Grid.Column="0"
+                Margin="10,0"
                 VerticalAlignment="Center"
-                FontSize="100"
-                FontWeight="Bold"
-                Foreground="#d2d2d2"
-                Text="00:00:00"
-                TextAlignment="Center" />
-        </Border>
-        <Button
-            x:Name="CancelButton"
-            Grid.Row="1"
-            Width="100"
-            Height="30"
-            Margin="10"
-            materialDesign:RippleAssist.Feedback="#DD000000"
-            Background="#ef3945"
-            BorderBrush="#ef3945"
-            Content="CANCEL"
-            FontWeight="Bold" />
+                Orientation="Horizontal">
+                <!--  Icon  -->
+                <Image
+                    Width="20"
+                    Height="20"
+                    Margin="0,1,10,0"
+                    Source="..\..\res\icons\icon.png" />
+
+                <!--  Title  -->
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Foreground="White"
+                    Text="AAPADS - Advanced Access Point Anomaly Detection System" />
+            </StackPanel>
+
+            <!--  Minimize Button  -->
+            <Button
+                Name="MinimizeButton"
+                Grid.Column="2"
+                Style="{StaticResource TitleBarButtonStyle}">
+                <TextBlock
+                    VerticalAlignment="Top"
+                    FontSize="16"
+                    Text="-" />
+            </Button>
+
+            <!--  Maximize Button  -->
+            <Button
+                Name="MaximizeButton"
+                Grid.Column="3"
+                Style="{StaticResource TitleBarButtonStyle}">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="□" />
+            </Button>
+
+            <!--  Close Button  -->
+            <Button
+                Name="CloseButton"
+                Grid.Column="4"
+                Background="Red"
+                Style="{StaticResource TitleBarButtonStyle}">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="x" />
+            </Button>
+
+        </Grid>
+        <Grid Grid.Row="1" Background="#303030">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border
+                Margin="20"
+                Background="#424242"
+                CornerRadius="20">
+                <TextBlock
+                    x:Name="TimerTextBox"
+                    Grid.Row="0"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    FontSize="75"
+                    FontWeight="Bold"
+                    Foreground="#d2d2d2"
+                    Text="00:00:00"
+                    TextAlignment="Center" />
+            </Border>
+            <Button
+                x:Name="CancelButton"
+                Grid.Row="1"
+                Width="100"
+                Height="30"
+                Margin="10"
+                materialDesign:RippleAssist.Feedback="#DD000000"
+                Background="#ef3945"
+                BorderBrush="#ef3945"
+                Content="CANCEL"
+                FontWeight="Bold" />
+        </Grid>
     </Grid>
 </Window>
