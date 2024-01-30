@@ -41,6 +41,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
+            <RowDefinition Height="20" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -77,6 +78,7 @@
             <Button
                 Name="MinimizeButton"
                 Grid.Column="2"
+                Click="MinimizeButton_Click"
                 Style="{StaticResource TitleBarButtonStyle}">
                 <TextBlock
                     VerticalAlignment="Top"
@@ -88,6 +90,7 @@
             <Button
                 Name="MaximizeButton"
                 Grid.Column="3"
+                Click="MaximizeButton_Click"
                 Style="{StaticResource TitleBarButtonStyle}">
                 <TextBlock
                     VerticalAlignment="Center"
@@ -100,6 +103,7 @@
                 Name="CloseButton"
                 Grid.Column="4"
                 Background="Red"
+                Click="CloseButton_Click"
                 Style="{StaticResource TitleBarButtonStyle}">
                 <TextBlock
                     VerticalAlignment="Center"
@@ -109,6 +113,14 @@
 
         </Grid>
         <Grid Grid.Row="1" Background="#303030">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontWeight="Bold"
+                Foreground="#d2d2d2"
+                Text="MACHINE LEARNING ENCHANCED DETECTION WILL BEGIN IN: " />
+        </Grid>
+        <Grid Grid.Row="2" Background="#303030">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -139,6 +151,7 @@
                 materialDesign:RippleAssist.Feedback="#DD000000"
                 Background="#ef3945"
                 BorderBrush="#ef3945"
+                Click="AbortDetectionTraning_Click"
                 Content="CANCEL"
                 FontWeight="Bold" />
         </Grid>
