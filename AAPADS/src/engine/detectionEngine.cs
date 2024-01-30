@@ -26,12 +26,14 @@ namespace AAPADS.src.engine
         public List<string> DETECTION_ACCESS_POINT_CONNECTED_CLIENTS = new List<string>();
         
         public event EventHandler DetectionDiscovered;
+        public bool IsDetectionComplete { get; private set; } = false;
 
         public void START_DETECTION_ENGINE()
         {
 
             populateDetectionViewModelStaticDataTest();
 
+            IsDetectionComplete = true;
             // when detection is done invoke event so UI can update            
             DetectionDiscovered?.Invoke(this, EventArgs.Empty);
         }

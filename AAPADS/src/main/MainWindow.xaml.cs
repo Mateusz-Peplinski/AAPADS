@@ -60,7 +60,7 @@ namespace AAPADS
 
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
             DETECTION_VIEW_MODEL = new detectionsViewDataModel();
-            DETECTION_ENGINE_OBJECT.DetectionDiscovered += UpdateDetectionTabUI;
+            
 
 
             AAPADS_GLOBAL_ENGINES_START(); // start the engines, however if detection has not been enabled the classes are just initilized and sit idle 
@@ -147,7 +147,6 @@ namespace AAPADS
                 DragMove();
             }
         }
-
         private void StartDetectionLearning_Click(object sender, RoutedEventArgs e)
         {
             // Need validation to check all information is present before starting else show message box 
@@ -188,10 +187,9 @@ namespace AAPADS
                     break;
             }
         }
-
         private void DetectionTimer_Tick(object sender, EventArgs e)
         {
-            if (_timeRemaining.TotalSeconds > 0)
+            if (_timeRemaining.TotalSeconds > 0 && FetchTrainingFlagStatus())
             {
                 _timeRemaining = _timeRemaining.Add(TimeSpan.FromSeconds(-1));
                 SaveRemainingTimeToDatabase();
@@ -204,7 +202,6 @@ namespace AAPADS
                 DetectionLearningStageComplete();
             }
         }
-
         private TimeSpan FetchDetectionTrainingTimeFromDatabase()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
@@ -226,12 +223,32 @@ namespace AAPADS
                 db.SaveSetting("TrainingFlag", FlagStatus.ToString());
             }
         }
+        private void SetDetectionFlag(bool FlagStatus)
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // Convert the boolean to a string representation and save it.
+                db.SaveSetting("DetectionFlag", FlagStatus.ToString());
+            }
+        }
         private void DetectionLearningStageComplete()
         {
-            // Actions to take when countdown finishes
-            SetDetectionTrainingFlag(false); // Sets the DetectionTrainingFlag false. This will cause the engines to stop writing "traningData" to the DB.
-            // Next step pass over control to the configuration to finialize the detection configuration.
+            SetDetectionTrainingFlag(false);
+            SetDetectionFlag(true);
 
+            // Subscribe to the event
+            DETECTION_ENGINE_OBJECT.DetectionDiscovered += UpdateDetectionTabUI;
+
+            // Check if detection is already complete
+            if (DETECTION_ENGINE_OBJECT.IsDetectionComplete)
+            {
+                UpdateDetectionTabUI(this, EventArgs.Empty);
+            }
+            else
+            {
+                // Call START_DETECTION_ENGINE if it hasn't been called yet
+                DETECTION_ENGINE_OBJECT.START_DETECTION_ENGINE();
+            }
         }
         private void PreformDetectionTraningValidation()
         {
@@ -313,11 +330,6 @@ namespace AAPADS
                 return bool.TryParse(flagValue, out bool flagStatus) && flagStatus;
             }
         }
-        private void UpdateUITimer(TimeSpan time)
-        {
-            // Currently not in use
-        }
-
         private void SaveRemainingTimeToDatabase()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
@@ -337,7 +349,6 @@ namespace AAPADS
                 SaveRemainingTimeToDatabase();
             }
         }
-
         private void About_Click(object sender, RoutedEventArgs e)
         {
             about AboutPage = new about();
