@@ -22,7 +22,6 @@ namespace AAPADS
 
         private readonly DataIngestEngine DATA_INGESTION_ENGINE_OBJECT;
         private readonly DetectionEngine DETECTION_ENGINE_OBJECT;
-
         private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL;
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL;
         private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL;
@@ -75,6 +74,8 @@ namespace AAPADS
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
             NetworkCardInfoExpander.DataContext = NetworkCardInfoVM; // This has its own data context because is should run no matter which tab is selected
 
+            // If detection was started and the program was closed. This function will reopen the program at the state it closed on
+            ContinueDetectionTrainingOnLoad();
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
 
@@ -153,7 +154,10 @@ namespace AAPADS
             PreformDetectionTraningValidation();
 
             // Confirm with the user they want to start DetectionTraningPhase
-            var result = MessageBox.Show("Detection Traning is about to start\nPlease leave the process to run in the background\nAre you sure you want to continue ?", "AAPADS - CONFIRMATION", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            var result = MessageBox.Show("Detection Traning is about to start\n" +
+                "Please leave the process to run in the background\n" +
+                "Are you sure you want to continue ?", "AAPADS - CONFIRMATION",
+                MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
 
             switch (result)
             {
@@ -163,7 +167,7 @@ namespace AAPADS
                     _timeRemaining = FetchDetectionTrainingTimeFromDatabase();
 
                     // Show window with timer and a cancel button the file is called DetectionTraningWindow
-                    _detectionTrainingWindow = new DetectionTrainingWindow(); 
+                    _detectionTrainingWindow = new DetectionTrainingWindow();
                     _detectionTrainingWindow.Show();
 
                     // STEP 2: Start the timer
@@ -244,6 +248,29 @@ namespace AAPADS
             }
 
         }
+        public void ContinueDetectionTrainingOnLoad()
+        {
+            bool isTrainingInProgress = FetchTrainingFlagStatus();
+
+            if (isTrainingInProgress)
+            {
+                // Fetch the remaining time from the database
+                _timeRemaining = FetchDetectionTrainingTimeFromDatabase();
+
+                // Open the detection training window
+                _detectionTrainingWindow = new DetectionTrainingWindow();
+                _detectionTrainingWindow.Show();
+                _detectionTrainingWindow.UpdateTimerDisplay(_timeRemaining);
+
+                // Start the timer
+                _detectionLearningTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(1)
+                };
+                _detectionLearningTimer.Tick += DetectionTimer_Tick;
+                _detectionLearningTimer.Start();
+            }
+        }
         private string FetechDefaultWLANName()
         {
             String DefaultWLANName;
@@ -277,6 +304,14 @@ namespace AAPADS
 
             }
             return DefaultWNICName;
+        }
+        private bool FetchTrainingFlagStatus()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                string flagValue = db.GetSetting("TrainingFlag");
+                return bool.TryParse(flagValue, out bool flagStatus) && flagStatus;
+            }
         }
         private void UpdateUITimer(TimeSpan time)
         {
@@ -484,9 +519,6 @@ namespace AAPADS
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
     }
 }
