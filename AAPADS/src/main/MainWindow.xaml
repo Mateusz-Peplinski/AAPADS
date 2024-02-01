@@ -1024,7 +1024,6 @@
                                                                                             Foreground="#d2d2d2"
                                                                                             Text="{Binding DETECTION_TIME, StringFormat='Time of Detection: {0:dd:MMM:yyyy [ HH:mm:ss ]}'}" />
                                                                                     </Border>
-
                                                                                 </Grid>
 
                                                                                 <!--  Separator  -->
@@ -1079,18 +1078,186 @@
                                                                             </StackPanel>
                                                                         </ScrollViewer>
                                                                     </TabItem>
+                                                                    <TabItem Header="DEVICE INFORMATION">
+                                                                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                                            <Grid Margin="10">
+                                                                                <Grid.ColumnDefinitions>
 
+                                                                                    <ColumnDefinition Width="*" />
+                                                                                    <ColumnDefinition Width="*" />
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <Grid.RowDefinitions>
 
-                                                                    <TabItem Header="ACCESS POINT INFORMATION">
-                                                                        <TextBlock>
-                                                                            <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
-                                                                            <LineBreak />
-                                                                            <LineBreak />
-                                                                            <Run FontStyle="Italic">
-                                                                                Need to find out what information here is usefull
-                                                                            </Run>
-                                                                        </TextBlock>
+                                                                                    <RowDefinition Height="Auto" />
+                                                                                    <RowDefinition Height="Auto" />
+                                                                                    <RowDefinition Height="Auto" />
+                                                                                    <RowDefinition Height="Auto" />
+                                                                                </Grid.RowDefinitions>
+
+                                                                                <Border
+                                                                                    Grid.Row="0"
+                                                                                    Grid.Column="0"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="RouterWireless" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_SSID, StringFormat='SSID: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                                <Border
+                                                                                    Grid.Row="1"
+                                                                                    Grid.Column="0"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="Antenna" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_MAC_ADDRESS, StringFormat='RADIO BSSID: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                                <Border
+                                                                                    Grid.Row="2"
+                                                                                    Grid.Column="0"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="Signal" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_SIGNAL_STRENGTH, StringFormat='SIGNAL STRENGTH: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                                <Border
+                                                                                    Grid.Row="3"
+                                                                                    Grid.Column="0"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="WifiArrowLeftRight" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_OPEN_CHANNEL, StringFormat='CURRENT OPEN CHANNEL: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                                <Border
+                                                                                    Grid.Row="0"
+                                                                                    Grid.Column="1"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="Waveform" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_FREQUENCY, StringFormat='CHANNEL FREQUENCY: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                                <Border
+                                                                                    Grid.Row="1"
+                                                                                    Grid.Column="1"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="Clock" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED, StringFormat='FIRST SEEN: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                                <Border
+                                                                                    Grid.Row="2"
+                                                                                    Grid.Column="1"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="ShieldLock" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_ENCRYPTION, StringFormat='ENCRYPTION: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                                <Border
+                                                                                    Grid.Row="3"
+                                                                                    Grid.Column="1"
+                                                                                    Margin="10"
+                                                                                    Padding="10"
+                                                                                    Background="#303030"
+                                                                                    CornerRadius="5">
+                                                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Foreground="#ef3945"
+                                                                                            Kind="Devices" />
+                                                                                        <TextBlock
+                                                                                            Margin="5,0,0,0"
+                                                                                            VerticalAlignment="Center"
+                                                                                            Text="{Binding DETECTION_ACCESS_POINT_CONNECTED_CLIENTS, StringFormat='CONNECTED CLIENTS: {0}'}" />
+                                                                                    </StackPanel>
+                                                                                </Border>
+
+                                                                            </Grid>
+                                                                        </ScrollViewer>
                                                                     </TabItem>
+
                                                                     <TabItem Header="PACKET/FRAME DATA">
                                                                         <TextBlock>
                                                                             <Run Text="THIS IS WHERE THE INCIDENT DATA WILL GO " />
