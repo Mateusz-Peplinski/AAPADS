@@ -27,6 +27,9 @@ namespace AAPADS
         private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL;
         private AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL;
         private SettingsViewModel SETTINGS_VIEW_MODEL;
+
+//private DetectionEngineDatabaseAccess databaseAccess;
+
         public NetworkCardInfoViewModel NetworkCardInfoVM { get; set; }
 
 
@@ -58,10 +61,11 @@ namespace AAPADS
             DATA_INGESTION_ENGINE_OBJECT = new DataIngestEngine();
             DATA_INGESTION_ENGINE_OBJECT.SSIDDataCollected += UpdateOverviewTabUI;
 
+
+            //databaseAccess = new DetectionEngineDatabaseAccess("wireless_profile.db");
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
             DETECTION_VIEW_MODEL = new detectionsViewDataModel();
             
-
 
             AAPADS_GLOBAL_ENGINES_START(); // start the engines, however if detection has not been enabled the classes are just initilized and sit idle 
 
@@ -74,8 +78,17 @@ namespace AAPADS
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
             NetworkCardInfoExpander.DataContext = NetworkCardInfoVM; // This has its own data context because is should run no matter which tab is selected
 
-            // If detection was started and the program was closed. This function will reopen the program at the state it closed on
-            ContinueDetectionTrainingOnLoad();
+            
+            if (FetchTrainingFlagStatus()) // If Training Flag == true
+            {
+                // If detection was started and the program was closed. This function will reopen the program at the state it closed on
+                ContinueDetectionTrainingOnLoad();
+            }
+            if (FetchDetectionFlagStatus()) // If Detection Flag == true
+            {
+                DetectionLearningStageComplete();
+                
+            }
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
 
@@ -330,6 +343,14 @@ namespace AAPADS
                 return bool.TryParse(flagValue, out bool flagStatus) && flagStatus;
             }
         }
+        private bool FetchDetectionFlagStatus()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                string flagValue = db.GetSetting("DetectionFlag");
+                return bool.TryParse(flagValue, out bool flagStatus) && flagStatus;
+            }
+        }
         private void SaveRemainingTimeToDatabase()
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
@@ -406,7 +427,7 @@ namespace AAPADS
         {
             this.Dispatcher.Invoke(() =>
             {
-                DETECTION_VIEW_MODEL.updateDetections(DETECTION_ENGINE_OBJECT);
+                DETECTION_VIEW_MODEL.updateDetections();
             });
         }
 
