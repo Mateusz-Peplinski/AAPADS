@@ -845,20 +845,6 @@
                                                                 <ColumnDefinition Width="*" />
                                                             </Grid.ColumnDefinitions>
                                                             <Border
-                                                                Grid.Column="0"
-                                                                Margin="5"
-                                                                Background="{Binding DETECTION_STATUS, Converter={StaticResource DetectionStatusToColorConverter}}"
-                                                                CornerRadius="5">
-                                                                <TextBlock
-                                                                    Width="85"
-                                                                    Margin="0,0,0,0"
-                                                                    VerticalAlignment="Center"
-                                                                    FontWeight="Bold"
-                                                                    Foreground="Black"
-                                                                    Text="{Binding DETECTION_STATUS}"
-                                                                    TextAlignment="Center" />
-                                                            </Border>
-                                                            <Border
                                                                 Grid.Column="1"
                                                                 MaxWidth="100"
                                                                 Margin="5"

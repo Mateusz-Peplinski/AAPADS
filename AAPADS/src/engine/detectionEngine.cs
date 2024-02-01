@@ -28,16 +28,46 @@ namespace AAPADS.src.engine
         public event EventHandler DetectionDiscovered;
         public bool IsDetectionComplete { get; private set; } = false;
 
+
+
         public void START_DETECTION_ENGINE()
         {
+            //populateDetectionViewModelStaticDataTest();
 
-            populateDetectionViewModelStaticDataTest();
+            WriteSQLDataTest();
+
 
             IsDetectionComplete = true;
             // when detection is done invoke event so UI can update            
             DetectionDiscovered?.Invoke(this, EventArgs.Empty);
         }
+        private void WriteSQLDataTest()
+        {
+            var detectionEvent = new DetectionEvent
+            {
+                CriticalityLevel = "LEVEL_5",
+                RiskLevel = 95,
+                DetectionStatus = "Active",
+                DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                DetectionTitle = "Unauthorized Access Detected",
+                DetectionDescription = "An unauthorized device has been detected attempting to access the network.",
+                DetectionRemediation = "Investigate the device and take appropriate security measures.",
+                DetectionAccessPointSsid = "ExampleSSID",
+                DetectionAccessPointMacAddress = "00:1A:2B:3C:4D:5E",
+                DetectionAccessPointSignalStrength = "-50 dBm",
+                DetectionAccessPointOpenChannel = "6",
+                DetectionAccessPointFrequency = "2.412 GHz",
+                DetectionAccessPointIsStillActive = "Yes",
+                DetectionAccessPointTimeFirstDetected = "14:20:15 [Date: 01 Jan 2024]",
+                DetectionAccessPointEncryption = "WPA2",
+                DetectionAccessPointConnectedClients = "12"
+            };
+            using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
+            {
+                db.SaveDetectionData(detectionEvent);
+            }
 
+        }
         private void populateDetectionViewModelStaticDataTest()
         {
             CRITICALITY_LEVEL.Add("LEVEL_5"); // CIRITICAL (RISK SCORE: 80 - 100)
@@ -75,7 +105,7 @@ namespace AAPADS.src.engine
             for (int i = 0; i < 5; i++)
             {
                 DETECTION_ACCESS_POINT_SSID.Add($"SSID-{i}");
-            }
+            }  
 
             
             DETECTION_ACCESS_POINT_MAC_ADDRESS.Add("00:0a:95:9d:68:16");
