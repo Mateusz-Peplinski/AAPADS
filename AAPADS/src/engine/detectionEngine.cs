@@ -34,7 +34,7 @@ namespace AAPADS.src.engine
         {
             //populateDetectionViewModelStaticDataTest();
 
-            WriteSQLDataTest();
+            //WriteSQLDataTest();
 
 
             IsDetectionComplete = true;
