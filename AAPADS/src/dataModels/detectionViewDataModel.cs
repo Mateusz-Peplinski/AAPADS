@@ -15,7 +15,7 @@ public class detectionsViewDataModel : baseDataModel, INotifyPropertyChanged
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    }  
     public void updateDetections()
     {
         DETECTIONS.Clear();
