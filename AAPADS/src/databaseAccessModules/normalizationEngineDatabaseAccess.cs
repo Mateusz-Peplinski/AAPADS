@@ -33,6 +33,8 @@ namespace AAPADS
             PRIMARY KEY(""ID"" AUTOINCREMENT)
             );", connection);
 
+
+            // The REPORTED will be used by the detection to keep track of unknown access points that have been detected and reported.
             var knownBSSIDSCommand = new SQLiteCommand(
                 @"CREATE TABLE IF NOT EXISTS ""KnownBSSIDS"" (
                 ""ID"" INTEGER NOT NULL UNIQUE,
@@ -40,6 +42,7 @@ namespace AAPADS
                 ""BSSID"" TEXT,
                 ""FIRST_DETECTED_TIME"" TEXT,
                 ""FIRST_DETECTED_DATE"" TEXT,
+                ""REPORTED"" BOOLEAN,
                 UNIQUE(SSID, BSSID),
                 PRIMARY KEY(""ID"" AUTOINCREMENT)
                 );", connection);
