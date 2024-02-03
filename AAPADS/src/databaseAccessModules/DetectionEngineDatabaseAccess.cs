@@ -88,6 +88,27 @@ namespace AAPADS
             var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM NormWirelessProfile ORDER BY ID DESC LIMIT 1"); //Fetch the last proccess TIME_FRAME_ID that NormEng last processed
             return result ?? "A0";
         }
+        //public void AlterKnownBSSIDsTable()
+        //{
+        //    var addReportedColumnCommand = new SQLiteCommand(@"ALTER TABLE KnownBSSIDS ADD COLUMN ""REPORTED"" BOOLEAN NOT NULL DEFAULT 0;");
+        //    addReportedColumnCommand.ExecuteNonQuery();
+        //
+        //}
+        public void InsertAndReportNewBssid(string ssid, string bssid)
+        {
+            var insertQuery = @"
+                        INSERT INTO KnownBSSIDS (SSID, BSSID, FIRST_DETECTED_TIME, FIRST_DETECTED_DATE, REPORTED) 
+                        VALUES (@SSID, @BSSID, @FIRST_DETECTED_TIME, @FIRST_DETECTED_DATE, @Reported)";
+
+            connection.Execute(insertQuery, new
+            {
+                SSID = ssid,
+                BSSID = bssid,
+                FIRST_DETECTED_TIME = DateTime.Now.ToString("hh:mm:ss tt"),
+                FIRST_DETECTED_DATE = DateTime.Now.ToShortDateString(),
+                Reported = true
+            });
+        }
 
         public void Dispose()
         {

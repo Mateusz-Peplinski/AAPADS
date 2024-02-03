@@ -41,6 +41,11 @@ namespace AAPADS.src.engine
             // This function will populate the database with sample detection data
             //WriteSQLDataTest();
 
+
+            //_databaseAccess.AlterKnownBSSIDsTable();
+
+
+
             IsDetectionComplete = true;
             // when detection is done invoke event so UI can update            
             DetectionDiscovered?.Invoke(this, EventArgs.Empty);
@@ -83,7 +88,6 @@ namespace AAPADS.src.engine
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     
-
                     string latestTimeFrameId = _databaseAccess.GetLastTimeFrameID(); //Fetch the last proccess TIME_FRAME_ID that NormEng last processed
 
                     Console.ForegroundColor = ConsoleColor.Cyan;
@@ -98,7 +102,7 @@ namespace AAPADS.src.engine
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND");
-
+                        HandleNewAccessPointsDetection(newAccessPoints);
                     }
 
                     //Delay just to prevent tight loop and high CPU usage
@@ -131,6 +135,23 @@ namespace AAPADS.src.engine
 
 
         }
+        private void HandleNewAccessPointsDetection(List<dot11DataIngestDataForTimeFrameID> newAccessPoints)
+        {
+            foreach (var ap in newAccessPoints)
+            {
+                // Process each new access point, for example:
+                Console.WriteLine($"New Access Point Detected: SSID = {ap.SSID}, BSSID = {ap.BSSID}, SignalStrength = {ap.Signal_Strength}%");
+
+                _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID);
+
+                // Depending on your application's needs, you might:
+                // - Log to a file
+                // - Insert a record into a 'detections' table in the database
+                // - Trigger an alert or notification
+                // - Etc.
+            }
+        }
+
         private string FetchNextTimeFrameID(string currentId)
         {
             var idGenerator = new TimeFrameIdGenerator(currentId);
@@ -165,8 +186,8 @@ namespace AAPADS.src.engine
         public string Time { get; set; }
         public string SSID { get; set; }
         public string BSSID { get; set; }
-        public int SignalStrength { get; set; }
-        public string WifiStandard { get; set; }
+        public int Signal_Strength { get; set; }
+        public string Wifi_Standard { get; set; }
         public string Band { get; set; }
         public int Channel { get; set; }
         public string Frequency { get; set; }
