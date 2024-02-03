@@ -69,6 +69,7 @@ namespace AAPADS
 
         public bool isLoading = false;
         private bool TraningFlagStatus = false;
+        private bool DetectionFlagStatus = false;
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(1);
         private bool isRunning = true;
@@ -150,8 +151,9 @@ namespace AAPADS
                         
 
                         FetechTrainingFlagStatus();
+                        FetechDetectionFlagStatus();
 
-                        if (TraningFlagStatus == true) // todo: add also detection flag == true
+                        if (TraningFlagStatus == true || DetectionFlagStatus == true) // todo: add also detection flag == true
                         {
                             //Console.ForegroundColor = ConsoleColor.Red;
                             //Console.WriteLine("[ DATA INGEST ENGINE ] Traning Flag Status {0}", TraningFlagStatus);
@@ -190,6 +192,24 @@ namespace AAPADS
                 if (settingValue != null)
                 {
                     TraningFlagStatus = settingValue.Equals("true", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+        }
+        private void FetechDetectionFlagStatus()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // GetSetting should return the string representation of the setting.
+                var flagStatus = db.GetSetting("DetectionFlag");
+                if (flagStatus == null)
+                {
+                    DetectionFlagStatus = false;
+                }
+
+                // Parse the returned value to a boolean.
+                if (flagStatus != null)
+                {
+                    DetectionFlagStatus = flagStatus.Equals("true", StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -375,7 +395,7 @@ namespace AAPADS
                 );
             }
         }
-
+        
 
     }
 
