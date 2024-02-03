@@ -144,11 +144,30 @@ namespace AAPADS.src.engine
 
                 _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID);
 
-                // Depending on your application's needs, you might:
-                // - Log to a file
-                // - Insert a record into a 'detections' table in the database
-                // - Trigger an alert or notification
-                // - Etc.
+                var detectionEvent = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_2",
+                    RiskLevel = 30,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = "New Unknown Access Point Detected",
+                    DetectionDescription = "An unauthorized device has been detected attempting to access the network.",
+                    DetectionRemediation = "Investigate the device and take appropriate security measures.",
+                    DetectionAccessPointSsid = ap.SSID,
+                    DetectionAccessPointMacAddress = ap.BSSID,
+                    DetectionAccessPointSignalStrength = ap.Signal_Strength.ToString(),
+                    DetectionAccessPointOpenChannel = ap.Channel.ToString(),
+                    DetectionAccessPointFrequency = ap.Frequency,
+                    DetectionAccessPointIsStillActive = "Yes",
+                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionAccessPointEncryption = ap.Authentication,
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
+                {
+                    db.SaveDetectionData(detectionEvent);
+                }
+                DetectionDiscovered?.Invoke(this, EventArgs.Empty);
             }
         }
 

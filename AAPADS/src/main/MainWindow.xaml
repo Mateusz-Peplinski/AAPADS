@@ -892,7 +892,7 @@
                                                             <TextBlock
                                                                 Margin="8,0,0,0"
                                                                 FontWeight="Bold"
-                                                                Foreground="#ef3945"
+                                                                Foreground="#d2d2d2"
                                                                 Text="{Binding DETECTION_TITLE}"
                                                                 TextWrapping="NoWrap" />
                                                         </Grid>
