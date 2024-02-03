@@ -11,6 +11,7 @@ namespace AAPADS
         private normalizationEngineDatabaseAccess _dbAccess;
         private string _lastProcessedTimeFrameId;
         private bool TraningFlagStatus = false;
+        private bool DetectionFlagStatus = false;
         public NormalizationEngine()
         {
             _dbAccess = new normalizationEngineDatabaseAccess("wireless_profile.db");
@@ -35,8 +36,9 @@ namespace AAPADS
             {
 
                 FetechTrainingFlagStatus();
+                FetechDetectionFlagStatus();
 
-                if (TraningFlagStatus == true) // todo: add also detection flag == true
+                if (TraningFlagStatus == true || DetectionFlagStatus == true) 
                 {
                     var nextTimeFrameId = FetchNextTimeFrameID(_lastProcessedTimeFrameId);
 
@@ -103,6 +105,24 @@ namespace AAPADS
                 }
             }
         }
+        private void FetechDetectionFlagStatus()
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // GetSetting should return the string representation of the setting.
+                var flagStatus = db.GetSetting("DetectionFlag");
+                if (flagStatus == null)
+                {
+                    DetectionFlagStatus = false;
+                }
+
+                // Parse the returned value to a boolean.
+                if (flagStatus != null)
+                {
+                    DetectionFlagStatus = flagStatus.Equals("true", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+        }
         private bool CheckDataExistsForTimeFrameID(string timeFrameId)
         {
             string query = "SELECT COUNT(*) FROM WirelessProfile WHERE TIME_FRAME_ID = @TIME_FRAME_ID";
@@ -137,19 +157,17 @@ namespace AAPADS
             int total5GHzAPs = 0;
             string time = "NULL";
 
-            List<string> knownSSIDsList = new List<string>();
+            //List<string> knownSSIDsList = new List<string>();
 
             foreach (var accessPoint in data) // All the colleced data --> 
             {
 
                 if (((accessPoint.SignalStrength / 2) - 100) < 60) //Only care about SSID that have approx RSSI value of 60 or less
                 {
-                    _dbAccess.InsertSsidBssiIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID); // If new data add it TABLE knownSsids--> (Need to update so this is  only updated during the training stage)
-                    // step 1 -  add all to KnowBSSIDS (TRAIN)
-                    // step 2 -  stop TRAINING 
-                    // step 3 -  add all APs to AllKnownBSSIDS (This is so user can white / black list by moving an AP to KnownBSSID)
-
-                
+                    if (TraningFlagStatus == true) // only add access point data while the training phase is true
+                    {
+                        _dbAccess.InsertSsidBssiIfDoesNotExist(accessPoint.SSID, accessPoint.BSSID); 
+                    }      
                     if (accessPoint.Band == "2.4 GHz")
                     {
                         total24GHzAPs++;

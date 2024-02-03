@@ -76,10 +76,32 @@ namespace AAPADS
             var sql = @"SELECT * FROM DetectionData";
             return connection.Query<DetectionEvent>(sql);
         }
+
+        public List<KnownBSSID> GetKnownBSSIDs()
+        {
+            string query = "SELECT * FROM KnownBSSIDS";
+            var knownBSSIDs = Connection.Query<KnownBSSID>(query).ToList();
+            return knownBSSIDs;
+        }
+        public string GetLastTimeFrameID()
+        {
+            var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM NormWirelessProfile ORDER BY ID DESC LIMIT 1"); //Fetch the last proccess TIME_FRAME_ID that NormEng last processed
+            return result ?? "A0";
+        }
+
         public void Dispose()
         {
             // Dispose the SQLite connection when this object is disposed
             connection?.Dispose();
         }
+    }
+    public class KnownBSSID
+    {
+        public int ID { get; set; }
+        public string SSID { get; set; }
+        public string BSSID { get; set; }
+        public string FIRST_DETECTON_TIME { get; set; }
+        public string FIRST_DETECTON_DATE { get; set; }
+
     }
 }
