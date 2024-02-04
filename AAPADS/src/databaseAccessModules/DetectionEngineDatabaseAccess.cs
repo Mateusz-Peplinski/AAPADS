@@ -24,6 +24,7 @@ namespace AAPADS
             CreateTablesIfNotExists();
         }
 
+        // Need to add detection UID
         private void CreateTablesIfNotExists()
         {
             var command = new SQLiteCommand(

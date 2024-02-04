@@ -60,7 +60,7 @@ namespace AAPADS.src.engine
                 RiskLevel = 95,
                 DetectionStatus = "Active",
                 DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                DetectionTitle = "Unauthorized Access Detected",
+                DetectionTitle = "[TEST EVENT] Unauthorized Access Detected",
                 DetectionDescription = "An unauthorized device has been detected attempting to access the network.",
                 DetectionRemediation = "Investigate the device and take appropriate security measures.",
                 DetectionAccessPointSsid = "ExampleSSID",
@@ -93,17 +93,9 @@ namespace AAPADS.src.engine
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine("[ DETECTION ENGINE ] PROCESSING {0}", latestTimeFrameId);
 
-                    var currentAccessPoints = FetchDataForTimeFrame(latestTimeFrameId);
-                    var knownBSSIDs = _databaseAccess.GetKnownBSSIDs();
+                    SignitureDetectionRoutineRuleCheck(latestTimeFrameId);
 
-                    var newAccessPoints = currentAccessPoints.Where(ap => !knownBSSIDs.Any(known => known.BSSID == ap.BSSID)).ToList();
-
-                    if (newAccessPoints.Any())
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND");
-                        HandleNewAccessPointsDetection(newAccessPoints);
-                    }
+                    
 
                     //Delay just to prevent tight loop and high CPU usage
                     await Task.Delay(5000, cancellationToken);
@@ -120,6 +112,21 @@ namespace AAPADS.src.engine
                 Console.WriteLine($"[ DETECTION ENGINE ] AN ERROR OCCURRED: {ex.Message}");
             }
         }
+        private void SignitureDetectionRoutineRuleCheck(String latestTimeFrameId)
+        {
+            var currentAccessPoints = FetchDataForTimeFrame(latestTimeFrameId);
+            var knownBSSIDs = _databaseAccess.GetKnownBSSIDs();
+
+            var newAccessPoints = currentAccessPoints.Where(ap => !knownBSSIDs.Any(known => known.BSSID == ap.BSSID)).ToList();
+
+            if (newAccessPoints.Any())
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND");
+                HandleNewAccessPointsDetection(newAccessPoints);
+            }
+        }
+
         public void StopDetectionEngine()
         {
             _detectionCts.Cancel();
@@ -140,7 +147,7 @@ namespace AAPADS.src.engine
             foreach (var ap in newAccessPoints)
             {
                 // Process each new access point, for example:
-                Console.WriteLine($"New Access Point Detected: SSID = {ap.SSID}, BSSID = {ap.BSSID}, SignalStrength = {ap.Signal_Strength}%");
+                //Console.WriteLine($"[ DETECTION ENGINE ] New Access Point Detected: SSID = {ap.SSID}, BSSID = {ap.BSSID}, SignalStrength = {ap.Signal_Strength}%");
 
                 _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID);
 
@@ -211,6 +218,6 @@ namespace AAPADS.src.engine
         public int Channel { get; set; }
         public string Frequency { get; set; }
         public string Authentication { get; set; }
-        public string TimeFrameID { get; set; }
+        public string TimeFrameID { get; set; } //use this for the ID of the event
     }
 }
