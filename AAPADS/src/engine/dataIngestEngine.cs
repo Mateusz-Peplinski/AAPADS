@@ -148,8 +148,6 @@ namespace AAPADS
                         SSIDDataCollected?.Invoke(this, EventArgs.Empty);
 
 
-                        
-
                         FetechTrainingFlagStatus();
                         FetechDetectionFlagStatus();
 
