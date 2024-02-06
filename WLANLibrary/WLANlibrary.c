@@ -31,13 +31,13 @@ __declspec(dllexport) BOOL PerformWifiScan() {
    
     dwResult = WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
     if (dwResult != ERROR_SUCCESS) {
-        fprintf(stderr, "WlanOpenHandle failed with error: %u\n", dwResult);
+        fprintf(stderr, "[ WLAN LIBRARY ] WlanOpenHandle failed with error: %u\n", dwResult);
         return FALSE; 
     }
     
     dwResult = WlanEnumInterfaces(clientHandle, NULL, &pInterfaceList);
     if (dwResult != ERROR_SUCCESS) {
-        fprintf(stderr, "WlanEnumInterfaces failed with error: %u\n", dwResult);
+        fprintf(stderr, "[ WLAN LIBRARY ] WlanEnumInterfaces failed with error: %u\n", dwResult);
         WlanCloseHandle(clientHandle, NULL);
         return FALSE;
     }
@@ -45,7 +45,7 @@ __declspec(dllexport) BOOL PerformWifiScan() {
     for (DWORD i = 0; i < pInterfaceList->dwNumberOfItems; i++) {
         dwResult = WlanScan(clientHandle, &pInterfaceList->InterfaceInfo[i].InterfaceGuid, NULL, NULL, NULL);
         if (dwResult != ERROR_SUCCESS) {
-            fprintf(stderr, "WlanScan on interface %u failed with error: %u\n", i, dwResult);
+            fprintf(stderr, "[ WLAN LIBRARY ] WlanScan on interface %u failed with error: %u\n", i, dwResult);
         }
     }
     
@@ -257,7 +257,7 @@ __declspec(dllexport) int GetWLANStatistics(MyWLANStats* stats) {
     DWORD result;
     result = WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
     if (result != ERROR_SUCCESS) {
-        printf("Error\n");
+        printf("[ WLAN LIBRARY ] Error Opening Handle for GetWLANStatistics() \n");
     }
 
     WLAN_STATISTICS wlanStats;
@@ -336,7 +336,7 @@ __declspec(dllexport) int WLANGetAdapterStatus(WLANAdapterStatus* stats) {
     DWORD result;
     result = WlanOpenHandle(2, NULL, &negotiatedVersion, &clientHandle);
     if (result != ERROR_SUCCESS) {
-        printf("Error\n");
+        printf("[ WLAN LIBRARY ] Error Opening Handle for WLANGetAdapterStatus()\n");
     }
 
     WLAN_STATISTICS wlanStats;
