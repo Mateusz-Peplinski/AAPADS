@@ -85,8 +85,6 @@ namespace AAPADS
         private int currentChannel = 0;
         private string currentFrequency = null;
 
-        //private overviewViewDataModel liveLogDataModelConsole;
-
         private wirelessProfileDatabaseAccess _dbAccess;
         private NormalizationEngine _normalizationEngine;
 
@@ -95,15 +93,17 @@ namespace AAPADS
 
         public void START_DATA_INGEST_ENGINE()
         {
-            //liveLogDataModelConsole = new overviewViewDataModel();
 
             InitializeDataIngestEngineList();
 
+            // Initlize database access for this engine
             _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
 
-            _normalizationEngine = new NormalizationEngine(); // Start the normalization engine
+            // Start the normalization engine
+            _normalizationEngine = new NormalizationEngine();
 
-            Task.Run(PreformWLANScanThread); // main thread for constanly scanning and parsing output from netsh
+            // main thread for constanly scanning and parsing output from netsh
+            Task.Run(PreformWLANScanThread); 
         }
         private void InitializeDataIngestEngineList()
         {
@@ -151,7 +151,7 @@ namespace AAPADS
                         FetechTrainingFlagStatus();
                         FetechDetectionFlagStatus();
 
-                        if (TraningFlagStatus == true || DetectionFlagStatus == true) // todo: add also detection flag == true
+                        if (TraningFlagStatus == true || DetectionFlagStatus == true)
                         {
                             //Console.ForegroundColor = ConsoleColor.Red;
                             //Console.WriteLine("[ DATA INGEST ENGINE ] Traning Flag Status {0}", TraningFlagStatus);
@@ -168,7 +168,8 @@ namespace AAPADS
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"[ DATA INGEST ENGINE ] {ex.Message}.");
                 }
                 finally
                 {
@@ -183,12 +184,11 @@ namespace AAPADS
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
-                // GetSetting should return the string representation of the setting.
                 var settingValue = db.GetSetting("TrainingFlag");
-
-                // Parse the returned value to a boolean.
+                
                 if (settingValue != null)
                 {
+                    // Parse the returned value to a boolean.
                     TraningFlagStatus = settingValue.Equals("true", StringComparison.OrdinalIgnoreCase);
                 }
             }
@@ -197,16 +197,15 @@ namespace AAPADS
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
-                // GetSetting should return the string representation of the setting.
                 var flagStatus = db.GetSetting("DetectionFlag");
                 if (flagStatus == null)
                 {
                     DetectionFlagStatus = false;
                 }
 
-                // Parse the returned value to a boolean.
                 if (flagStatus != null)
                 {
+                    // Parse the returned value to a boolean.
                     DetectionFlagStatus = flagStatus.Equals("true", StringComparison.OrdinalIgnoreCase);
                 }
             }
@@ -365,7 +364,6 @@ namespace AAPADS
             currentChannel = 0;
             currentFrequency = null;
         }
-        //connection.Execute("INSERT INTO WirelessProfile (Time, SSID, BSSID, SIGNAL_STRENGTH, WIFI_STANDARD, BAND, CHANNEL, FREQUENCY, AUTHENTICATION) VALUES (@Time, @SSID, @BSSID, @SIGNAL_STRENGTH, @WIFI_STANDARD, @BAND, @CHANNEL, @FREQUENCY, @AUTHENTICATION)", wifiData);
 
         private void InsertParsedDataToDatabase()
         {
