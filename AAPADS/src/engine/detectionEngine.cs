@@ -27,7 +27,9 @@ namespace AAPADS.src.engine
         //public List<string> DETECTION_ACCESS_POINT_CONNECTED_CLIENTS = new List<string>();
 
 
-        private List<string> similarSSIDs;
+        private List<string> _SIMILAR_SSIDS_GENERATED_LIST;
+
+        private string _DEFAULT_WLAN_SSID;
 
         public event EventHandler DetectionDiscovered;
         public bool IsDetectionComplete { get; private set; } = false;
@@ -48,8 +50,9 @@ namespace AAPADS.src.engine
             string connectedSSID = LoadConnectedWLANNameFromDatabase();
 
             // Generate a list of similar SSIDs for PB1 RULE 3 - SSID Spoofing 
-            similarSSIDs = GenerateSimilarSSIDs(connectedSSID);
+            _SIMILAR_SSIDS_GENERATED_LIST = GenerateSimilarSSIDs(connectedSSID);
 
+            _DEFAULT_WLAN_SSID = LoadConnectedWLANNameFromDatabase();
 
             IsDetectionComplete = true;
             // when detection is done invoke event so UI can update            
@@ -194,7 +197,7 @@ namespace AAPADS.src.engine
 
                 // RULE 3 - SSID Spoofing - A sudden appearance of a similar looking SSID
                 // Compare each new access point's SSID with the list of similar SSIDs
-                if (similarSSIDs.Any(similarSSID => similarSSID == ap.SSID))
+                if (_SIMILAR_SSIDS_GENERATED_LIST.Any(similarSSID => similarSSID == ap.SSID))
                 {
                     // If a match is found, it indicates a potential SSID spoofing attempt
                     var SSIDSpoofingdetectionEvent = new DetectionEvent
