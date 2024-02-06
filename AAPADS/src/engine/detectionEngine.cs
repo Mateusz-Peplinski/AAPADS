@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dapper;
 
 namespace AAPADS.src.engine
 {
@@ -52,6 +52,177 @@ namespace AAPADS.src.engine
 
             Task.Run(async () => await StartDetection(_detectionCts.Token));
         }
+
+        private async Task StartDetection(CancellationToken cancellationToken)
+        {
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("[ DETECTION ENGINE ] STARTING...");
+                while (!cancellationToken.IsCancellationRequested)
+                {
+
+                    string latestTimeFrameId = _databaseAccess.GetLastTimeFrameID(); //Fetch the last proccess TIME_FRAME_ID that NormEng last processed
+
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("[ DETECTION ENGINE ] PROCESSING {0}", latestTimeFrameId);
+
+                    SignitureDetectionRoutineRuleCheck(latestTimeFrameId);
+
+
+
+                    //Delay to prevnt tight loop and high CPU usage
+                    await Task.Delay(5000, cancellationToken);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[ DETECTION ENGINE ] DETECTION ENGINE WAS CANCELLED.");
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"[ DETECTION ENGINE ] AN ERROR OCCURRED: {ex.Message}");
+            }
+        }
+        private void SignitureDetectionRoutineRuleCheck(String latestTimeFrameId)
+        {
+            // Fetech all the Access point data for the most recently process TIME_FRAME_ID
+            var currentAccessPoints = FetchDataForTimeFrame(latestTimeFrameId);
+
+            // Fetech the list of Known Access Points that where detected during the traning phase
+            var knownBSSIDs = _databaseAccess.GetKnownBSSIDs();
+
+            //  Filters currentAccessPoints to include only those access points whose BSSID is not found in the list of knownBSSIDs
+            var newAccessPoints = currentAccessPoints.Where(ap => !knownBSSIDs.Any(known => known.BSSID == ap.BSSID)).ToList();
+
+            // Process the new access points if any were found
+            if (newAccessPoints.Any())
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND");
+                HandleProcessBlockOneRules(newAccessPoints);
+            }
+
+            // PROCESS BLOCK 2 - Security Misconfigurations
+        }
+
+        public void StopDetectionEngine()
+        {
+            _detectionCts.Cancel();
+        }
+
+        private void HandleProcessBlockOneRules(List<dot11DataIngestDataForTimeFrameID> newAccessPoints)
+        {
+            // PROCESS BLOCK 1 - Check if a new access point has been detected and proccess then
+            // RULE 1 - SSID Beacon Flooding - A sudden appearance of many SSIDs
+            // RULE 2 - Unknown Access Point - A new unknown acess point is discovered in close proximity
+            // RULE 3 - Evil Twin Attack - A sudden appearance of a duplicate SSID and BSSID
+            // RULE 5 - SSID Spoofing - A sudden appearance of a similar looking SSID
+            // RULE 5 - WiFi Jamming - A sudden decrease in signal from all access points in proximity [NOT DONE YET]
+            // RULE 6 - Rogue Access Point - A sudden appearance of duplicate SSID on a different MAC addresses
+
+            // RULE 1 - SSID Beacon Flooding - A sudden appearance of many SSIDs
+            int NewlyDetectedAccessPointCount = newAccessPoints.Count;
+
+            var SSIDBeaconFloodingdetectionEvent = new DetectionEvent
+            {
+                CriticalityLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15 ? "LEVEL_2" : "LEVEL_3",
+                RiskLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15 ? 30 : 60,
+                DetectionStatus = "Active",
+                DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                DetectionTitle = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15 ? "Possible SSID Beacon Flooding" : "SSID Beacon Flooding",
+                DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
+                                        $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
+                DetectionRemediation = @"While the current information does not confirm malicious intent behind the surge in SSID broadcasts, caution and further investigation are advised to ensure network integrity and security. To address this situation, consider the following steps:
+
+                                            1. Conduct a detailed analysis of the SSID signals' origin, attempting to pinpoint the physical location or specific devices responsible for the surge.
+                                            2. Compare the newly detected SSIDs against a list of known and trusted networks to identify any that may be impersonating legitimate access points.
+                                            3. Increase the monitoring intensity of network traffic to quickly identify any unauthorized access or further anomalies in wireless activity.
+                                            4. If any of the new SSIDs attempt to mimic the naming conventions of your network or other nearby trusted networks, treat them as potential threats and investigate accordingly.
+                                            5. Advise network users to remain vigilant when connecting to wireless networks, especially those that have recently appeared or do not have a verified source.
+
+                                            Given the potential security implications of this event, documenting all findings and any steps taken in response is crucial for future reference and potential escalation to cybersecurity specialists if the situation does not resolve or escalates.",
+                DetectionAccessPointSsid = "N/A",
+                DetectionAccessPointMacAddress = "N/A",
+                DetectionAccessPointSignalStrength = "N/A",
+                DetectionAccessPointOpenChannel = "N/A",
+                DetectionAccessPointFrequency = "N/A",
+                DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
+                DetectionAccessPointTimeFirstDetected = "N/A",
+                DetectionAccessPointEncryption = "N/A",
+                DetectionAccessPointConnectedClients = "N/A"
+            };
+            SaveDetection(SSIDBeaconFloodingdetectionEvent);
+
+            //For each in handle many access points show up at once.
+            foreach (var ap in newAccessPoints) 
+            {
+                // Add the new access point to the KnownBSSIDs SQL TABLE to prevent many repative events
+                _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID); 
+
+                // RULE 2 - Unknown Access Point - A new unknown acess point is discovered in close proximity
+                var NewAccessPointdetectionEvent = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_1",
+                    RiskLevel = 10,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = $"New Unknown Access Point Detected [SSID: {ap.SSID}]",
+                    DetectionDescription = $"An new device with SSID {ap.SSID} and BSSID: {ap.BSSID} has been detected in your proximity",
+                    DetectionRemediation = $"The access point {ap.SSID} does not attempt to mimic your wireless network. It is likely a hotspot wireless network.\nHowever if this device has never been seen before it should be investigated.",
+                    DetectionAccessPointSsid = ap.SSID,
+                    DetectionAccessPointMacAddress = ap.BSSID,
+                    DetectionAccessPointSignalStrength = ap.Signal_Strength.ToString(),
+                    DetectionAccessPointOpenChannel = ap.Channel.ToString(),
+                    DetectionAccessPointFrequency = ap.Frequency,
+                    DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
+                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionAccessPointEncryption = ap.Authentication,
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                SaveDetection(NewAccessPointdetectionEvent);
+            }
+        }
+        private void SaveDetection(DetectionEvent detectionEvent)
+        {
+            using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
+            {
+                db.SaveDetectionData(detectionEvent);
+            }
+            TriggerDetectionEvent();
+        }
+        private void TriggerDetectionEvent()
+        {
+            DetectionDiscovered?.Invoke(this, EventArgs.Empty);
+        }
+        private string FetchNextTimeFrameID(string currentId)
+        {
+            var idGenerator = new TimeFrameIdGenerator(currentId);
+            var nextId = idGenerator.GenerateNextId();
+
+            // Check if data exists for the next ID
+            var dataExists = CheckDataExistsForTimeFrameID(nextId);
+
+            if (dataExists)
+            {
+                return nextId;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        private bool CheckDataExistsForTimeFrameID(string timeFrameId)
+        {
+            string query = "SELECT COUNT(*) FROM WirelessProfile WHERE TIME_FRAME_ID = @TIME_FRAME_ID";
+            var parameters = new { TIME_FRAME_ID = timeFrameId };
+
+            int count = _databaseAccess.Connection.ExecuteScalar<int>(query, parameters);
+
+            return count > 0;
+        }
         private void WriteSQLDataTest()
         {
             var detectionEvent = new DetectionEvent
@@ -78,70 +249,6 @@ namespace AAPADS.src.engine
                 db.SaveDetectionData(detectionEvent);
             }
         }
-
-        private async Task StartDetection(CancellationToken cancellationToken)
-        {
-            try
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("[ DETECTION ENGINE ] STARTING...");
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    
-                    string latestTimeFrameId = _databaseAccess.GetLastTimeFrameID(); //Fetch the last proccess TIME_FRAME_ID that NormEng last processed
-
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine("[ DETECTION ENGINE ] PROCESSING {0}", latestTimeFrameId);
-
-                    SignitureDetectionRoutineRuleCheck(latestTimeFrameId);
-
-                    
-
-                    //Delay just to prevent tight loop and high CPU usage
-                    await Task.Delay(5000, cancellationToken);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("[ DETECTION ENGINE ] DETECTION ENGINE WAS CANCELLED.");
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"[ DETECTION ENGINE ] AN ERROR OCCURRED: {ex.Message}");
-            }
-        }
-        private void SignitureDetectionRoutineRuleCheck(String latestTimeFrameId)
-        {
-            var currentAccessPoints = FetchDataForTimeFrame(latestTimeFrameId);
-            var knownBSSIDs = _databaseAccess.GetKnownBSSIDs();
-
-            // PROCESS BLOCK 1 - Check if a new access point has been detected and proccess then
-            // RULE 1 - Rogue Access Point - A sudden appearance of duplicate SSID on a different MAC addresses 
-            // RULE 2 - Evil Twin Attack - A sudden appearance of a duplicate SSID and BSSID
-            // RULE 3 - SSID Spoofing - A sudden appearance of a similar looking SSID
-            // RULE 4 - WiFi Jamming - A sudden decrease in signal from all access points in proximity [NOT DONE YET]
-            // RULE 5 - SSID Beacon Flooding - A sudden appearance of many SSIDs
-            
-            var newAccessPoints = currentAccessPoints.Where(ap => !knownBSSIDs.Any(known => known.BSSID == ap.BSSID)).ToList();
-
-            //int count = newAccessPoints.Count;
-
-            if (newAccessPoints.Any())
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND");
-                HandleProcessBlockOneRules(newAccessPoints);
-            }
-
-            // PROCESS BLOCK 2 - Security Misconfigurations
-        }
-
-        public void StopDetectionEngine()
-        {
-            _detectionCts.Cancel();
-        }
         private List<dot11DataIngestDataForTimeFrameID> FetchDataForTimeFrame(string timeFrameId)
         {
 
@@ -152,143 +259,6 @@ namespace AAPADS.src.engine
             return data;
 
 
-        }
-        private void HandleProcessBlockOneRules(List<dot11DataIngestDataForTimeFrameID> newAccessPoints)
-        {
-            int NewlyDetectedAccessPointCount = newAccessPoints.Count;
-
-            if (NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15)
-            {
-                var detectionEvent = new DetectionEvent
-                {
-                    CriticalityLevel = "LEVEL_2",
-                    RiskLevel = 30,
-                    DetectionStatus = "Active",
-                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                    DetectionTitle = $"Possible SSID Beacon Flooding",
-                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
-                                            $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
-                    DetectionRemediation = @"While the current information does not confirm malicious intent behind the surge in SSID broadcasts, caution and further investigation are advised to ensure network integrity and security. To address this situation, consider the following steps:
-
-                                            1. Conduct a detailed analysis of the SSID signals' origin, attempting to pinpoint the physical location or specific devices responsible for the surge.
-                                            2. Compare the newly detected SSIDs against a list of known and trusted networks to identify any that may be impersonating legitimate access points.
-                                            3. Increase the monitoring intensity of network traffic to quickly identify any unauthorized access or further anomalies in wireless activity.
-                                            4. If any of the new SSIDs attempt to mimic the naming conventions of your network or other nearby trusted networks, treat them as potential threats and investigate accordingly.
-                                            5. Advise network users to remain vigilant when connecting to wireless networks, especially those that have recently appeared or do not have a verified source.
-
-                                            Given the potential security implications of this event, documenting all findings and any steps taken in response is crucial for future reference and potential escalation to cybersecurity specialists if the situation does not resolve or escalates.",
-                    DetectionAccessPointSsid = "N/A",
-                    DetectionAccessPointMacAddress = "N/A",
-                    DetectionAccessPointSignalStrength = "N/A",
-                    DetectionAccessPointOpenChannel = "N/A",
-                    DetectionAccessPointFrequency = "N/A",
-                    DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
-                    DetectionAccessPointTimeFirstDetected = "N/A",
-                    DetectionAccessPointEncryption = "N/A",
-                    DetectionAccessPointConnectedClients = "N/A"
-                };
-                using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
-                {
-                    db.SaveDetectionData(detectionEvent);
-                }
-                DetectionDiscovered?.Invoke(this, EventArgs.Empty);
-            }
-            if (NewlyDetectedAccessPointCount > 16 )
-            {
-                var detectionEvent = new DetectionEvent
-                {
-                    CriticalityLevel = "LEVEL_3",
-                    RiskLevel = 60,
-                    DetectionStatus = "Active",
-                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                    DetectionTitle = $"SSID Beacon Flooding",
-                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
-                                            $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
-                    DetectionRemediation = @"While the current information does not confirm malicious intent behind the surge in SSID broadcasts, caution and further investigation are advised to ensure network integrity and security. To address this situation, consider the following steps:
-
-                                            1. Conduct a detailed analysis of the SSID signals' origin, attempting to pinpoint the physical location or specific devices responsible for the surge.
-                                            2. Compare the newly detected SSIDs against a list of known and trusted networks to identify any that may be impersonating legitimate access points.
-                                            3. Increase the monitoring intensity of network traffic to quickly identify any unauthorized access or further anomalies in wireless activity.
-                                            4. If any of the new SSIDs attempt to mimic the naming conventions of your network or other nearby trusted networks, treat them as potential threats and investigate accordingly.
-                                            5. Advise network users to remain vigilant when connecting to wireless networks, especially those that have recently appeared or do not have a verified source.
-
-                                            Given the potential security implications of this event, documenting all findings and any steps taken in response is crucial for future reference and potential escalation to cybersecurity specialists if the situation does not resolve or escalates.",
-                    DetectionAccessPointSsid = "N/A",
-                    DetectionAccessPointMacAddress = "N/A",
-                    DetectionAccessPointSignalStrength = "N/A",
-                    DetectionAccessPointOpenChannel = "N/A",
-                    DetectionAccessPointFrequency = "N/A",
-                    DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
-                    DetectionAccessPointTimeFirstDetected = "N/A",
-                    DetectionAccessPointEncryption = "N/A",
-                    DetectionAccessPointConnectedClients = "N/A"
-                };
-                using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
-                {
-                    db.SaveDetectionData(detectionEvent);
-                }
-                DetectionDiscovered?.Invoke(this, EventArgs.Empty);
-            }
-
-            foreach (var ap in newAccessPoints) //For each in case many access points show up at once.
-            {
-                // Process each new access point
-                // Console.WriteLine($"[ DETECTION ENGINE ] New Access Point Detected: SSID = {ap.SSID}, BSSID = {ap.BSSID}, SignalStrength = {ap.Signal_Strength}%");
-
-                _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID); // 
-
-                var detectionEvent = new DetectionEvent
-                {
-                    CriticalityLevel = "LEVEL_1",
-                    RiskLevel = 10,
-                    DetectionStatus = "Active",
-                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                    DetectionTitle = $"New Unknown Access Point Detected [SSID: {ap.SSID}]",
-                    DetectionDescription = $"An new device with SSID {ap.SSID} and BSSID: {ap.BSSID} has been detected in your proximity",
-                    DetectionRemediation = $"The access point {ap.SSID} does not attempt to mimic your wireless network. It is likely a hotspot wireless network.\nHowever if this device has never been seen before it should be investigated.",
-                    DetectionAccessPointSsid = ap.SSID,
-                    DetectionAccessPointMacAddress = ap.BSSID,
-                    DetectionAccessPointSignalStrength = ap.Signal_Strength.ToString(),
-                    DetectionAccessPointOpenChannel = ap.Channel.ToString(),
-                    DetectionAccessPointFrequency = ap.Frequency,
-                    DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
-                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                    DetectionAccessPointEncryption = ap.Authentication,
-                    DetectionAccessPointConnectedClients = "N/A"
-                };
-                using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
-                {
-                    db.SaveDetectionData(detectionEvent);
-                }
-                DetectionDiscovered?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        private string FetchNextTimeFrameID(string currentId)
-        {
-            var idGenerator = new TimeFrameIdGenerator(currentId);
-            var nextId = idGenerator.GenerateNextId();
-
-            // Check if data exists for the next ID
-            var dataExists = CheckDataExistsForTimeFrameID(nextId);
-
-            if (dataExists)
-            {
-                return nextId;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        private bool CheckDataExistsForTimeFrameID(string timeFrameId)
-        {
-            string query = "SELECT COUNT(*) FROM WirelessProfile WHERE TIME_FRAME_ID = @TIME_FRAME_ID";
-            var parameters = new { TIME_FRAME_ID = timeFrameId };
-
-            int count = _databaseAccess.Connection.ExecuteScalar<int>(query, parameters);
-
-            return count > 0;
         }
     }
 
