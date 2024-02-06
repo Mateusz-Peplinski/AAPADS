@@ -9,22 +9,25 @@ namespace AAPADS.src.engine
 {
     public class DetectionEngine
     {
-        public List<string> CRITICALITY_LEVEL = new List<string>();
-        public List<int> RISK_LEVEL = new List<int>();
-        public List<string> DETECTION_STATUS = new List<string>();
-        public List<string> DETECTION_TIME = new List<string>();
-        public List<string> DETECTION_TITLE = new List<string>();
-        public List<string> DETECTION_DESCRIPTION = new List<string>();
-        public List<string> DETECTION_REMEDIATION = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_SSID = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_MAC_ADDRESS = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_SIGNAL_STRENGTH = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_OPEN_CHANNEL = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_FREQUENCY = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_IS_STILL_ACTIVE = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_ENCRYPTION = new List<string>();
-        public List<string> DETECTION_ACCESS_POINT_CONNECTED_CLIENTS = new List<string>();
+        //public List<string> CRITICALITY_LEVEL = new List<string>();
+        //public List<int> RISK_LEVEL = new List<int>();
+        //public List<string> DETECTION_STATUS = new List<string>();
+        //public List<string> DETECTION_TIME = new List<string>();
+        //public List<string> DETECTION_TITLE = new List<string>();
+        //public List<string> DETECTION_DESCRIPTION = new List<string>();
+        //public List<string> DETECTION_REMEDIATION = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_SSID = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_MAC_ADDRESS = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_SIGNAL_STRENGTH = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_OPEN_CHANNEL = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_FREQUENCY = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_IS_STILL_ACTIVE = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_TIME_FIRST_DETECTED = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_ENCRYPTION = new List<string>();
+        //public List<string> DETECTION_ACCESS_POINT_CONNECTED_CLIENTS = new List<string>();
+
+
+        private List<string> similarSSIDs;
 
         public event EventHandler DetectionDiscovered;
         public bool IsDetectionComplete { get; private set; } = false;
@@ -41,9 +44,11 @@ namespace AAPADS.src.engine
             // This function will populate the database with sample detection data
             //WriteSQLDataTest();
 
+            // Fetch the SSID that the device is connected too
+            string connectedSSID = LoadConnectedWLANNameFromDatabase();
 
-            //_databaseAccess.AlterKnownBSSIDsTable();
-
+            // Generate a list of similar SSIDs for PB1 RULE 3 - SSID Spoofing 
+            similarSSIDs = GenerateSimilarSSIDs(connectedSSID);
 
 
             IsDetectionComplete = true;
@@ -118,8 +123,8 @@ namespace AAPADS.src.engine
             // PROCESS BLOCK 1 - Check if a new access point has been detected and proccess then
             // RULE 1 - SSID Beacon Flooding - A sudden appearance of many SSIDs
             // RULE 2 - Unknown Access Point - A new unknown acess point is discovered in close proximity
-            // RULE 3 - Evil Twin Attack - A sudden appearance of a duplicate SSID and BSSID
-            // RULE 5 - SSID Spoofing - A sudden appearance of a similar looking SSID
+            // RULE 3 - SSID Spoofing - A sudden appearance of a similar looking SSID
+            // RULE 4 - Evil Twin Attack - A sudden appearance of a duplicate SSID and BSSID
             // RULE 5 - WiFi Jamming - A sudden decrease in signal from all access points in proximity [NOT DONE YET]
             // RULE 6 - Rogue Access Point - A sudden appearance of duplicate SSID on a different MAC addresses
 
@@ -128,11 +133,11 @@ namespace AAPADS.src.engine
 
             var SSIDBeaconFloodingdetectionEvent = new DetectionEvent
             {
-                CriticalityLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15 ? "LEVEL_2" : "LEVEL_3",
-                RiskLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15 ? 30 : 60,
+                CriticalityLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount >= 15 ? "LEVEL_2" : "LEVEL_3",
+                RiskLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount >= 15 ? 30 : 60,
                 DetectionStatus = "Active",
                 DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                DetectionTitle = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15 ? "Possible SSID Beacon Flooding" : "SSID Beacon Flooding",
+                DetectionTitle = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount >= 15 ? "Possible SSID Beacon Flooding" : "SSID Beacon Flooding",
                 DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
                                         $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
                 DetectionRemediation = @"While the current information does not confirm malicious intent behind the surge in SSID broadcasts, caution and further investigation are advised to ensure network integrity and security. To address this situation, consider the following steps:
@@ -154,38 +159,70 @@ namespace AAPADS.src.engine
                 DetectionAccessPointEncryption = "N/A",
                 DetectionAccessPointConnectedClients = "N/A"
             };
-            SaveDetection(SSIDBeaconFloodingdetectionEvent);
+            SaveDetectionToDatabase(SSIDBeaconFloodingdetectionEvent);
 
             //For each in handle many access points show up at once.
             foreach (var ap in newAccessPoints) 
             {
                 // Add the new access point to the KnownBSSIDs SQL TABLE to prevent many repative events
-                _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID); 
+                _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID);
 
                 // RULE 2 - Unknown Access Point - A new unknown acess point is discovered in close proximity
-                var NewAccessPointdetectionEvent = new DetectionEvent
+                if (ap.Signal_Strength > 80)
                 {
-                    CriticalityLevel = "LEVEL_1",
-                    RiskLevel = 10,
-                    DetectionStatus = "Active",
-                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                    DetectionTitle = $"New Unknown Access Point Detected [SSID: {ap.SSID}]",
-                    DetectionDescription = $"An new device with SSID {ap.SSID} and BSSID: {ap.BSSID} has been detected in your proximity",
-                    DetectionRemediation = $"The access point {ap.SSID} does not attempt to mimic your wireless network. It is likely a hotspot wireless network.\nHowever if this device has never been seen before it should be investigated.",
-                    DetectionAccessPointSsid = ap.SSID,
-                    DetectionAccessPointMacAddress = ap.BSSID,
-                    DetectionAccessPointSignalStrength = ap.Signal_Strength.ToString(),
-                    DetectionAccessPointOpenChannel = ap.Channel.ToString(),
-                    DetectionAccessPointFrequency = ap.Frequency,
-                    DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
-                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                    DetectionAccessPointEncryption = ap.Authentication,
-                    DetectionAccessPointConnectedClients = "N/A"
-                };
-                SaveDetection(NewAccessPointdetectionEvent);
+                    var NewAccessPointdetectionEvent = new DetectionEvent
+                    {
+                        CriticalityLevel = "LEVEL_1",
+                        RiskLevel = 10,
+                        DetectionStatus = "Active",
+                        DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                        DetectionTitle = $"New Unknown Access Point Detected [SSID: {ap.SSID}]",
+                        DetectionDescription = $"An new device with SSID {ap.SSID} and BSSID: {ap.BSSID} has been detected in your proximity",
+                        DetectionRemediation = $"The access point {ap.SSID} does not attempt to mimic your wireless network. It is likely a hotspot wireless network.\nHowever if this device has never been seen before it should be investigated.",
+                        DetectionAccessPointSsid = ap.SSID,
+                        DetectionAccessPointMacAddress = ap.BSSID,
+                        DetectionAccessPointSignalStrength = ap.Signal_Strength.ToString(),
+                        DetectionAccessPointOpenChannel = ap.Channel.ToString(),
+                        DetectionAccessPointFrequency = ap.Frequency,
+                        DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
+                        DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                        DetectionAccessPointEncryption = ap.Authentication,
+                        DetectionAccessPointConnectedClients = "N/A"
+                    };
+                    SaveDetectionToDatabase(NewAccessPointdetectionEvent);
+                }
+
+                // RULE 3 - SSID Spoofing - A sudden appearance of a similar looking SSID
+                // Compare each new access point's SSID with the list of similar SSIDs
+                if (similarSSIDs.Any(similarSSID => similarSSID == ap.SSID))
+                {
+                    // If a match is found, it indicates a potential SSID spoofing attempt
+                    var SSIDSpoofingdetectionEvent = new DetectionEvent
+                    {
+                        CriticalityLevel = "LEVEL_4",
+                        RiskLevel = 75,
+                        DetectionStatus = "Active",
+                        DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                        DetectionTitle = $"SSID Spoofing Detected [SSID: {ap.SSID}]",
+                        DetectionDescription = $"A new access point with an SSID similar to your connected network ({ap.SSID}) has been detected, indicating a potential SSID spoofing attempt.",
+                        DetectionRemediation = "AAPADS noticed a new Wi-Fi network nearby with an SSID similar to your connected network. Stick to Known Networks. Check your router settings for anything odd. Consider hiding your Wi-Fi name ('Hide SSID') for privacy. " +
+                                               "\nInform your household not to connect to unfamiliar networks. When unsure, avoid connecting and seek advice.",
+                        DetectionAccessPointSsid = ap.SSID,
+                        DetectionAccessPointMacAddress = ap.BSSID,
+                        DetectionAccessPointSignalStrength = ap.Signal_Strength.ToString(),
+                        DetectionAccessPointOpenChannel = ap.Channel.ToString(),
+                        DetectionAccessPointFrequency = ap.Frequency,
+                        DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
+                        DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                        DetectionAccessPointEncryption = ap.Authentication,
+                        DetectionAccessPointConnectedClients = "N/A"
+                    };
+                    SaveDetectionToDatabase(SSIDSpoofingdetectionEvent);
+                }
+
             }
         }
-        private void SaveDetection(DetectionEvent detectionEvent)
+        private void SaveDetectionToDatabase(DetectionEvent detectionEvent)
         {
             using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
             {
@@ -222,6 +259,20 @@ namespace AAPADS.src.engine
             int count = _databaseAccess.Connection.ExecuteScalar<int>(query, parameters);
 
             return count > 0;
+        }
+        private string LoadConnectedWLANNameFromDatabase()
+        {
+            String WLANName = "";
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                var settingValue = db.GetSetting("DefaultWLANName");
+
+                if (settingValue != null)
+                {
+                    WLANName = settingValue;
+                }
+            }
+            return WLANName;
         }
         private void WriteSQLDataTest()
         {
@@ -260,8 +311,94 @@ namespace AAPADS.src.engine
 
 
         }
-    }
+        List<string> GenerateSimilarSSIDs(string ssid)
+        {
+            var variations = new List<string>();
 
+            // Basic numeric appendages
+            for (int i = 1; i <= 5; i++)
+            {
+                variations.Add(ssid + i.ToString());
+            }
+
+            // Common substitutions and alterations
+            variations.Add(ssid.Replace("-", "_"));
+            variations.Add(ssid.Replace("_", "-"));
+            variations.Add(ssid + "_guest");
+            variations.Add(ssid + "-guest");
+            variations.Add(ssid + " guest");
+            variations.Add(ssid + "_Guest");
+            variations.Add(ssid + "-Guest");
+            variations.Add(ssid + " Guest");
+            variations.Add(ssid + "_GUEST");
+            variations.Add(ssid + "-GUEST");
+            variations.Add(ssid + " GUEST");
+            variations.Add(ssid + "5G");
+            variations.Add(ssid + "5g");
+            variations.Add(ssid + "2_4g");
+            variations.Add(ssid + "24g");
+            variations.Add(ssid + "2.4g");
+            variations.Add(ssid + "2.4G");
+            variations.Add(ssid + "2_4G");
+            variations.Add(ssid + "24G");
+            variations.Add(ssid.ToUpper());
+            variations.Add(ssid.ToLower());
+
+            // Removing and adding common separators
+            variations.Add(ssid.Replace("-", ""));
+            variations.Add(ssid.Replace("_", ""));
+            variations.Add(ssid.Replace(" ", ""));
+            variations.Add(" " + ssid);
+            variations.Add("-" + ssid);
+            variations.Add("_" + ssid);
+
+            // Try Replace spaces with other chars
+            if (ssid.Contains(" "))
+            {
+                variations.Add(ssid.Replace(" ", "-")); // Replace spaces with hyphens
+                variations.Add(ssid.Replace(" ", "_")); // Replace spaces with underscores
+            }
+
+            // Case variations for each character (for shorter SSIDs)  
+            // 16 is used as MAX to produce 65536 SSID variations
+            if (ssid.Length <= 16)
+            {
+                variations.AddRange(GetCasePermutations(ssid));
+            }
+
+            // Adding common prefixes/suffixes
+            var commonPrefixesSuffixes = new[] { "Free", "Secure", "Public", "Private", "home", "FREE", "SECURE", "PUBLIC", "PRIVATE", "HOME" };
+            foreach (var item in commonPrefixesSuffixes)
+            {
+                variations.Add(item + ssid);
+                variations.Add(ssid + item);
+            }
+
+            return variations.Distinct().ToList(); // Return unique variations
+        }
+        List<string> GetCasePermutations(string ssid)
+        {
+            if (string.IsNullOrEmpty(ssid)) return new List<string>();
+
+            var charArrays = new List<List<char>>();
+            foreach (var c in ssid)
+            {
+                var chars = new List<char> { char.ToUpper(c), char.ToLower(c) };
+                charArrays.Add(chars);
+            }
+
+            IEnumerable<string> permutations = new[] { "" };
+            foreach (var arr in charArrays)
+            {
+                permutations = from perm in permutations
+                               from c in arr
+                               select perm + c;
+            }
+
+            return permutations.ToList();
+        }
+
+    }
     public class dot11DataIngestDataForTimeFrameID
     {
         public int ID { get; set; }
