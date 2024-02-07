@@ -59,7 +59,7 @@ namespace AAPADS
             OVERVIEW_VIEW_MODEL = new overviewViewDataModel();
 
             DATA_INGESTION_ENGINE_OBJECT = new DataIngestEngine();
-            DATA_INGESTION_ENGINE_OBJECT.SSIDDataCollected += UpdateOverviewTabUI;
+            DATA_INGESTION_ENGINE_OBJECT.EVENT_WLAN_DATA_COLLECTED += UpdateOverviewTabUI;
 
 
             //databaseAccess = new DetectionEngineDatabaseAccess("wireless_profile.db");
@@ -250,7 +250,7 @@ namespace AAPADS
             SetDetectionFlag(true);
 
             // Subscribe to the event
-            DETECTION_ENGINE_OBJECT.DetectionDiscovered += UpdateDetectionTabUI;
+            DETECTION_ENGINE_OBJECT.GLOBAL_DETECTION_DISCOVERED_EVENT += UpdateDetectionTabUI;
 
             // Check if detection is already complete
             if (DETECTION_ENGINE_OBJECT.IsDetectionComplete)
