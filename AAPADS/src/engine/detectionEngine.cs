@@ -107,9 +107,7 @@ namespace AAPADS.src.engine
 
             // Process the new access points if any were found
             if (newAccessPoints.Any())
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND");
+            { 
                 HandleProcessBlockOneRules(newAccessPoints);
             }
 
@@ -134,36 +132,60 @@ namespace AAPADS.src.engine
             // RULE 1 - SSID Beacon Flooding - A sudden appearance of many SSIDs
             int NewlyDetectedAccessPointCount = newAccessPoints.Count;
 
-            var SSIDBeaconFloodingdetectionEvent = new DetectionEvent
+            if (NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15)
             {
-                CriticalityLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount >= 15 ? "LEVEL_2" : "LEVEL_3",
-                RiskLevel = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount >= 15 ? 30 : 60,
-                DetectionStatus = "Active",
-                DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
-                DetectionTitle = NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount >= 15 ? "Possible SSID Beacon Flooding" : "SSID Beacon Flooding",
-                DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND - POSSIBLE SSID BEACON FLOODING");
+
+                var PossibleSSIDBeaconFloodingdetectionEvent = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_2",
+                    RiskLevel = 30,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = $"Possible SSID Beacon Flooding",
+                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
                                         $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
-                DetectionRemediation = @"While the current information does not confirm malicious intent behind the surge in SSID broadcasts, caution and further investigation are advised to ensure network integrity and security. To address this situation, consider the following steps:
+                    DetectionRemediation = @"",
+                    DetectionAccessPointSsid = "N/A",
+                    DetectionAccessPointMacAddress = "N/A",
+                    DetectionAccessPointSignalStrength = "N/A",
+                    DetectionAccessPointOpenChannel = "N/A",
+                    DetectionAccessPointFrequency = "N/A",
+                    DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
+                    DetectionAccessPointTimeFirstDetected = "N/A",
+                    DetectionAccessPointEncryption = "N/A",
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                SaveDetectionToDatabase(PossibleSSIDBeaconFloodingdetectionEvent);
+            }
+            if (NewlyDetectedAccessPointCount > 16)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND - SSID BEACON FLOODING"); 
 
-                                            1. Conduct a detailed analysis of the SSID signals' origin, attempting to pinpoint the physical location or specific devices responsible for the surge.
-                                            2. Compare the newly detected SSIDs against a list of known and trusted networks to identify any that may be impersonating legitimate access points.
-                                            3. Increase the monitoring intensity of network traffic to quickly identify any unauthorized access or further anomalies in wireless activity.
-                                            4. If any of the new SSIDs attempt to mimic the naming conventions of your network or other nearby trusted networks, treat them as potential threats and investigate accordingly.
-                                            5. Advise network users to remain vigilant when connecting to wireless networks, especially those that have recently appeared or do not have a verified source.
+                var SSIDBeaconFloodingdetectionEvent = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_3",
+                    RiskLevel = 60,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = $"SSID Beacon Flooding",
+                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
+                                        $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
+                    DetectionAccessPointSsid = "N/A",
+                    DetectionAccessPointMacAddress = "N/A",
+                    DetectionAccessPointSignalStrength = "N/A",
+                    DetectionAccessPointOpenChannel = "N/A",
+                    DetectionAccessPointFrequency = "N/A",
+                    DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
+                    DetectionAccessPointTimeFirstDetected = "N/A",
+                    DetectionAccessPointEncryption = "N/A",
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                SaveDetectionToDatabase(SSIDBeaconFloodingdetectionEvent);
 
-                                            Given the potential security implications of this event, documenting all findings and any steps taken in response is crucial for future reference and potential escalation to cybersecurity specialists if the situation does not resolve or escalates.",
-                DetectionAccessPointSsid = "N/A",
-                DetectionAccessPointMacAddress = "N/A",
-                DetectionAccessPointSignalStrength = "N/A",
-                DetectionAccessPointOpenChannel = "N/A",
-                DetectionAccessPointFrequency = "N/A",
-                DetectionAccessPointIsStillActive = "UNKNOWN", // Need to make a mechanism for this
-                DetectionAccessPointTimeFirstDetected = "N/A",
-                DetectionAccessPointEncryption = "N/A",
-                DetectionAccessPointConnectedClients = "N/A"
-            };
-            SaveDetectionToDatabase(SSIDBeaconFloodingdetectionEvent);
-
+            }
             //For each in handle many access points show up at once.
             foreach (var ap in newAccessPoints) 
             {
@@ -173,6 +195,9 @@ namespace AAPADS.src.engine
                 // RULE 2 - Unknown Access Point - A new unknown acess point is discovered in close proximity
                 if (ap.Signal_Strength > 80)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND - NEW UNKNOWN ACCESS POINT DETECTED");
+
                     var NewAccessPointdetectionEvent = new DetectionEvent
                     {
                         CriticalityLevel = "LEVEL_1",
@@ -199,6 +224,9 @@ namespace AAPADS.src.engine
                 // Compare each new access point's SSID with the list of similar SSIDs
                 if (_SIMILAR_SSIDS_GENERATED_LIST.Any(similarSSID => similarSSID == ap.SSID))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND - SSID SPOOFING");
+
                     // If a match is found, it indicates a potential SSID spoofing attempt
                     var SSIDSpoofingdetectionEvent = new DetectionEvent
                     {
@@ -209,7 +237,7 @@ namespace AAPADS.src.engine
                         DetectionTitle = $"SSID Spoofing Detected [SSID: {ap.SSID}]",
                         DetectionDescription = $"A new access point with an SSID similar to your connected network ({ap.SSID}) has been detected, indicating a potential SSID spoofing attempt.",
                         DetectionRemediation = "AAPADS noticed a new Wi-Fi network nearby with an SSID similar to your connected network. Stick to Known Networks. Check your router settings for anything odd. Consider hiding your Wi-Fi name ('Hide SSID') for privacy. " +
-                                               "\nInform your household not to connect to unfamiliar networks. When unsure, avoid connecting and seek advice.",
+                                               "\nInform your household or office not to connect to unfamiliar networks. When unsure, avoid connecting and seek advice.",
                         DetectionAccessPointSsid = ap.SSID,
                         DetectionAccessPointMacAddress = ap.BSSID,
                         DetectionAccessPointSignalStrength = ap.Signal_Strength.ToString(),
@@ -319,7 +347,7 @@ namespace AAPADS.src.engine
             var variations = new List<string>();
 
             // Basic numeric appendages
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 10; i++)
             {
                 variations.Add(ssid + i.ToString());
             }
@@ -338,12 +366,20 @@ namespace AAPADS.src.engine
             variations.Add(ssid + " GUEST");
             variations.Add(ssid + "5G");
             variations.Add(ssid + "5g");
+            variations.Add(ssid + " 5G");
+            variations.Add(ssid + " 5g");
             variations.Add(ssid + "2_4g");
             variations.Add(ssid + "24g");
             variations.Add(ssid + "2.4g");
             variations.Add(ssid + "2.4G");
             variations.Add(ssid + "2_4G");
             variations.Add(ssid + "24G");
+            variations.Add(ssid + " 2_4g");
+            variations.Add(ssid + " 24g");
+            variations.Add(ssid + " 2.4g");
+            variations.Add(ssid + " 2.4G");
+            variations.Add(ssid + " 2_4G");
+            variations.Add(ssid + " 24G");
             variations.Add(ssid.ToUpper());
             variations.Add(ssid.ToLower());
 
@@ -366,11 +402,11 @@ namespace AAPADS.src.engine
             // 16 is used as MAX to produce 65536 SSID variations
             if (ssid.Length <= 16)
             {
-                variations.AddRange(GetCasePermutations(ssid));
+                variations.AddRange(CreateCasePermutations(ssid));
             }
 
             // Adding common prefixes/suffixes
-            var commonPrefixesSuffixes = new[] { "Free", "Secure", "Public", "Private", "home", "FREE", "SECURE", "PUBLIC", "PRIVATE", "HOME" };
+            var commonPrefixesSuffixes = new[] { " Free", " Secure", " Public", " Private", "home", "FREE", " SECURE", " PUBLIC", " PRIVATE", " HOME","_Free", "_Secure", "_Public", "_Private", "_home", "_FREE", "_SECURE", "_PUBLIC", "_PRIVATE", "_HOME" };
             foreach (var item in commonPrefixesSuffixes)
             {
                 variations.Add(item + ssid);
@@ -379,7 +415,7 @@ namespace AAPADS.src.engine
 
             return variations.Distinct().ToList(); // Return unique variations
         }
-        List<string> GetCasePermutations(string ssid)
+        List<string> CreateCasePermutations(string ssid)
         {
             if (string.IsNullOrEmpty(ssid)) return new List<string>();
 
