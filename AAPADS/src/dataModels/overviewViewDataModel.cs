@@ -178,7 +178,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         UpdateFrequencyGraph(TOTAL_2_4_GHz_AP, TOTAL_5_GHz_AP);
         var (data24GHz, data5GHz) = PopulateSSIDInfoList(dataIngestEngine);
         await RefreshChannelAllocationChartsAsync(data24GHz, data5GHz);
-        IS_LOADING = dataIngestEngine.isLoading;
+        IS_LOADING = dataIngestEngine.IS_LOADING_STATUS_FLAG;
         if (IS_LOADING == false)
         {
             // Add in here to add after intial scan is complete

@@ -868,7 +868,7 @@
                                                                         Grid.Column="1"
                                                                         Margin="2"
                                                                         Background="#303030"
-                                                                        CornerRadius="5">
+                                                                        CornerRadius="3">
                                                                         <TextBlock
                                                                             Width="20"
                                                                             VerticalAlignment="Center"

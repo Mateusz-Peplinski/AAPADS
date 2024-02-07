@@ -10,8 +10,11 @@ namespace AAPADS
 {
     public class DataIngestEngine
     {
+        // Trigger Event in MainWindow.xaml.cs
+        public event EventHandler EVENT_WLAN_DATA_COLLECTED;
 
-        public event EventHandler SSIDDataCollected;
+        // Lists which will store the access point information
+        // Public because they will be accessed by the ViewModel to populate the GUI
         public List<string> SSID_LIST = new List<string>();
         public List<string> ENCRYPTION_TYPE_LIST = new List<string>();
         public List<string> BSSID_LIST = new List<string>();
@@ -21,6 +24,8 @@ namespace AAPADS
         public List<int> CHANNEL_LIST = new List<int>();
         public List<string> FREQUENCY_LIST = new List<string>();
         public List<string> AUTH_LIST = new List<string>();
+
+        // Dictionary of IEE802.11 channels and their frequencies
         public Dictionary<int, string> channelToFrequencies = new Dictionary<int, string>()
 {
             // 2.4 GHz Band
@@ -67,40 +72,56 @@ namespace AAPADS
             { 165, "5.825 GHz" }
         };
 
-        public bool isLoading = false;
-        private bool TraningFlagStatus = false;
-        private bool DetectionFlagStatus = false;
+        // The status flag to show loading animation bar in OVERVIEW TAB in MainWindow.xaml
+        public bool IS_LOADING_STATUS_FLAG = false;
 
-        private SemaphoreSlim semaphore = new SemaphoreSlim(1);
-        private bool isRunning = true;
-        private int programLoadCount = 0;
+        // The status flag for if traning phase has begun
+        private bool TRANING_FLAG_STATUS = false;
 
-        private string currentSSID = null;
-        private string currentEncryption = null;
-        private string currentAuth = null;
-        private string currentBSSID = null;
-        private int currentSignal = 0;
-        private string currentRadio = null;
-        private string currentBand = null;
-        private int currentChannel = 0;
-        private string currentFrequency = null;
+        // The status flag for if detection phase has begun
+        private bool DETECTION_FLAG_STATUS = false;
 
-        private wirelessProfileDatabaseAccess _dbAccess;
-        private NormalizationEngine _normalizationEngine;
+        // The status flag from the main loop in the scanning thread
+        private bool IS_RUNNING_STATUS_FLAG = true;
 
+        // The Semaphore used to lock the lists
+        private SemaphoreSlim DATA_INGEST_ENGINE_THREAD_SEMAPHORE = new SemaphoreSlim(1);
+
+        // Keep track if the program has been loaded before
+        private int PROGRAM_LOAD_COUNTER = 0;
+
+        // Used by ParseRecivedData() to keep track of BSSIDS in SSIDS
+        private string CURRENT_SSID = null;
+        private string CURRENT_ENCRYPTION = null;
+        private string CURRENT_AUTH = null;
+        private string CURRENT_BSSID = null;
+        private int CURRENT_SIGNAL = 0;
+        private string CURRENT_RADIO = null;
+        private string CURRENT_BAND = null;
+        private int CURRENT_CHANNEL = 0;
+        private string CURRENT_FREQUENCY = null;
+
+        // Database access object
+        private wirelessProfileDatabaseAccess DATA_INGEST_ENGINE_DATABASE_ACCESS;
+
+        // Normalization Engine object
+        private NormalizationEngine INIT_NORMALIZATION_ENGINE;
+
+        // PerformWifiScan() from WLANLibrary.dll
         [DllImport("WLANLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool PerformWifiScan();
 
+        // The Data Ingest Engine Start Function
         public void START_DATA_INGEST_ENGINE()
         {
-
+            // Initialize the lists which will store the access point information
             InitializeDataIngestEngineList();
 
-            // Initlize database access for this engine
-            _dbAccess = new wirelessProfileDatabaseAccess("wireless_profile.db");
+            // Initialize database connection for this engine
+            DATA_INGEST_ENGINE_DATABASE_ACCESS = new wirelessProfileDatabaseAccess("wireless_profile.db");
 
             // Start the normalization engine
-            _normalizationEngine = new NormalizationEngine();
+            INIT_NORMALIZATION_ENGINE = new NormalizationEngine();
 
             // main thread for constanly scanning and parsing output from netsh
             Task.Run(PreformWLANScanThread); 
@@ -119,17 +140,21 @@ namespace AAPADS
         }
         private async Task PreformWLANScanThread()
         {
-            while (isRunning)
+            while (IS_RUNNING_STATUS_FLAG)
             {
-                await semaphore.WaitAsync();
+                await DATA_INGEST_ENGINE_THREAD_SEMAPHORE.WaitAsync();
 
-                // Clear lists at the beginning of each iteration.
+                // Clear lists at the beginning of each loop iteration.
                 ClearDataIngestEngineList();   
 
-                if (programLoadCount == 0)
+                // Only ran once in the first iteration of the loop. 
+                if (PROGRAM_LOAD_COUNTER == 0)
                 {
-                    isLoading = true;
-                    programLoadCount++;
+                    // Setting this true will show the loading UI
+                    IS_LOADING_STATUS_FLAG = true; 
+
+                    // increment the counter so it is != 0 
+                    PROGRAM_LOAD_COUNTER++; 
                 }
 
                 try
@@ -137,81 +162,103 @@ namespace AAPADS
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("[ DATA INGEST ENGINE ] COLLECTING WLAN DATA...");
 
-                    if (PerformWifiScan())//Call WLANLibrary to refresh the access point information that windows has cached
+                    // Call PerformWifiScan() from WLANLibrary to refresh the access point information
+                    // Without PerformWifiScan() Windows will ignore other WLAN beacons frames and only show the connected SSID
+                    if (PerformWifiScan())
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(5)); // Wait for 5 seconds between scans
-                        SystemRunNETSHCommand();
+                        // Wait for 5 seconds between scans
+                        await Task.Delay(TimeSpan.FromSeconds(5)); 
 
+                        // Run the netsh wlan show networks mode=Bssid command
+                        CollectBSSIDInformation();
+
+                        // Show how much BSSID information was processed
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"[ DATA INGEST ENGINE ] COLLECTED {SSID_LIST.Count} ACCESS POINTS DATA");
 
-                        SSIDDataCollected?.Invoke(this, EventArgs.Empty);
+                        // Trigger Event in MainWindow.xaml.cs --> This will update the ViewModel and in return the GUI
+                        EVENT_WLAN_DATA_COLLECTED?.Invoke(this, EventArgs.Empty);
 
 
+                        // Fetch the staus flags from 'settings' from the database 
                         FetechTrainingFlagStatus();
                         FetechDetectionFlagStatus();
 
-                        if (TraningFlagStatus == true || DetectionFlagStatus == true)
+                        // AAPADS only needs to write to database if the detection capabilities have started
+                        // The Status flags are feteched from 'settings' in the database
+                        if (TRANING_FLAG_STATUS == true || DETECTION_FLAG_STATUS == true)
                         {
-                            //Console.ForegroundColor = ConsoleColor.Red;
-                            //Console.WriteLine("[ DATA INGEST ENGINE ] Traning Flag Status {0}", TraningFlagStatus);
-                            //ADD START_DATA_INGEST_ENGINE_WRITE --> Only need to write if Detection has started --> need to add bool value that
-                            //will be set when user selected detection start 
+                            // Write the collected data to the database
                             InsertParsedDataToDatabase();
                         }
                     }
                     else
                     {
+                        // ERROR: Calling PerformWifiScan()
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("[ DATA INGEST ENGINE ] FAILED TO INITIATE WI-FI SCAN.");
+                        Console.WriteLine("[ DATA INGEST ENGINE ] FAILED TO INITIATE WI-FI SCAN");
                     }
                 }
                 catch (Exception ex)
                 {
+                    // MAJOR ERROR: Failed to peform scan
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"[ DATA INGEST ENGINE ] {ex.Message}.");
+                    IS_RUNNING_STATUS_FLAG = false;
                 }
                 finally
                 {
-                    isLoading = false;
-                    semaphore.Release();
+                    // The data has been collected with no error and the loading animation can be stoped
+                    IS_LOADING_STATUS_FLAG = false;
+
+                    // Release the lock on the data 
+                    DATA_INGEST_ENGINE_THREAD_SEMAPHORE.Release();
                 }
 
+                // Wait for 5 seconds between scans
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
         }
         private void FetechTrainingFlagStatus()
         {
+            // Create a disposable connection to the settings database
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
+                // Fetch the status
                 var settingValue = db.GetSetting("TrainingFlag");
                 
                 if (settingValue != null)
                 {
                     // Parse the returned value to a boolean.
-                    TraningFlagStatus = settingValue.Equals("true", StringComparison.OrdinalIgnoreCase);
+                    TRANING_FLAG_STATUS = settingValue.Equals("true", StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
         private void FetechDetectionFlagStatus()
         {
+            // Create a disposable connection to the settings database
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
             {
+                // Fetch the status
                 var flagStatus = db.GetSetting("DetectionFlag");
+
+                // DetectionFlag can be null if Detection Engine has not yet been initialized
                 if (flagStatus == null)
                 {
-                    DetectionFlagStatus = false;
+                    // Return flase if null because Detection Engine has not yet been initialized
+                    DETECTION_FLAG_STATUS = false;
                 }
 
                 if (flagStatus != null)
                 {
                     // Parse the returned value to a boolean.
-                    DetectionFlagStatus = flagStatus.Equals("true", StringComparison.OrdinalIgnoreCase);
+                    DETECTION_FLAG_STATUS = flagStatus.Equals("true", StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
         private void ClearDataIngestEngineList()
         {
+            // Clear the lists before the next loop iteration
             SSID_LIST.Clear();
             ENCRYPTION_TYPE_LIST.Clear();
             BSSID_LIST.Clear();
@@ -222,11 +269,9 @@ namespace AAPADS
             FREQUENCY_LIST.Clear();
             AUTH_LIST.Clear();
         }
-
-        private void SystemRunNETSHCommand()
+        private void CollectBSSIDInformation()
         {
-            //liveLogDataModelConsole.AppendToLog("init netsh");
-
+            // Create 
             ProcessStartInfo processInfo = new ProcessStartInfo
             {
                 FileName = "netsh",
@@ -238,7 +283,7 @@ namespace AAPADS
 
             using (Process process = new Process { StartInfo = processInfo })
             {
-                process.OutputDataReceived += ProcessNETSHReciveData;
+                process.OutputDataReceived += ProcessRecivedData;
 
                 process.Start();
                 process.BeginOutputReadLine();
@@ -246,18 +291,15 @@ namespace AAPADS
                 process.WaitForExit();
             }
         }
-
-        private void ProcessNETSHReciveData(object sender, DataReceivedEventArgs e)
+        private void ProcessRecivedData(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                ParseNETSHReciveData(e.Data);
+                ParseRecivedData(e.Data);
 
             }
         }
-
-
-        private void ParseNETSHReciveData(string output)
+        private void ParseRecivedData(string output)
         {
             output = output.Trim();
             int index = output.IndexOf(":");
@@ -265,7 +307,7 @@ namespace AAPADS
             {
                 AddCurrentDataToGlobalLists();
                 ClearCurrentData();
-                currentSSID = "[HIDDEN NETWORK]";
+                CURRENT_SSID = "[HIDDEN NETWORK]";
                 return;
             }
             if (index < 0) return;
@@ -283,22 +325,22 @@ namespace AAPADS
                     AddCurrentDataToGlobalLists();
                     ClearCurrentData();
 
-                    currentSSID = value;
+                    CURRENT_SSID = value;
                     break;
 
                 case "Encryption":
-                    currentEncryption = value;
+                    CURRENT_ENCRYPTION = value;
                     break;
 
                 case "Authentication":
-                    currentAuth = value;
+                    CURRENT_AUTH = value;
                     break;
 
                 case "BSSID":
                     AddCurrentDataToGlobalLists();
                     ClearBssidRelatedData();
 
-                    currentBSSID = value;
+                    CURRENT_BSSID = value;
                     break;
 
                 case "Signal":
@@ -308,66 +350,62 @@ namespace AAPADS
                         string signalValue = output.Substring(index + 1, endIndex - index - 1).Trim();
                         if (int.TryParse(signalValue, out int signal))
                         {
-                            currentSignal = signal;
+                            CURRENT_SIGNAL = signal;
                         }
                     }
                     break;
 
                 case "Radio":
-                    currentRadio = value;
+                    CURRENT_RADIO = value;
                     break;
 
                 case "Band":
-                    currentBand = value;
+                    CURRENT_BAND = value;
                     break;
 
                 case "Channel":
                     if (int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel))
                     {
-                        currentChannel = channel;
-                        currentFrequency = channelToFrequencies[channel];
+                        CURRENT_CHANNEL = channel;
+                        CURRENT_FREQUENCY = channelToFrequencies[channel];
                     }
                     break;
             }
         }
-
         private void AddCurrentDataToGlobalLists()
         {
-            if (!string.IsNullOrEmpty(currentSSID) && !string.IsNullOrEmpty(currentBSSID))
+            if (!string.IsNullOrEmpty(CURRENT_SSID) && !string.IsNullOrEmpty(CURRENT_BSSID))
             {
-                SSID_LIST.Add(currentSSID);
-                ENCRYPTION_TYPE_LIST.Add(currentEncryption);
-                AUTH_LIST.Add(currentAuth);
-                BSSID_LIST.Add(currentBSSID);
-                SIGNAL_STRENGTH_LIST.Add(currentSignal);
-                WIFI_STANDARD_LIST.Add(currentRadio);
-                BAND_LIST.Add(currentBand);
-                CHANNEL_LIST.Add(currentChannel);
-                FREQUENCY_LIST.Add(currentFrequency);
+                SSID_LIST.Add(CURRENT_SSID);
+                ENCRYPTION_TYPE_LIST.Add(CURRENT_ENCRYPTION);
+                AUTH_LIST.Add(CURRENT_AUTH);
+                BSSID_LIST.Add(CURRENT_BSSID);
+                SIGNAL_STRENGTH_LIST.Add(CURRENT_SIGNAL);
+                WIFI_STANDARD_LIST.Add(CURRENT_RADIO);
+                BAND_LIST.Add(CURRENT_BAND);
+                CHANNEL_LIST.Add(CURRENT_CHANNEL);
+                FREQUENCY_LIST.Add(CURRENT_FREQUENCY);
             }
         }
-
         private void ClearCurrentData()
         {
-            currentSSID = null;
-            currentEncryption = null;
-            currentAuth = null;
+            CURRENT_SSID = null;
+            CURRENT_ENCRYPTION = null;
+            CURRENT_AUTH = null;
             ClearBssidRelatedData();
         }
-
         private void ClearBssidRelatedData()
         {
-            currentBSSID = null;
-            currentSignal = 0;
-            currentRadio = null;
-            currentBand = null;
-            currentChannel = 0;
-            currentFrequency = null;
+            CURRENT_BSSID = null;
+            CURRENT_SIGNAL = 0;
+            CURRENT_RADIO = null;
+            CURRENT_BAND = null;
+            CURRENT_CHANNEL = 0;
+            CURRENT_FREQUENCY = null;
         }
-
         private void InsertParsedDataToDatabase()
         {
-            string LAST_TIME_FRAME_ID = _dbAccess.GetLastTimeFrameId();
+            string LAST_TIME_FRAME_ID = DATA_INGEST_ENGINE_DATABASE_ACCESS.GetLastTimeFrameId();
             var idGenerator = new TimeFrameIdGenerator(LAST_TIME_FRAME_ID);
 
 
@@ -378,7 +416,7 @@ namespace AAPADS
 
             for (int i = 0; i < SSID_LIST.Count; i++)
             {
-                _dbAccess.DataIngestEngineInsertAccessPointData(
+                DATA_INGEST_ENGINE_DATABASE_ACCESS.DataIngestEngineInsertAccessPointData(
                     SSID_LIST[i],
                     BSSID_LIST[i],
                     SIGNAL_STRENGTH_LIST[i],

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,15 +28,14 @@ namespace AAPADS.src.engine
         //public List<string> DETECTION_ACCESS_POINT_CONNECTED_CLIENTS = new List<string>();
 
 
-        private List<string> _SIMILAR_SSIDS_GENERATED_LIST;
+        private List<string> SIMILAR_SSIDS_GENERATED_LIST;
 
-        private string _DEFAULT_WLAN_SSID;
+        private string DEFAULT_WLAN_SSID;
 
-        public event EventHandler DetectionDiscovered;
+        public event EventHandler GLOBAL_DETECTION_DISCOVERED_EVENT;
         public bool IsDetectionComplete { get; private set; } = false;
 
         private CancellationTokenSource _detectionCts = new CancellationTokenSource();
-
 
         private DetectionEngineDatabaseAccess _databaseAccess;
         public void START_DETECTION_ENGINE()
@@ -49,14 +49,16 @@ namespace AAPADS.src.engine
             // Fetch the SSID that the device is connected too
             string connectedSSID = LoadConnectedWLANNameFromDatabase();
 
-            // Generate a list of similar SSIDs for PB1 RULE 3 - SSID Spoofing 
-            _SIMILAR_SSIDS_GENERATED_LIST = GenerateSimilarSSIDs(connectedSSID);
+            // A global instance of the WLAN Name is created. This will be used for PROCESS BLOCK 2 - Security Misconfigurations
+            DEFAULT_WLAN_SSID = connectedSSID;
 
-            _DEFAULT_WLAN_SSID = LoadConnectedWLANNameFromDatabase();
+            // Generate a list of similar SSIDs for PB1 RULE 3 - SSID Spoofing 
+            SIMILAR_SSIDS_GENERATED_LIST = GenerateSimilarSSIDs(connectedSSID);
 
             IsDetectionComplete = true;
-            // when detection is done invoke event so UI can update            
-            DetectionDiscovered?.Invoke(this, EventArgs.Empty);
+
+            // This is invoked to populate the detections data from the database on load           
+            GLOBAL_DETECTION_DISCOVERED_EVENT?.Invoke(this, EventArgs.Empty);
 
             Task.Run(async () => await StartDetection(_detectionCts.Token));
         }
@@ -105,6 +107,7 @@ namespace AAPADS.src.engine
             //  Filters currentAccessPoints to include only those access points whose BSSID is not found in the list of knownBSSIDs
             var newAccessPoints = currentAccessPoints.Where(ap => !knownBSSIDs.Any(known => known.BSSID == ap.BSSID)).ToList();
 
+            // PROCESS BLOCK 1 - Access Point Anomalies
             // Process the new access points if any were found
             if (newAccessPoints.Any())
             { 
@@ -112,6 +115,7 @@ namespace AAPADS.src.engine
             }
 
             // PROCESS BLOCK 2 - Security Misconfigurations
+            HandleProcessBlockTwoRules();
         }
 
         public void StopDetectionEngine()
@@ -129,7 +133,7 @@ namespace AAPADS.src.engine
             // RULE 5 - WiFi Jamming - A sudden decrease in signal from all access points in proximity [NOT DONE YET]
             // RULE 6 - Rogue Access Point - A sudden appearance of duplicate SSID on a different MAC addresses
 
-            // RULE 1 - SSID Beacon Flooding - A sudden appearance of many SSIDs
+            // RULE 1 - SSID Beacon Flooding - A sudden appearance of many SSIDs in a single TIME_FRAME_ID
             int NewlyDetectedAccessPointCount = newAccessPoints.Count;
 
             if (NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15)
@@ -222,7 +226,7 @@ namespace AAPADS.src.engine
 
                 // RULE 3 - SSID Spoofing - A sudden appearance of a similar looking SSID
                 // Compare each new access point's SSID with the list of similar SSIDs
-                if (_SIMILAR_SSIDS_GENERATED_LIST.Any(similarSSID => similarSSID == ap.SSID))
+                if (SIMILAR_SSIDS_GENERATED_LIST.Any(similarSSID => similarSSID == ap.SSID))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND - SSID SPOOFING");
@@ -253,6 +257,10 @@ namespace AAPADS.src.engine
 
             }
         }
+        private void HandleProcessBlockTwoRules()
+        {
+
+        }
         private void SaveDetectionToDatabase(DetectionEvent detectionEvent)
         {
             using (var db = new DetectionEngineDatabaseAccess("wireless_profile.db"))
@@ -263,7 +271,7 @@ namespace AAPADS.src.engine
         }
         private void TriggerDetectionEvent()
         {
-            DetectionDiscovered?.Invoke(this, EventArgs.Empty);
+            GLOBAL_DETECTION_DISCOVERED_EVENT?.Invoke(this, EventArgs.Empty);
         }
         private string FetchNextTimeFrameID(string currentId)
         {
@@ -399,14 +407,14 @@ namespace AAPADS.src.engine
             }
 
             // Case variations for each character (for shorter SSIDs)  
-            // 16 is used as MAX to produce 65536 SSID variations
+            // 16 is used as MAX to produce 65536 SSID case variations
             if (ssid.Length <= 16)
             {
                 variations.AddRange(CreateCasePermutations(ssid));
             }
 
             // Adding common prefixes/suffixes
-            var commonPrefixesSuffixes = new[] { " Free", " Secure", " Public", " Private", "home", "FREE", " SECURE", " PUBLIC", " PRIVATE", " HOME","_Free", "_Secure", "_Public", "_Private", "_home", "_FREE", "_SECURE", "_PUBLIC", "_PRIVATE", "_HOME" };
+            var commonPrefixesSuffixes = new[] { " Free", " Secure", " Public", " Private", " home", " FREE", " SECURE", " PUBLIC", " PRIVATE", " HOME","_Free", "_Secure", "_Public", "_Private", "_home", "_FREE", "_SECURE", "_PUBLIC", "_PRIVATE", "_HOME" };
             foreach (var item in commonPrefixesSuffixes)
             {
                 variations.Add(item + ssid);
