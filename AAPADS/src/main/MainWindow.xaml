@@ -837,7 +837,7 @@
                                                     </Grid.ColumnDefinitions>
                                                     <Border
                                                         Margin="2"
-                                                        Background="#424242"
+                                                        Background="{Binding CRITICAILITY_LEVEL, Converter={StaticResource CriticalityColorConverter}}"
                                                         CornerRadius="5">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
