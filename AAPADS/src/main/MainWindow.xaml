@@ -629,6 +629,8 @@
                                                             Grid.RowSpan="2"
                                                             Grid.ColumnSpan="2"
                                                             Margin="0,0,0,10"
+                                                            DataTooltip="{x:Null}"
+                                                            Hoverable="False"
                                                             LegendLocation="Bottom"
                                                             Series="{Binding FrequencySeriesCollection}">
                                                             <liveCharts:CartesianChart.AxisX>
@@ -659,7 +661,9 @@
                                                 <liveCharts:CartesianChart
                                                     Name="channelAllocation24GHz"
                                                     Grid.ColumnSpan="2"
+                                                    DataTooltip="{x:Null}"
                                                     DisableAnimations="True"
+                                                    Hoverable="False"
                                                     Series="{Binding ChannelAllocationSeries24GHz}">
                                                     <liveCharts:CartesianChart.AxisX>
                                                         <liveCharts:Axis
@@ -702,7 +706,9 @@
                                                 <liveCharts:CartesianChart
                                                     Name="channelAllocation5GHz"
                                                     Grid.ColumnSpan="2"
+                                                    DataTooltip="{x:Null}"
                                                     DisableAnimations="True"
+                                                    Hoverable="False"
                                                     Series="{Binding ChannelAllocationSeries5GHz}">
 
                                                     <liveCharts:CartesianChart.AxisX>

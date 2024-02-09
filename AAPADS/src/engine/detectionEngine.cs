@@ -27,7 +27,6 @@ namespace AAPADS.src.engine
         //public List<string> DETECTION_ACCESS_POINT_ENCRYPTION = new List<string>();
         //public List<string> DETECTION_ACCESS_POINT_CONNECTED_CLIENTS = new List<string>();
 
-
         private List<string> SIMILAR_SSIDS_GENERATED_LIST;
 
         private string DEFAULT_WLAN_SSID;
@@ -69,6 +68,7 @@ namespace AAPADS.src.engine
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("[ DETECTION ENGINE ] STARTING...");
+
                 while (!cancellationToken.IsCancellationRequested)
                 {
 
@@ -115,7 +115,8 @@ namespace AAPADS.src.engine
             }
 
             // PROCESS BLOCK 2 - Security Misconfigurations
-            HandleProcessBlockTwoRules();
+            // NOTE: Need a way to make this rule check happen less often. These checks do not need to happen everytime a new TIME_FRAME_ID is feteched
+            HandleProcessBlockTwoRules(currentAccessPoints);
         }
 
         public void StopDetectionEngine()
@@ -257,9 +258,11 @@ namespace AAPADS.src.engine
 
             }
         }
-        private void HandleProcessBlockTwoRules()
+        private void HandleProcessBlockTwoRules(List<dot11DataIngestDataForTimeFrameID> currentAccessPoints)
         {
+            // 1 - Fetech information about the BSSIDS that have the SSID DEFAULT_WLAN_SSID
 
+            // 2 - Check for rules match 
         }
         private void SaveDetectionToDatabase(DetectionEvent detectionEvent)
         {
