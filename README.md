@@ -25,7 +25,7 @@ The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively miti
 * User Interface: Developed using Microsoft's WPF (Windows Presentation Foundation) to ensure an interactive front-end experience.
 
 ### 📐 Architecture
-![Figure 1 – Basic architecture of AAPADS](AAPADS/res/graphics/ARCH_AAPADS.png)
+![Figure 1 – Basic architecture of AAPADS](AAPADS/res/graphics/aapads_high_level_arch.png)
 <p align="center">
   <italic>Not Final Version</italic>
 </p>
