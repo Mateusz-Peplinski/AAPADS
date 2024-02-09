@@ -266,6 +266,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
         {
             PointGeometrySize = 10,
             StrokeThickness = 2,
+            PointGeometry = null,
             Stroke = strokeBrush,
             Foreground = foregroundBrush,
             Fill = fillBrush,
@@ -295,6 +296,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 Title = "2.4GHz",
                 Values = new ChartValues<int>(),
                 PointGeometrySize = 10,
+                PointGeometry = null,
                 Stroke = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
                 PointForeground = new SolidColorBrush(Color.FromRgb(255, 73, 60)),
                 StrokeThickness = 2,
@@ -317,6 +319,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                 Title = "5GHz",
                 Values = new ChartValues<int>(),
                 PointGeometrySize = 10,
+                PointGeometry = null,
                 Stroke = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
                 PointForeground = new SolidColorBrush(Color.FromRgb(22, 125, 255)),
                 StrokeThickness = 2,
@@ -455,6 +458,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     lineSeries.Values.AddRange(temporalCv);
                 }
 
+                // NOTE: Need to add spacing +/- 5/10px eachtime a label is added
                 lineSeries.LabelPoint = point =>
                 {
                     var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);
@@ -552,6 +556,7 @@ public class overviewViewDataModel : baseDataModel, INotifyPropertyChanged
                     lineSeries.Values.AddRange(temporalCv);
                 }
 
+                // NOTE: Need to add spacing +/- 5/10px eachtime a label is added
                 lineSeries.LabelPoint = point =>
                 {
                     var maxVal = (lineSeries.Values as ChartValues<ObservablePoint>).Max(p => p.Y);

@@ -255,14 +255,30 @@ namespace AAPADS.src.engine
                     };
                     SaveDetectionToDatabase(SSIDSpoofingdetectionEvent);
                 }
-
             }
         }
         private void HandleProcessBlockTwoRules(List<dot11DataIngestDataForTimeFrameID> currentAccessPoints)
         {
-            // 1 - Fetech information about the BSSIDS that have the SSID DEFAULT_WLAN_SSID
+            // Filter access points to only include those with the SSID DEFAULT_WLAN_SSID
+            var currentNetworkAcessPoints = currentAccessPoints.Where(ap => ap.SSID == DEFAULT_WLAN_SSID).ToList();
+
 
             // 2 - Check for rules match 
+            foreach (var accessPoint in currentNetworkAcessPoints)
+            {
+                //Console.ForegroundColor = ConsoleColor.Red;
+                //Console.WriteLine($"THE SSID: {accessPoint.SSID} THE BSSID: {accessPoint.BSSID}");
+
+                if (accessPoint.Authentication == "Open")
+                {
+                    Console.WriteLine($"THE SSID: {accessPoint.SSID} THE BSSID: {accessPoint.BSSID} has an open auth");
+                }
+                if (accessPoint.Authentication == "WP2-Personal" || accessPoint.Authentication == "WPA2-Enterprise")
+                {
+                    Console.WriteLine($"THE SSID: {accessPoint.SSID} THE BSSID: {accessPoint.BSSID} has an WPA2 auth");
+                }
+
+            }
         }
         private void SaveDetectionToDatabase(DetectionEvent detectionEvent)
         {

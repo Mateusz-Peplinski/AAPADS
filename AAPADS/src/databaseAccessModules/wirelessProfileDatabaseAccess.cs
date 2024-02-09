@@ -22,6 +22,7 @@ namespace AAPADS
 
             CreateTablesIfNotExists();
         }
+        // NOTE: Need to add encryption field
         private void CreateTablesIfNotExists()
         {
             var command = new SQLiteCommand(
