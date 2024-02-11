@@ -262,22 +262,135 @@ namespace AAPADS.src.engine
             // Filter access points to only include those with the SSID DEFAULT_WLAN_SSID
             var currentNetworkAcessPoints = currentAccessPoints.Where(ap => ap.SSID == DEFAULT_WLAN_SSID).ToList();
 
+            //Rule flags (flags are used to only raise only one detection event even if a SSID has many multiple BSSIDs)
+            bool WEPDetectionStatusFlag = false;
+            bool WPADetectionStatusFlag = false;
+            bool WPA2DetectionStatusFlag = false;
+            bool OpenAuthDetectionStatusFlag = false;
+
 
             // 2 - Check for rules match 
             foreach (var accessPoint in currentNetworkAcessPoints)
             {
                 //Console.ForegroundColor = ConsoleColor.Red;
                 //Console.WriteLine($"THE SSID: {accessPoint.SSID} THE BSSID: {accessPoint.BSSID}");
+                string  AccessPointAuthentication = accessPoint.Authentication;
 
-                if (accessPoint.Authentication == "Open")
+                //Need to also add Encryption --> This needs to be added from the data ingest engine
+                switch (AccessPointAuthentication)
                 {
-                    Console.WriteLine($"THE SSID: {accessPoint.SSID} THE BSSID: {accessPoint.BSSID} has an open auth");
-                }
-                if (accessPoint.Authentication == "WP2-Personal" || accessPoint.Authentication == "WPA2-Enterprise")
-                {
-                    Console.WriteLine($"THE SSID: {accessPoint.SSID} THE BSSID: {accessPoint.BSSID} has an WPA2 auth");
+                    case "WEP":
+                        WEPDetectionStatusFlag = true;
+                        break;
+                    case "WPA":
+                        WPADetectionStatusFlag = true;
+                        break;
+                    case "WPA2":
+                        WPA2DetectionStatusFlag = true;
+                        break;
+                    case "WPA2-Personal":
+                        WPA2DetectionStatusFlag = true;
+                        break;
+                    case "WPA2-Enterprise":
+                        WPA2DetectionStatusFlag = true;
+                        break;
+                    case "Open":
+                        OpenAuthDetectionStatusFlag = true;
+                        break;
                 }
 
+            }
+            if(WEPDetectionStatusFlag == true)
+            {
+                var WEPProtocolDetection = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_4",
+                    RiskLevel = 75,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = $"WEP Authentication Protocol",
+                    DetectionDescription = $"The network {DEFAULT_WLAN_SSID} is using WEP to authenticate users to this network.\nWEP is a a very out-of-date and highly vulnerable authentication protocol.",
+                    DetectionRemediation = $"It is highly recommended that the WEP Authentication Protocol is upgraded to a newer and more secure protocol such as WPA3.",
+                    DetectionAccessPointSsid = DEFAULT_WLAN_SSID,
+                    DetectionAccessPointMacAddress = "ALL BSSIDS",
+                    DetectionAccessPointSignalStrength = "N/A",
+                    DetectionAccessPointOpenChannel = "ALL CHANNELS",
+                    DetectionAccessPointFrequency = "ALL FREQUENCYS",
+                    DetectionAccessPointIsStillActive = "TRUE",
+                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionAccessPointEncryption = "WEP",
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                SaveDetectionToDatabase(WEPProtocolDetection);
+            }
+            if (WPADetectionStatusFlag == true)
+            {
+                var WPAProtocolDetection = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_3",
+                    RiskLevel = 55,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = $"WPA Authentication Protocol",
+                    DetectionDescription = $"The network {DEFAULT_WLAN_SSID} is using WPA to authenticate users to this network. \nWPA is a out-of-date and vulnerable authentication protocol.",
+                    DetectionRemediation = $"It is highly recommended that the WPA Authentication Protocol is upgraded to a newer and more secure protocol such as WPA3.",
+                    DetectionAccessPointSsid = DEFAULT_WLAN_SSID,
+                    DetectionAccessPointMacAddress = "ALL BSSIDS",
+                    DetectionAccessPointSignalStrength = "N/A",
+                    DetectionAccessPointOpenChannel = "ALL CHANNELS",
+                    DetectionAccessPointFrequency = "ALL FREQUENCYS",
+                    DetectionAccessPointIsStillActive = "TRUE",
+                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionAccessPointEncryption = "WPA",
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                SaveDetectionToDatabase(WPAProtocolDetection);
+            }
+            if (WPA2DetectionStatusFlag == true)
+            {
+                var WPA2ProtocolDetection = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_1",
+                    RiskLevel = 15,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = $"WPA2 Authentication Protocol",
+                    DetectionDescription = $"The network {DEFAULT_WLAN_SSID} is using WPA2 to authenticate users to this network.",
+                    DetectionRemediation = $"It is recommended that the WPA2 Authentication Protocol is upgraded to a newer and more secure protocol such as WPA3.",
+                    DetectionAccessPointSsid = DEFAULT_WLAN_SSID,
+                    DetectionAccessPointMacAddress = "ALL BSSIDS",
+                    DetectionAccessPointSignalStrength = "N/A",
+                    DetectionAccessPointOpenChannel = "ALL CHANNELS",
+                    DetectionAccessPointFrequency = "ALL FREQUENCYS",
+                    DetectionAccessPointIsStillActive = "TRUE",
+                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionAccessPointEncryption = "WPA2",
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                SaveDetectionToDatabase(WPA2ProtocolDetection);
+            }
+            if (OpenAuthDetectionStatusFlag == true)
+            {
+                var OpenAuthenticationDetection = new DetectionEvent
+                {
+                    CriticalityLevel = "LEVEL_4",
+                    RiskLevel = 70,
+                    DetectionStatus = "Active",
+                    DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionTitle = $"Open Network - No Authentication",
+                    DetectionDescription = $"The network {DEFAULT_WLAN_SSID} does not authenticate users to this network. \nThis can allow untrusted users to openly connect to this network",
+                    DetectionRemediation = $"It is highly recommended that an strong authentication protocol such as WPA3 is used to prevent unwanted users connecting and gaining access to your network.",
+                    DetectionAccessPointSsid = DEFAULT_WLAN_SSID,
+                    DetectionAccessPointMacAddress = "ALL BSSIDS",
+                    DetectionAccessPointSignalStrength = "N/A",
+                    DetectionAccessPointOpenChannel = "ALL CHANNELS",
+                    DetectionAccessPointFrequency = "ALL FREQUENCYS",
+                    DetectionAccessPointIsStillActive = "TRUE",
+                    DetectionAccessPointTimeFirstDetected = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
+                    DetectionAccessPointEncryption = "NONE",
+                    DetectionAccessPointConnectedClients = "N/A"
+                };
+                SaveDetectionToDatabase(OpenAuthenticationDetection);
             }
         }
         private void SaveDetectionToDatabase(DetectionEvent detectionEvent)

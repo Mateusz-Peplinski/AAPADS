@@ -15,10 +15,8 @@ namespace AAPADS
         {
             dbPath = Path.Combine(Directory.GetCurrentDirectory(), dbFileName);
 
-
             connection = new SQLiteConnection($"Data Source={dbPath};Version=3;");
             connection.Open();
-
 
             CreateTablesIfNotExists();
         }
