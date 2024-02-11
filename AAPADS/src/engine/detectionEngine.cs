@@ -82,7 +82,7 @@ namespace AAPADS.src.engine
 
 
                     //Delay to prevnt tight loop and high CPU usage
-                    await Task.Delay(5000, cancellationToken);
+                    await Task.Delay(10000, cancellationToken);
                 }
             }
             catch (OperationCanceledException)
@@ -137,6 +137,7 @@ namespace AAPADS.src.engine
             // RULE 1 - SSID Beacon Flooding - A sudden appearance of many SSIDs in a single TIME_FRAME_ID
             int NewlyDetectedAccessPointCount = newAccessPoints.Count;
 
+            // Between 10 - 15 new access points appear in a given TIME_FRAME_ID possible SSID Beacon Flooding
             if (NewlyDetectedAccessPointCount >= 10 && NewlyDetectedAccessPointCount <= 15)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -149,7 +150,7 @@ namespace AAPADS.src.engine
                     DetectionStatus = "Active",
                     DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
                     DetectionTitle = $"Possible SSID Beacon Flooding",
-                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
+                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity,\nraising concerns about a potential SSID beacon flooding scenario. \nSuch an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, \nwhich can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
                                         $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
                     DetectionRemediation = @"",
                     DetectionAccessPointSsid = "N/A",
@@ -164,6 +165,8 @@ namespace AAPADS.src.engine
                 };
                 SaveDetectionToDatabase(PossibleSSIDBeaconFloodingdetectionEvent);
             }
+
+            // More then 16 new access points appear in a given TIME_FRAME_ID would probably indicate SSID Beacon Flooding
             if (NewlyDetectedAccessPointCount > 16)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -176,7 +179,7 @@ namespace AAPADS.src.engine
                     DetectionStatus = "Active",
                     DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
                     DetectionTitle = $"SSID Beacon Flooding",
-                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. Such an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, which can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
+                    DetectionDescription = $"AAPADS systems have registered a notable increase in the number of {NewlyDetectedAccessPointCount} SSIDs being broadcasted in your proximity, raising concerns about a potential SSID beacon flooding scenario. \nSuch an increase is often indicative of a device or a group of devices emitting a large number of SSID beacons in a short period, \nwhich can be a tactic used in reconnaissance phases of cyber attacks or to create confusion and disrupt wireless network operations. " +
                                         $"\nThis activity does not match the usual wireless traffic patterns observed in this environment, suggesting an anomaly that warrants closer inspection.",
                     DetectionAccessPointSsid = "N/A",
                     DetectionAccessPointMacAddress = "N/A",
@@ -267,7 +270,7 @@ namespace AAPADS.src.engine
             bool WPADetectionStatusFlag = false;
             bool WPA2DetectionStatusFlag = false;
             bool OpenAuthDetectionStatusFlag = false;
-
+            // Need to add encryption detection flags
 
             // 2 - Check for rules match 
             foreach (var accessPoint in currentNetworkAcessPoints)
@@ -300,7 +303,7 @@ namespace AAPADS.src.engine
                 }
 
             }
-            if(WEPDetectionStatusFlag == true)
+            if (WEPDetectionStatusFlag == true)
             {
                 var WEPProtocolDetection = new DetectionEvent
                 {
@@ -378,7 +381,7 @@ namespace AAPADS.src.engine
                     DetectionStatus = "Active",
                     DetectionTime = DateTime.Now.ToString("dd:MMM:yyyy [ HH:mm:ss ]"),
                     DetectionTitle = $"Open Network - No Authentication",
-                    DetectionDescription = $"The network {DEFAULT_WLAN_SSID} does not authenticate users to this network. \nThis can allow untrusted users to openly connect to this network",
+                    DetectionDescription = $"The network {DEFAULT_WLAN_SSID} does not authenticate users to this network. \nThis can allow untrusted users to openly connect to this network.",
                     DetectionRemediation = $"It is highly recommended that an strong authentication protocol such as WPA3 is used to prevent unwanted users connecting and gaining access to your network.",
                     DetectionAccessPointSsid = DEFAULT_WLAN_SSID,
                     DetectionAccessPointMacAddress = "ALL BSSIDS",

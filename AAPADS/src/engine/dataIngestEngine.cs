@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace AAPADS
 {
@@ -271,7 +273,9 @@ namespace AAPADS
         }
         private void CollectBSSIDInformation()
         {
-            // Create 
+            // Create the netsh process information
+            // This is used to fetch the WLAN information from the OS.
+            // NOTE: maybe I can make this information global
             ProcessStartInfo processInfo = new ProcessStartInfo
             {
                 FileName = "netsh",
@@ -281,91 +285,121 @@ namespace AAPADS
                 CreateNoWindow = true
             };
 
+            // Run the process using the created processInfo
             using (Process process = new Process { StartInfo = processInfo })
             {
                 process.OutputDataReceived += ProcessRecivedData;
-
                 process.Start();
                 process.BeginOutputReadLine();
-
                 process.WaitForExit();
             }
         }
         private void ProcessRecivedData(object sender, DataReceivedEventArgs e)
         {
+            // Run though the received data from the process that was ran
             if (!string.IsNullOrEmpty(e.Data))
             {
+                // Call the parsing function
                 ParseRecivedData(e.Data);
-
             }
         }
         private void ParseRecivedData(string output)
         {
+            // Removes all leading and trailing white-space
             output = output.Trim();
+
+            // Finds the index of the first occurrence of ":" in the output
             int index = output.IndexOf(":");
+
+            // Check if the output starts with "SSID" and if there is no value after the colon or if it's only white-spaces
+            // This is becase the netsh command just has null if the SSID/BSSID is a hidden network and whitespace is removed with the .Trim()
+            // So this is needed to be able to parse out hidden networks else they would not show and inherit all network information from a previously procces SSID
             if (output.StartsWith("SSID") && (index == output.Length - 1 || string.IsNullOrWhiteSpace(output.Substring(index + 1))))
             {
+                // Adds current data to global lists and clears current data for a new entry, then sets CURRENT_SSID to indicate a hidden network
                 AddCurrentDataToGlobalLists();
                 ClearCurrentData();
                 CURRENT_SSID = "[HIDDEN NETWORK]";
+
+                // return so the next line can be processed from e.Data 
                 return;
             }
+
+            // Return early if no colon is found in the output
             if (index < 0) return;
 
+            // Check if the colon is the last character in the output
+            // This indicates no value follows the title
             if (index >= output.Length - 1)
                 return;
 
+            // Extract the value following the colon and trims any leading or trailing white-spaces
             string value = output.Substring(index + 1).Trim();
 
+            // Extract the title from the output, which is the substring before the colon, and takes the first word as the title
             string title = output.Substring(0, index).Split(' ')[0];
 
             switch (title)
             {
                 case "SSID":
+
+                    // Add the current data to global lists, clears current data, and set the CURRENT_SSID with the new value
                     AddCurrentDataToGlobalLists();
+
                     ClearCurrentData();
 
                     CURRENT_SSID = value;
                     break;
 
                 case "Encryption":
+
+                    // Set the CURRENT_ENCRYPTION with the new value
                     CURRENT_ENCRYPTION = value;
                     break;
 
                 case "Authentication":
+                    // Set the CURRENT_AUTH with the new value
                     CURRENT_AUTH = value;
                     break;
 
                 case "BSSID":
+                    // Add current data to global lists, clears BSSID related data, and set the CURRENT_BSSID with the new value
                     AddCurrentDataToGlobalLists();
+
                     ClearBssidRelatedData();
 
                     CURRENT_BSSID = value;
                     break;
 
                 case "Signal":
+                    // Parses and sets the signal strength if it's followed by a "%" character and is a valid integer
                     int endIndex = output.IndexOf("%");
                     if (endIndex > index && endIndex < output.Length)
                     {
                         string signalValue = output.Substring(index + 1, endIndex - index - 1).Trim();
                         if (int.TryParse(signalValue, out int signal))
                         {
+                            // Sets the CURRENT_SIGNAL with the new signal value
                             CURRENT_SIGNAL = signal;
                         }
                     }
                     break;
 
                 case "Radio":
+                    // Set the CURRENT_RADIO with the new value
                     CURRENT_RADIO = value;
                     break;
 
                 case "Band":
+                    // Set the CURRENT_BAND with the new value
                     CURRENT_BAND = value;
                     break;
 
                 case "Channel":
+                    // Parse the channel number and sets CURRENT_CHANNEL and CURRENT_FREQUENCY if the channel is known
                     if (int.TryParse(value, out int channel) && channelToFrequencies.ContainsKey(channel))
                     {
+                        // Set the CURRENT_CHANNEL & CURRENT_FREQUENCY with the new values
                         CURRENT_CHANNEL = channel;
                         CURRENT_FREQUENCY = channelToFrequencies[channel];
                     }
@@ -374,8 +408,10 @@ namespace AAPADS
         }
         private void AddCurrentDataToGlobalLists()
         {
+            // Check if both CURRENT_SSID and CURRENT_BSSID are not null or empty to ensure valid data
             if (!string.IsNullOrEmpty(CURRENT_SSID) && !string.IsNullOrEmpty(CURRENT_BSSID))
             {
+                // Add current data to respective global lists
                 SSID_LIST.Add(CURRENT_SSID);
                 ENCRYPTION_TYPE_LIST.Add(CURRENT_ENCRYPTION);
                 AUTH_LIST.Add(CURRENT_AUTH);
@@ -389,33 +425,42 @@ namespace AAPADS
         }
         private void ClearCurrentData()
         {
+            // Clear current session or scan data, preparing for the next piece of data to be processed
             CURRENT_SSID = null;
             CURRENT_ENCRYPTION = null;
             CURRENT_AUTH = null;
+
+            // Call method to clear BSSID related data specifically
             ClearBssidRelatedData();
         }
         private void ClearBssidRelatedData()
         {
+            // Clear data related to the current BSSID, including signal strength, radio type, band, channel, and frequency
             CURRENT_BSSID = null;
-            CURRENT_SIGNAL = 0;
+            CURRENT_SIGNAL = 0; // Resets signal strength to 0
             CURRENT_RADIO = null;
             CURRENT_BAND = null;
-            CURRENT_CHANNEL = 0;
+            CURRENT_CHANNEL = 0; // Resets channel to 0
             CURRENT_FREQUENCY = null;
         }
         private void InsertParsedDataToDatabase()
         {
+            // Retrieves the last time frame ID from the database to maintain a sequence
             string LAST_TIME_FRAME_ID = DATA_INGEST_ENGINE_DATABASE_ACCESS.GetLastTimeFrameId();
+
+            // Initializes an ID generator with the last known time frame ID
             var idGenerator = new TimeFrameIdGenerator(LAST_TIME_FRAME_ID);
 
-
+            // Generates the next time frame ID based on the last one
             string CURRENT_TIME_FRAME_ID = idGenerator.GenerateNextId();
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"[ DATA INGEST ENGINE ] SQL WRITE at {CURRENT_TIME_FRAME_ID}");
 
+            // Iterates over the SSID_LIST to insert each access point's data into the database
             for (int i = 0; i < SSID_LIST.Count; i++)
             {
+                // Inserts data for each access point using the collected lists and the current time frame ID
                 DATA_INGEST_ENGINE_DATABASE_ACCESS.DataIngestEngineInsertAccessPointData(
                     SSID_LIST[i],
                     BSSID_LIST[i],
