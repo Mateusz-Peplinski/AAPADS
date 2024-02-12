@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -110,7 +109,7 @@ namespace AAPADS.src.engine
             // PROCESS BLOCK 1 - Access Point Anomalies
             // Process the new access points if any were found
             if (newAccessPoints.Any())
-            { 
+            {
                 HandleProcessBlockOneRules(newAccessPoints);
             }
 
@@ -170,7 +169,7 @@ namespace AAPADS.src.engine
             if (NewlyDetectedAccessPointCount > 16)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND - SSID BEACON FLOODING"); 
+                Console.WriteLine("[ DETECTION ENGINE ] DETECTION FOUND - SSID BEACON FLOODING");
 
                 var SSIDBeaconFloodingdetectionEvent = new DetectionEvent
                 {
@@ -195,7 +194,7 @@ namespace AAPADS.src.engine
 
             }
             //For each in handle many access points show up at once.
-            foreach (var ap in newAccessPoints) 
+            foreach (var ap in newAccessPoints)
             {
                 // Add the new access point to the KnownBSSIDs SQL TABLE to prevent many repative events
                 _databaseAccess.InsertAndReportNewBssid(ap.SSID, ap.BSSID);
@@ -277,7 +276,7 @@ namespace AAPADS.src.engine
             {
                 //Console.ForegroundColor = ConsoleColor.Red;
                 //Console.WriteLine($"THE SSID: {accessPoint.SSID} THE BSSID: {accessPoint.BSSID}");
-                string  AccessPointAuthentication = accessPoint.Authentication;
+                string AccessPointAuthentication = accessPoint.Authentication;
 
                 //Need to also add Encryption --> This needs to be added from the data ingest engine
                 switch (AccessPointAuthentication)
@@ -324,7 +323,11 @@ namespace AAPADS.src.engine
                     DetectionAccessPointEncryption = "WEP",
                     DetectionAccessPointConnectedClients = "N/A"
                 };
-                SaveDetectionToDatabase(WEPProtocolDetection);
+                if (!_databaseAccess.HasDetectionBeenReported("WEP Authentication Protocol", "WEP"))
+                {
+                    SaveDetectionToDatabase(WEPProtocolDetection);
+                }
+                
             }
             if (WPADetectionStatusFlag == true)
             {
@@ -347,7 +350,11 @@ namespace AAPADS.src.engine
                     DetectionAccessPointEncryption = "WPA",
                     DetectionAccessPointConnectedClients = "N/A"
                 };
-                SaveDetectionToDatabase(WPAProtocolDetection);
+                if (!_databaseAccess.HasDetectionBeenReported("WPA Authentication Protocol", "WPA"))
+                {
+                    SaveDetectionToDatabase(WPAProtocolDetection);
+                }
+                
             }
             if (WPA2DetectionStatusFlag == true)
             {
@@ -370,7 +377,11 @@ namespace AAPADS.src.engine
                     DetectionAccessPointEncryption = "WPA2",
                     DetectionAccessPointConnectedClients = "N/A"
                 };
-                SaveDetectionToDatabase(WPA2ProtocolDetection);
+                if (!_databaseAccess.HasDetectionBeenReported("WPA2 Authentication Protocol", "WPA2"))
+                {
+                    SaveDetectionToDatabase(WPA2ProtocolDetection);
+                }
+                
             }
             if (OpenAuthDetectionStatusFlag == true)
             {
@@ -393,7 +404,11 @@ namespace AAPADS.src.engine
                     DetectionAccessPointEncryption = "NONE",
                     DetectionAccessPointConnectedClients = "N/A"
                 };
-                SaveDetectionToDatabase(OpenAuthenticationDetection);
+                if (!_databaseAccess.HasDetectionBeenReported("Open Network - No Authentication", "NONE"))
+                {
+                    SaveDetectionToDatabase(OpenAuthenticationDetection);
+                }
+
             }
         }
         private void SaveDetectionToDatabase(DetectionEvent detectionEvent)
@@ -549,7 +564,7 @@ namespace AAPADS.src.engine
             }
 
             // Adding common prefixes/suffixes
-            var commonPrefixesSuffixes = new[] { " Free", " Secure", " Public", " Private", " home", " FREE", " SECURE", " PUBLIC", " PRIVATE", " HOME","_Free", "_Secure", "_Public", "_Private", "_home", "_FREE", "_SECURE", "_PUBLIC", "_PRIVATE", "_HOME" };
+            var commonPrefixesSuffixes = new[] { " Free", " Secure", " Public", " Private", " home", " FREE", " SECURE", " PUBLIC", " PRIVATE", " HOME", "_Free", "_Secure", "_Public", "_Private", "_home", "_FREE", "_SECURE", "_PUBLIC", "_PRIVATE", "_HOME" };
             foreach (var item in commonPrefixesSuffixes)
             {
                 variations.Add(item + ssid);
