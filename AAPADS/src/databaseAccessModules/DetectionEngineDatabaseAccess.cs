@@ -89,12 +89,24 @@ namespace AAPADS
             var result = connection.QueryFirstOrDefault<string>("SELECT TIME_FRAME_ID FROM NormWirelessProfile ORDER BY ID DESC LIMIT 1"); //Fetch the last proccess TIME_FRAME_ID that NormEng last processed
             return result ?? "A0";
         }
-        //public void AlterKnownBSSIDsTable()
-        //{
-        //    var addReportedColumnCommand = new SQLiteCommand(@"ALTER TABLE KnownBSSIDS ADD COLUMN ""REPORTED"" BOOLEAN NOT NULL DEFAULT 0;");
-        //    addReportedColumnCommand.ExecuteNonQuery();
-        //
-        //}
+        public bool HasDetectionBeenReported(string detectionTitle, string encryptionType)
+        {
+            // Define the SQL query to check for an existing detection event
+            var query = @"
+            SELECT COUNT(*) 
+            FROM DetectionData 
+            WHERE DETECTION_TITLE = @DetectionTitle 
+            AND DETECTION_ACCESS_POINT_ENCRYPTION = @EncryptionType";
+
+            // Execute the query using the connection and parameters
+            int count = this.connection.QueryFirstOrDefault<int>(
+                query,
+                new { DetectionTitle = detectionTitle, EncryptionType = encryptionType });
+
+            // Return true if a detection event exists, false otherwise
+            return count > 0;
+        }
+
         public void InsertAndReportNewBssid(string ssid, string bssid)
         {
             var insertQuery = @"
