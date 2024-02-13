@@ -1,6 +1,7 @@
 ﻿using AAPADS.src.engine;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +29,7 @@ namespace AAPADS
         private AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL;
         private SettingsViewModel SETTINGS_VIEW_MODEL;
 
-//private DetectionEngineDatabaseAccess databaseAccess;
+        //private DetectionEngineDatabaseAccess databaseAccess;
 
         public NetworkCardInfoViewModel NetworkCardInfoVM { get; set; }
 
@@ -43,7 +44,8 @@ namespace AAPADS
         private double _originalTop;
         private bool _wasMaximized = false;
 
-        private DispatcherTimer _detectionLearningTimer; //This time is started when the detecion configuration starts
+        //This time is started when the detecion configuration starts
+        private DispatcherTimer _detectionLearningTimer; 
         private TimeSpan _timeRemaining;
 
         public MainWindow()
@@ -65,29 +67,44 @@ namespace AAPADS
             //databaseAccess = new DetectionEngineDatabaseAccess("wireless_profile.db");
             DETECTION_ENGINE_OBJECT = new DetectionEngine();
             DETECTION_VIEW_MODEL = new detectionsViewDataModel();
-            
 
-            AAPADS_GLOBAL_ENGINES_START(); // start the engines, however if detection has not been enabled the classes are just initilized and sit idle 
+            // start the engines, however if detection has not been enabled the classes are just initilized and sit idle 
+            AAPADS_GLOBAL_ENGINES_START();
 
-            WLAN_NETWORK_ADAPTER_VIEW_MODEL = new detectionSetUpViewDataModel(); //View model for detection set-up
+            //View model for detection set-up
+            WLAN_NETWORK_ADAPTER_VIEW_MODEL = new detectionSetUpViewDataModel();
 
+            // Settings view model --> needed for lunch to load settings
+            SETTINGS_VIEW_MODEL = new SettingsViewModel();
 
-            SETTINGS_VIEW_MODEL = new SettingsViewModel(); // Settings view model --> needed for lunch to load settings
-            SETTINGS_VIEW_MODEL.LoadSettings(); // Load settings
+            // Load settings
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("LOADING SETTINGS...");
+            SETTINGS_VIEW_MODEL.LoadSettings();
 
+            //Hardcoded for now
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("TRYING TO SET WNIC TO MONITOR MODE");
+            SetMonitorMode("WiFi 2");
+
+            // This has its own data context because it needs to run no matter which tab is selected
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
-            NetworkCardInfoExpander.DataContext = NetworkCardInfoVM; // This has its own data context because is should run no matter which tab is selected
+            NetworkCardInfoExpander.DataContext = NetworkCardInfoVM;
 
             
-            if (FetchTrainingFlagStatus()) // If Training Flag == true
+
+            // If Training Flag == true
+            if (FetchTrainingFlagStatus()) 
             {
                 // If detection was started and the program was closed. This function will reopen the program at the state it closed on
                 ContinueDetectionTrainingOnLoad();
             }
-            if (FetchDetectionFlagStatus()) // If Detection Flag == true
+
+            // If Detection Flag == true
+            if (FetchDetectionFlagStatus()) 
             {
                 DetectionLearningStageComplete();
-                
+
             }
 
             MinimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
@@ -543,6 +560,51 @@ namespace AAPADS
 
             public static bool operator !=(RECT rect1, RECT rect2) { return !(rect1 == rect2); }
         }
+
+
+        public static bool SetMonitorMode(string adapterName)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "WlanHelper.exe",
+                    Arguments = $"\"{adapterName}\" mode monitor",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+
+                using (Process process = Process.Start(startInfo))
+                {
+                    // Read the output to ensure the command was successful
+                    string output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+
+                    // Check if the output contains the success message
+                    if (output.Contains("Success"))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("MONITOR MODE SET SUCCESSFULLY.");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("FAILED TO SET MONITOR MODE. ERROR: " + output);
+                        Console.WriteLine("TRY RUNNING PROGRAM WITH ADMINISTRATOR PRIVILEGES");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error setting monitor mode: {ex.Message}");
+                return false;
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

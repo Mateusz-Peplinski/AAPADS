@@ -125,6 +125,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\engine\DataIngestEngineDot11Frames.cs" />
     <Compile Include="src\engine\DetectionEvent.cs" />
     <Compile Include="src\databaseAccessModules\DetectionEngineDatabaseAccess.cs" />
     <Compile Include="src\main\DetectionTrainingWindow.xaml.cs">
