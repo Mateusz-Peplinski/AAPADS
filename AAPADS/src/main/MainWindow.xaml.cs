@@ -25,6 +25,7 @@ namespace AAPADS
         private readonly DetectionEngine DETECTION_ENGINE_OBJECT;
         private readonly overviewViewDataModel OVERVIEW_VIEW_MODEL;
         private readonly detectionsViewDataModel DETECTION_VIEW_MODEL;
+        private readonly DataIngestEngineDot11Frames DATA_INGEST_ENGINE_DOT11_FRAMES;
         private readonly detectionSetUpViewDataModel WLAN_NETWORK_ADAPTER_VIEW_MODEL;
         private AccessPointInvestigatorDataModel ACCESS_POINT_INVESTIGATOR_VIEW_MODEL;
         private SettingsViewModel SETTINGS_VIEW_MODEL;
@@ -82,10 +83,17 @@ namespace AAPADS
             Console.WriteLine("LOADING SETTINGS...");
             SETTINGS_VIEW_MODEL.LoadSettings();
 
+
+            
+
             //Hardcoded for now
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("TRYING TO SET WNIC TO MONITOR MODE");
             SetMonitorMode("WiFi 2");
+
+
+            DATA_INGEST_ENGINE_DOT11_FRAMES = new DataIngestEngineDot11Frames();
+            DATA_INGEST_ENGINE_DOT11_FRAMES.StartCaptureAsync();
 
             // This has its own data context because it needs to run no matter which tab is selected
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
