@@ -238,9 +238,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="res\graphics\ARCH_AAPADS.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="res\icons\icon.png" />
     <Resource Include="res\graphics\LargeLogoBlackBackground.png" />
     <Resource Include="res\graphics\LargeLogoNoBackground.png" />
@@ -251,9 +248,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\graphics\animated.gif" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\OUI.txt">
@@ -271,9 +265,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\graphics\screenshot2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="res\graphics\screenshot3.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper">
