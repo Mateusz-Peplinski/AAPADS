@@ -1,9 +1,12 @@
 ﻿using Dapper;
+using Notifications.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
 using System.Threading.Tasks;
+
 
 namespace AAPADS.src.engine
 {
@@ -418,6 +421,10 @@ namespace AAPADS.src.engine
                 db.SaveDetectionData(detectionEvent);
             }
             TriggerDetectionEvent();
+            
+            TriggerNotification(detectionEvent.DetectionTitle);
+
+            TriggerDetectionAudioSound();
         }
         private void TriggerDetectionEvent()
         {
@@ -439,6 +446,22 @@ namespace AAPADS.src.engine
             {
                 return null;
             }
+        }
+        private void TriggerDetectionAudioSound()
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer("res/audio/rwr/rwr.wav");
+            player.PlaySync();
+        }
+        private void TriggerNotification(string content)
+        {
+            var notificationManager = new NotificationManager();
+
+            notificationManager.Show(new NotificationContent
+            {
+                Title = "AAPADS - NEW DETECTION !",
+                Message = content,
+                Type = NotificationType.Warning
+            });
         }
         private bool CheckDataExistsForTimeFrameID(string timeFrameId)
         {
