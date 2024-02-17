@@ -16,7 +16,7 @@ namespace AAPADS
         public loadingScreen()
         {
             InitializeComponent();
-            AllocConsole(); // The debug console is created now to give the console window time to initialize before calling the Console.Writeline();
+            AllocConsole(); // The debug console is created now to give the console window time to initialize before calling the first Console.Writeline();
             START_AAPADS();
         }
 
@@ -26,7 +26,7 @@ namespace AAPADS
         private void START_AAPADS()
         {
             _mainWindow = new MainWindow();
-
+            
             //currently a time --> needs to map to an event in data ingest engine to say the scan has been preformed so the program does not load blank data
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(4);
