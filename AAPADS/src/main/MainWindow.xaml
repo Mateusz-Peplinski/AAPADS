@@ -2434,14 +2434,30 @@
                             </StackPanel>
                         </TabItem.Header>
                         <Grid>
-                            <StackPanel>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0">
                                 <CheckBox
                                     Name="DebugConsoleCheckBox"
                                     Content="Debug Console Enabled"
                                     Foreground="#d2d2d2"
                                     IsChecked="{Binding IsDebugConsoleEnabled, Mode=TwoWay}" />
                             </StackPanel>
-
+                            <StackPanel Grid.Row="1">
+                                <Button
+                                    Width="300"
+                                    HorizontalAlignment="Left"
+                                    materialDesign:RippleAssist.Feedback="#DD000000"
+                                    Background="#ef3945"
+                                    BorderBrush="#ef3945"
+                                    Click="SetMonitorMode_Click"
+                                    Content="Monitor Mode Configuration Menu"
+                                    FontWeight="Bold"
+                                    IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                    ToolTip="Resource name: MaterialDesignRaisedSecondaryButton" />
+                            </StackPanel>
                         </Grid>
                     </TabItem>
                 </TabControl>

@@ -19,8 +19,6 @@ namespace AAPADS
             StartCaptureAsync();
         }
 
-
-
         public void StartCaptureAsync()
         {
             Task.Run(() => StartCapture());
@@ -38,11 +36,13 @@ namespace AAPADS
                 return;
             }
             int i = 0; 
-            foreach (var dev in devices) 
-            {
-                Console.WriteLine($"{i} - {dev}");
-                i++; // Increment i so that each device has a unique index
-            }
+
+            //Print all the devices that sharpcap detects
+            //foreach (var dev in devices) 
+            //{
+            //    Console.WriteLine($"{i} - {dev}");
+            //    i++;
+            //}
             // Find a device that matches the name "WiFi 2"
             var device = devices.FirstOrDefault(d => d.Name.Contains("WiFi 2"));
             if (device == null)
