@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Notifications.Wpf;
+using PacketDotNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +84,7 @@ namespace AAPADS.src.engine
 
                     //Delay to prevnt tight loop and high CPU usage
                     await Task.Delay(10000, cancellationToken);
-                }
+                } 
             }
             catch (OperationCanceledException)
             {
