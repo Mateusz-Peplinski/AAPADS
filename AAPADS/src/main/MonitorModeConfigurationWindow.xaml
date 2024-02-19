@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AAPADS"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MonitorModeConfigurationWindow"
     Width="800"
@@ -127,8 +128,76 @@
             <Border
                 Margin="20"
                 Background="#424242"
-                CornerRadius="20" />
+                CornerRadius="20">
+                <Grid Grid.Row="0">
+                    <DataGrid
+                        Margin="20"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        materialDesign:DataGridAssist.CellPadding="16 8"
+                        materialDesign:DataGridAssist.ColumnHeaderPadding="16 8"
+                        AutoGenerateColumns="False"
+                        BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                        CanUserAddRows="False"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding MONITOR_MODE_NETWORK_ADAPTERS}"
+                        RowHeight="40"
+                        SelectedItem="{Binding SelectedAdapter}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="SELECT">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ToggleButton
+                                            Width="22"
+                                            Height="22"
+                                            IsChecked="{Binding IsAdapterActive, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{StaticResource MaterialDesignFlatToggleButton}"
+                                            ToolTip="MaterialDesignFlatToggleButton">
+                                            <materialDesign:PackIcon
+                                                Width="21"
+                                                Height="21"
+                                                Kind="Antenna" />
+                                        </ToggleButton>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Binding="{Binding MONITOR_MODE_NETWORK_ADAPTER_NAME}" Header="NAME" />
+                            <DataGridTextColumn Binding="{Binding MONITOR_MODE_NETWORK_ADAPTER_DESCRIPTION}" Header="DESCRIPTION" />
+                            <DataGridTextColumn Binding="{Binding MONITOR_MODE_NETWORK_ADAPTER_STATUS}" Header="STATUS" />
+                            <DataGridTextColumn Binding="{Binding MONITOR_MODE_NETWORK_ADAPTER_MAC_ADDRESS}" Header="MAC ADDRESS" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
 
+            </Border>
+            <Grid Grid.Row="1" Margin="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="20" />
+                    <!--  Spacer column  -->
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <!--  Set Monitor Mode Button  -->
+                <Button
+                    Grid.Column="0"
+                    Margin="5"
+                    Padding="10,5"
+                    HorizontalAlignment="Stretch"
+                    Background="Red"
+                    Content="Set Monitor Mode"
+                    Foreground="White" />
+
+                <!--  Set Managed Mode Button  -->
+                <Button
+                    Grid.Column="2"
+                    Margin="5"
+                    Padding="10,5"
+                    HorizontalAlignment="Stretch"
+                    Background="Green"
+                    Content="Set Managed Mode"
+                    Foreground="White" />
+            </Grid>
         </Grid>
     </Grid>
 </Window>
