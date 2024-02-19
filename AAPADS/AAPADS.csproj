@@ -125,6 +125,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\main\MonitorModeConfigurationWindow.xaml.cs">
+      <DependentUpon>MonitorModeConfigurationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\engine\DataIngestEngineDot11Frames.cs" />
     <Compile Include="src\engine\DetectionEvent.cs" />
     <Compile Include="src\databaseAccessModules\DetectionEngineDatabaseAccess.cs" />
@@ -168,6 +171,10 @@
     <Compile Include="src\WLANScanInvoker\WifiScanner.cs" />
     <Compile Include="src\databaseAccessModules\TimeFrameIdGenerator.cs" />
     <Compile Include="src\main\converters\StatusToColorConverter.cs" />
+    <Page Include="src\main\MonitorModeConfigurationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\main\DetectionTrainingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

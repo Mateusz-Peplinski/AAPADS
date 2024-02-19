@@ -395,6 +395,12 @@ namespace AAPADS
                 SaveRemainingTimeToDatabase();
             }
         }
+        private void SetMonitorMode_Click(object sender, RoutedEventArgs e)
+        {
+            MonitorModeConfigurationWindow monitorModeConfigurationWindow = new MonitorModeConfigurationWindow();
+
+            monitorModeConfigurationWindow.Show(); 
+        }
         private void About_Click(object sender, RoutedEventArgs e)
         {
             about AboutPage = new about();
@@ -455,7 +461,48 @@ namespace AAPADS
                 DETECTION_VIEW_MODEL.updateDetections();
             });
         }
+        public static bool SetMonitorMode(string adapterName)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "WlanHelper.exe",
+                    Arguments = $"\"{adapterName}\" mode monitor",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
 
+                using (Process process = Process.Start(startInfo))
+                {
+                    // Read the output to ensure the command was successful
+                    string output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+
+                    // Check if the output contains the success message
+                    if (output.Contains("Success"))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("MONITOR MODE SET SUCCESSFULLY.");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("FAILED TO SET MONITOR MODE. ERROR: " + output);
+                        Console.WriteLine("TRY RUNNING PROGRAM WITH ADMINISTRATOR PRIVILEGES");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error setting monitor mode: {ex.Message}");
+                return false;
+            }
+        }
         private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
@@ -568,51 +615,6 @@ namespace AAPADS
 
             public static bool operator !=(RECT rect1, RECT rect2) { return !(rect1 == rect2); }
         }
-
-
-        public static bool SetMonitorMode(string adapterName)
-        {
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = "WlanHelper.exe",
-                    Arguments = $"\"{adapterName}\" mode monitor",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                };
-
-                using (Process process = Process.Start(startInfo))
-                {
-                    // Read the output to ensure the command was successful
-                    string output = process.StandardOutput.ReadToEnd();
-                    process.WaitForExit();
-
-                    // Check if the output contains the success message
-                    if (output.Contains("Success"))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("MONITOR MODE SET SUCCESSFULLY.");
-                        return true;
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("FAILED TO SET MONITOR MODE. ERROR: " + output);
-                        Console.WriteLine("TRY RUNNING PROGRAM WITH ADMINISTRATOR PRIVILEGES");
-                        return false;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Error setting monitor mode: {ex.Message}");
-                return false;
-            }
-        }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
