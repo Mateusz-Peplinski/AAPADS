@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Windows;
 
@@ -16,6 +18,7 @@ namespace AAPADS
         public event PropertyChangedEventHandler PropertyChanged;
 
         private MONITOR_MODE_NETWORK_ADAPTER_INFO _selectedAdapter;
+        private string _defaultWLANName;
         public MONITOR_MODE_NETWORK_ADAPTER_INFO SelectedAdapter
         {
             get { return _selectedAdapter; }
@@ -26,7 +29,19 @@ namespace AAPADS
                     _selectedAdapter = value;
                     OnPropertyChanged(nameof(SelectedAdapter));
                     // When the selection changes, update DefaultWNICName
-                    //DefaultWNICName = value?.NETWORK_ADAPTER_DESCRIPTION;
+                    SELECTED_NETWORK_ADAPTER = value?.MONITOR_MODE_NETWORK_ADAPTER_DESCRIPTION;
+                }
+            }
+        }
+        public string SELECTED_NETWORK_ADAPTER
+        {
+            get { return _defaultWLANName; }
+            set
+            {
+                if (_defaultWLANName != value)
+                {
+                    _defaultWLANName = value;
+                    OnPropertyChanged(nameof(SELECTED_NETWORK_ADAPTER));
                 }
             }
         }
@@ -58,6 +73,14 @@ namespace AAPADS
             {
                 db.SaveSetting("MonitorModeWNICName", adapterName);
             }
+        }
+        private void SetMonitorMode_Click(object sender, RoutedEventArgs e)
+        {
+            SetMonitorMode(SELECTED_NETWORK_ADAPTER);
+        }
+        private void SetManagedMode_Click(object sender, RoutedEventArgs e)
+        {
+            SetManagedMode(SELECTED_NETWORK_ADAPTER);
         }
         public List<MONITOR_MODE_NETWORK_ADAPTER_INFO> GetNetworkAdapters()
         {
@@ -98,6 +121,91 @@ namespace AAPADS
         {
             this.Close();
         }
+        public bool SetMonitorMode(string adapterName)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "WlanHelper.exe",
+                    Arguments = $"\"{adapterName}\" mode monitor",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+
+                using (Process process = Process.Start(startInfo))
+                {
+                    // Read the output to ensure the command was successful
+                    string output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+
+                    // Check if the output contains the success message
+                    if (output.Contains("Success"))
+                    {
+                        SaveSelectedMonitorModeAdapterSetting(adapterName);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("MONITOR MODE SET SUCCESSFULLY.");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("FAILED TO SET MONITOR MODE. ERROR: " + output);
+                        Console.WriteLine("TRY RUNNING PROGRAM WITH ADMINISTRATOR PRIVILEGES");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ERROR SETTING MONITOR MODE: {ex.Message}");
+                return false;
+            }
+        }
+        public bool SetManagedMode(string adapterName)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "WlanHelper.exe",
+                    Arguments = $"\"{adapterName}\" mode managed",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+
+                using (Process process = Process.Start(startInfo))
+                {
+                    // Read the output to ensure the command was successful
+                    string output = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+
+                    // Check if the output contains the success message
+                    if (output.Contains("Success"))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("MANAGED MODE SET SUCCESSFULLY.");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("FAILED TO SET MANAGED MODE. ERROR: " + output);
+                        Console.WriteLine("TRY RUNNING PROGRAM WITH ADMINISTRATOR PRIVILEGES");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ERROR SETTING MONITOR MODE: {ex.Message}");
+                return false;
+            }
+        }
     }
     public class MONITOR_MODE_NETWORK_ADAPTER_INFO : INotifyPropertyChanged
     {
@@ -117,3 +225,5 @@ namespace AAPADS
         }
     }
 }
+
+

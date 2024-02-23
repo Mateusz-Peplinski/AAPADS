@@ -178,25 +178,32 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
 
-                <!--  Set Monitor Mode Button  -->
+                <!--  Set Monitor Mode  -->
                 <Button
                     Grid.Column="0"
                     Margin="5"
                     Padding="10,5"
                     HorizontalAlignment="Stretch"
-                    Background="Red"
-                    Content="Set Monitor Mode"
-                    Foreground="White" />
+                    materialDesign:RippleAssist.Feedback="#DD000000"
+                    Background="#ef3945"
+                    BorderBrush="#ef3945"
+                    Click="SetMonitorMode_Click"
+                    Content="SET MONITOR MODE"
+                    FontWeight="Bold"
+                    Foreground="#303030" />
 
-                <!--  Set Managed Mode Button  -->
+                <!--  Set Managed Mode  -->
                 <Button
                     Grid.Column="2"
                     Margin="5"
                     Padding="10,5"
                     HorizontalAlignment="Stretch"
-                    Background="Green"
-                    Content="Set Managed Mode"
-                    Foreground="White" />
+                    materialDesign:RippleAssist.Feedback="#DD000000"
+                    Background="#6ecc25"
+                    BorderBrush="#6ecc25"
+                    Click="SetManagedMode_Click"
+                    Content="SET MANAGED MODE"
+                    Foreground="#303030" />
             </Grid>
         </Grid>
     </Grid>
