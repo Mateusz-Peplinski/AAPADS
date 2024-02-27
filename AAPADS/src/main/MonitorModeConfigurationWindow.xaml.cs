@@ -28,8 +28,9 @@ namespace AAPADS
                 {
                     _selectedAdapter = value;
                     OnPropertyChanged(nameof(SelectedAdapter));
+
                     // When the selection changes, update DefaultWNICName
-                    SELECTED_NETWORK_ADAPTER = value?.MONITOR_MODE_NETWORK_ADAPTER_DESCRIPTION;
+                    SELECTED_NETWORK_ADAPTER = value?.MONITOR_MODE_NETWORK_ADAPTER_NAME;
                 }
             }
         }
