@@ -83,13 +83,13 @@ namespace AAPADS
             Console.WriteLine("LOADING SETTINGS...");
             SETTINGS_VIEW_MODEL.LoadSettings();
 
-
-            
-
-            //Hardcoded for now
+            // If a montitor mode adapter has been selected and set in the settings menu in the past
+            // ... on load try fetch the name of that adapter and set it to monitor mode again
+            // NOTE: this requires program to run as admin
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("TRYING TO SET WNIC TO MONITOR MODE");
-            SetMonitorMode("WiFi 2");
+            String MonitorModeAdapterName = FetchMonitorModeWNICName();
+            Console.WriteLine($"TRYING TO SET [{MonitorModeAdapterName}] TO MONITOR MODE");   
+            SetMonitorMode(MonitorModeAdapterName);
 
 
             DATA_INGEST_ENGINE_DOT11_FRAMES = new DataIngestEngineDot11Frames();
@@ -155,6 +155,7 @@ namespace AAPADS
             Storyboard.SetTarget(flashingAnimation, flashingIcon);
             flashingAnimation.Begin();
 
+            // Set the Default Data Context
             DataContext = OVERVIEW_VIEW_MODEL;
 
 
@@ -343,6 +344,27 @@ namespace AAPADS
             }
             return DefaultWLANName;
         }
+        private string FetchMonitorModeWNICName()
+        {
+            string defaultMonitorModeWNICName = "MONITOR MODE ADAPTER NOT SET"; // Default value if the setting does not exist
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                // Attempt to fetch the setting from the database
+                string monitorModeWNICName = db.GetSetting("MonitorModeWNICName");
+
+                // If 'monitorModeWNICName' is null, the setting does not exist in the database
+                if (string.IsNullOrEmpty(monitorModeWNICName))
+                {
+                    // Setting does not exist or is empty; use the default value
+                    monitorModeWNICName = defaultMonitorModeWNICName;
+                }
+
+                // Return the fetched value or the default if not found
+                return monitorModeWNICName;
+            }
+        }
+
+
         private string FetechDefaultWNICName()
         {
             String DefaultWNICName;
