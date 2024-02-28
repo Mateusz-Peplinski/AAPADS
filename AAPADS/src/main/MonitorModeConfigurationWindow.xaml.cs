@@ -19,6 +19,7 @@ namespace AAPADS
 
         private MONITOR_MODE_NETWORK_ADAPTER_INFO _selectedAdapter;
         private string _defaultWLANName;
+        private string _defaultWLANDescription;
         public MONITOR_MODE_NETWORK_ADAPTER_INFO SelectedAdapter
         {
             get { return _selectedAdapter; }
@@ -29,8 +30,9 @@ namespace AAPADS
                     _selectedAdapter = value;
                     OnPropertyChanged(nameof(SelectedAdapter));
 
-                    // When the selection changes, update DefaultWNICName
+                    
                     SELECTED_NETWORK_ADAPTER = value?.MONITOR_MODE_NETWORK_ADAPTER_NAME;
+                    SELECTED_NETWORK_ADAPTER_DESCRIPTION = value?.MONITOR_MODE_NETWORK_ADAPTER_DESCRIPTION;
                 }
             }
         }
@@ -42,6 +44,18 @@ namespace AAPADS
                 if (_defaultWLANName != value)
                 {
                     _defaultWLANName = value;
+                    OnPropertyChanged(nameof(SELECTED_NETWORK_ADAPTER));
+                }
+            }
+        }
+        public string SELECTED_NETWORK_ADAPTER_DESCRIPTION
+        {
+            get { return _defaultWLANDescription; }
+            set
+            {
+                if (_defaultWLANDescription != value)
+                {
+                    _defaultWLANDescription = value;
                     OnPropertyChanged(nameof(SELECTED_NETWORK_ADAPTER));
                 }
             }
@@ -68,6 +82,7 @@ namespace AAPADS
                 MONITOR_MODE_NETWORK_ADAPTERS.Add(adapter);
             }
         }
+        // Will be used by wlanhelper.exe
         private void SaveSelectedMonitorModeAdapterSetting(string adapterName)
         {
             using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
@@ -75,9 +90,17 @@ namespace AAPADS
                 db.SaveSetting("MonitorModeWNICName", adapterName);
             }
         }
+        // Will be used up sharpcap
+        private void SaveSelectedMonitorModeAdapterDescriptionSetting(string adapterDescription)
+        {
+            using (var db = new SettingsDatabaseAccess("wireless_profile.db"))
+            {
+                db.SaveSetting("MonitorModeWNICDescription", adapterDescription);
+            }
+        }
         private void SetMonitorMode_Click(object sender, RoutedEventArgs e)
         {
-            SetMonitorMode(SELECTED_NETWORK_ADAPTER);
+            SetMonitorMode(SELECTED_NETWORK_ADAPTER, SELECTED_NETWORK_ADAPTER_DESCRIPTION);
         }
         private void SetManagedMode_Click(object sender, RoutedEventArgs e)
         {
@@ -122,7 +145,7 @@ namespace AAPADS
         {
             this.Close();
         }
-        public bool SetMonitorMode(string adapterName)
+        public bool SetMonitorMode(string adapterName, string adapterDescription)
         {
             try
             {
@@ -145,6 +168,7 @@ namespace AAPADS
                     if (output.Contains("Success"))
                     {
                         SaveSelectedMonitorModeAdapterSetting(adapterName);
+                        SaveSelectedMonitorModeAdapterDescriptionSetting(adapterDescription);
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("MONITOR MODE SET SUCCESSFULLY.");
                         return true;
