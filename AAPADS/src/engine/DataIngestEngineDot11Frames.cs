@@ -1,28 +1,40 @@
-﻿using System;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
-using PacketDotNet;
-using PacketDotNet.Ieee80211;
+﻿using PacketDotNet;
 using SharpPcap;
-using PacketDotNet.Utils;
 using SharpPcap.LibPcap;
+using System;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace AAPADS
 {
     public class DataIngestEngineDot11Frames
     {
-        private bool _stopCapturing;
+        // The status flag for the capture process
+        private bool _stopCapturingFlag;
+        private static CaptureFileWriterDevice captureFileWriter;
+
+
+        private const string PCAP_DLL = "wpcap.dll";
+
+        [DllImport(PCAP_DLL, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int pcap_set_rfmon(IntPtr p, int rfmon);
 
         public DataIngestEngineDot11Frames()
         {
-            StartCaptureAsync();
+            // The monitor mode adapter is set in the settings menu
+            string HasMonitorModeAdapterBeenSet = FetchMonitorModeWNICDescription();
+
+            // If a monitor mode adapater has not been set the default value is MONITOR MODE ADAPTER NOT SET
+            // Start network capture if a monitor mode adapter has been set
+            if (HasMonitorModeAdapterBeenSet != "MONITOR MODE ADAPTER NOT SET")
+            {
+                StartCaptureAsync();
+            }
         }
         //ISSUES: 
-        // Need to convert friendly name to adpatername
         // the thread locks the program unless ctrl-c is pressed
         // does not seem to capture packets
-
 
         public void StartCaptureAsync()
         {
@@ -43,12 +55,8 @@ namespace AAPADS
             }
             int i = 0;
 
-            //Print all the devices that sharpcap detects
-            //foreach (var dev in devices)
-            //{
-            //    Console.WriteLine($"{i} - {dev}");
-            //    i++;
-            //}
+            // Print all the devices that sharpcap detects
+            // showAllDevices();
 
             String MonitorModeAdapterName = FetchMonitorModeWNICDescription();
 
@@ -60,14 +68,47 @@ namespace AAPADS
             }
 
             // Open the device for capturing
-            device.Open(DeviceModes.None, 1000); // Open device with a read timeout of 1000 milliseconds
+            int readTimeoutMilliseconds = 1000;
+
+            //IntPtr deviceHandle; // You would need to obtain this from the SharpPcap device handle
+            //int monitorMode = 1; // 1 to enable monitor mode, 0 to disable
+            //int result = PcapNativeMethods.pcap_set_rfmon(deviceHandle, monitorMode);
+            //if (result != 0)
+            //{
+            //    throw new Exception("Failed to set monitor mode");
+            //}
+
+            var configuration = new DeviceConfiguration
+            {
+                Snaplen = 65536,
+                ReadTimeout = 1000,
+                //Promiscuous = DeviceModes.Promiscuous,
+                Immediate = true,
+                TimestampResolution = TimestampResolution.Microsecond,
+                Monitor = MonitorMode.Active, // IMPORTANT needs to be set for 802.11 frames to be captures
+                BufferSize = 1 << 16,
+                TimestampType = TimestampType.Host
+            };
+
+
+            device.Open(configuration);
+            device.Filter = "";
 
             Console.WriteLine($"[ 802.11 CAPTURE ENGINE ] Listening on {device.Description}, hit 'ctrl-c' to stop...");
 
             device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival);
+            string capFile = "80211Capture";
+
+            // create the output file
+            captureFileWriter = new CaptureFileWriterDevice(capFile);
+
+
+
+            captureFileWriter.Open(device);
+
             device.StartCapture();
 
-            while (!_stopCapturing)
+            while (!_stopCapturingFlag)
             {
                 // Keep the application running until Ctrl+C is pressed
                 Task.Delay(1000).Wait();
@@ -78,31 +119,39 @@ namespace AAPADS
             Console.WriteLine("[ 802.11 CAPTURE ENGINE ] Capture stopped");
         }
 
+        private void showAllDevices()
+        {
+            var devices = CaptureDeviceList.Instance;
+            if (devices.Count < 1)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[ 802.11 CAPTURE ENGINE ] No devices were found on this machine");
+                return;
+            }
+            int i = 0;
+
+            foreach (var dev in devices)
+            {
+                Console.WriteLine($"{i} - {dev}");
+                i++;
+            }
+        }
 
         private static void Device_OnPacketArrival(object s, PacketCapture e)
         {
-            var packet = Packet.ParsePacket(e.GetPacket().LinkLayerType, e.GetPacket().Data);
-            Console.WriteLine("packet");
-            // Assuming the base packet is an 802.11 packet since we are in monitor mode
-            var wifiPacket = packet as PacketDotNet.Ieee80211.MacFrame;
+
+            var rawPacket = e.GetPacket();
+            var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
+            //Console.WriteLine($"{packet.PayloadPacket}");
+            // Directly check for MacFrame if Ieee80211RadioPacket is not recognized
+
+            var wifiPacket = packet.PayloadPacket as PacketDotNet.Ieee80211.MacFrame;
 
             if (wifiPacket != null)
             {
-                // Process all the 802.11 packets here
-                switch (wifiPacket.FrameControl.SubType)
-                {
-                    case PacketDotNet.Ieee80211.FrameControlField.FrameSubTypes.ManagementBeacon:
-                        // Process Beacon Frame
-                        break;
-                    case PacketDotNet.Ieee80211.FrameControlField.FrameSubTypes.ManagementAssociationRequest:
-                        // Process Association Request Frame
-                        break;
-                    case PacketDotNet.Ieee80211.FrameControlField.FrameSubTypes.ManagementAssociationResponse:
-                        // Process Association Response Frame
-                        break;
-                      
-                }
+                Console.WriteLine($"802.11: [{wifiPacket.FrameControl.SubType}]");
             }
+
         }
         private string FetchMonitorModeWNICDescription()
         {
@@ -126,9 +175,10 @@ namespace AAPADS
 
         private void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            Console.WriteLine("-- Stopping capture");
-            _stopCapturing = true;
+            Console.WriteLine("Stopping capture");
+            _stopCapturingFlag = true;
             e.Cancel = true;
         }
     }
+
 }

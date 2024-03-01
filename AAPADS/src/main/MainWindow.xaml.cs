@@ -91,9 +91,9 @@ namespace AAPADS
             Console.WriteLine($"TRYING TO SET [{MonitorModeAdapterName}] TO MONITOR MODE");   
             SetMonitorMode(MonitorModeAdapterName);
 
-
+            // Start capture of 802.11 frames if monitor mode ahs been set
             DATA_INGEST_ENGINE_DOT11_FRAMES = new DataIngestEngineDot11Frames();
-            DATA_INGEST_ENGINE_DOT11_FRAMES.StartCaptureAsync();
+            //DATA_INGEST_ENGINE_DOT11_FRAMES.StartCaptureAsync();
 
             // This has its own data context because it needs to run no matter which tab is selected
             NetworkCardInfoVM = new NetworkCardInfoViewModel();
