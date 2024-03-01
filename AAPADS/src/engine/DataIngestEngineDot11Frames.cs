@@ -137,7 +137,7 @@ namespace AAPADS
         }
 
         private static void Device_OnPacketArrival(object s, PacketCapture e)
-        {
+         {
             // Get the raw packet data
             var rawPacket = e.GetPacket();
 
