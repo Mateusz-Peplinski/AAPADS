@@ -6,10 +6,10 @@
 </p>
 
 ## 📌 Introduction
-The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively mitigates the increased risk of data interception and provides early detection of possible wireless cyber attacks.
+The **Advanced Access Point Anomaly Detection System (AAPADS)** proactively mitigates the increased risk of data interception and provides detection of wireless cyber attacks.
 AAPADS also contains many WiFi and 802.11 analysis functionalities such as:
-* The ability to investigate access points near you 
-* Inspect and investigate 802.11 Managment Frames captured in monitor mode
+* The ability to investigate and collect information on access points near you 
+* The ability to inspect and investigate 802.11 Managment Frames captured in monitor mode
 * Get notifed of security misconfigurations on your wireless network
 
 ## Technical Overview 🖥️
