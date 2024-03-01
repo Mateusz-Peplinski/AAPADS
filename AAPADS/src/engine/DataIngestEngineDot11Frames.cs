@@ -12,8 +12,6 @@ namespace AAPADS
     {
         // The status flag for the capture process
         private bool _stopCapturingFlag;
-        private static CaptureFileWriterDevice captureFileWriter;
-
 
         private const string PCAP_DLL = "wpcap.dll";
 
@@ -43,41 +41,40 @@ namespace AAPADS
 
         private void StartCapture()
         {
+            // For testing key press would prevent 802.11 frame data collection
             Console.CancelKeyPress += HandleCancelKeyPress;
 
             // Retrieve the device list
             var devices = CaptureDeviceList.Instance;
+
+            // If there is less then one device throw erroe message and return
             if (devices.Count < 1)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("[ 802.11 CAPTURE ENGINE ] No devices were found on this machine");
                 return;
             }
-            int i = 0;
 
-            // Print all the devices that sharpcap detects
+            // Print all the devices that sharpcap detects (Debugging method)
             // showAllDevices();
 
+
+            // Get the same of the Monitor Mode adapter 
             String MonitorModeAdapterName = FetchMonitorModeWNICDescription();
 
+            // Set the capture device that which contains the MonitorModeAdapterName
             var device = devices.FirstOrDefault(d => d.Description.Contains(MonitorModeAdapterName));
+
+            // If no device was set it means it was not found it could be that it was unplugged
             if (device == null)
             {
                 Console.WriteLine($"[ 802.11 CAPTURE ENGINE ] Device '{MonitorModeAdapterName}' not found on this machine");
                 return;
             }
 
-            // Open the device for capturing
-            int readTimeoutMilliseconds = 1000;
-
-            //IntPtr deviceHandle; // You would need to obtain this from the SharpPcap device handle
-            //int monitorMode = 1; // 1 to enable monitor mode, 0 to disable
-            //int result = PcapNativeMethods.pcap_set_rfmon(deviceHandle, monitorMode);
-            //if (result != 0)
-            //{
-            //    throw new Exception("Failed to set monitor mode");
-            //}
-
+            // Set the configuration of the network adapter
+            // without this no frames will print in pure Promiscuous with mon mode enabled
+            // This was the only was I found to allow monitor mode frame capture with SharpPcap
             var configuration = new DeviceConfiguration
             {
                 Snaplen = 65536,
@@ -90,35 +87,37 @@ namespace AAPADS
                 TimestampType = TimestampType.Host
             };
 
-
+            // Open the divice with the configuration
             device.Open(configuration);
+
+            // Set no filter
             device.Filter = "";
 
-            Console.WriteLine($"[ 802.11 CAPTURE ENGINE ] Listening on {device.Description}, hit 'ctrl-c' to stop...");
+            Console.WriteLine($"[ 802.11 CAPTURE ENGINE ] Listening on {device.Description}");
 
+            // bind the OnPacketArrival event subscription to Device_OnPacketArrival
             device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival);
-            string capFile = "80211Capture";
 
-            // create the output file
-            captureFileWriter = new CaptureFileWriterDevice(capFile);
-
-
-
-            captureFileWriter.Open(device);
-
+            // Begin the capture
             device.StartCapture();
 
+            // Keep thread running untill status flag is changed
             while (!_stopCapturingFlag)
             {
                 // Keep the application running until Ctrl+C is pressed
                 Task.Delay(1000).Wait();
             }
 
+            //Stop Capture 
             device.StopCapture();
+
+            // Close the deivce
             device.Close();
+
             Console.WriteLine("[ 802.11 CAPTURE ENGINE ] Capture stopped");
         }
 
+        // Debug method to show all deivces detected by SharpPcap
         private void showAllDevices()
         {
             var devices = CaptureDeviceList.Instance;
@@ -139,17 +138,21 @@ namespace AAPADS
 
         private static void Device_OnPacketArrival(object s, PacketCapture e)
         {
-
+            // Get the raw packet data
             var rawPacket = e.GetPacket();
-            var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
-            //Console.WriteLine($"{packet.PayloadPacket}");
-            // Directly check for MacFrame if Ieee80211RadioPacket is not recognized
 
-            var wifiPacket = packet.PayloadPacket as PacketDotNet.Ieee80211.MacFrame;
+            // define LinkLayerFrame as a LINK-LAYER HEADER TYPE frame. In this case with a WLAN this will be a IEEE 802.11 frame
+            var LinkLayerFrame = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
-            if (wifiPacket != null)
+            // Print each framw payload
+            // Console.WriteLine($"{LinkLayerFrame.PayloadPacket}");
+
+            // Attempt to cast the PayloadPacket property of the LinkLayerFrame to a MacFrame type. 
+            var IEEE80211Frame = LinkLayerFrame.PayloadPacket as PacketDotNet.Ieee80211.MacFrame;
+
+            if (IEEE80211Frame != null)
             {
-                Console.WriteLine($"802.11: [{wifiPacket.FrameControl.SubType}]");
+                Console.WriteLine($"802.11: [{IEEE80211Frame.FrameControl.SubType}]");
             }
 
         }
@@ -175,7 +178,7 @@ namespace AAPADS
 
         private void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            Console.WriteLine("Stopping capture");
+            Console.WriteLine("[ 802.11 CAPTURE ENGINE ] Stopping capture");
             _stopCapturingFlag = true;
             e.Cancel = true;
         }
