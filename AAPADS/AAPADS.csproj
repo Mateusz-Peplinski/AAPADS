@@ -125,6 +125,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FrameInspectorViewModel.cs" />
+    <Compile Include="FrameTypeToColorConverter.cs" />
+    <Compile Include="IEEE80211FrameInfo.cs" />
     <Compile Include="src\main\MonitorModeConfigurationWindow.xaml.cs">
       <DependentUpon>MonitorModeConfigurationWindow.xaml</DependentUpon>
     </Compile>
