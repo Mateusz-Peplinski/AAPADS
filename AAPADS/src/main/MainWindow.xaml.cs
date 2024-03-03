@@ -458,6 +458,14 @@ namespace AAPADS
                 ACCESS_POINT_INVESTIGATOR_VIEW_MODEL = new AccessPointInvestigatorDataModel();
                 DataContext = ACCESS_POINT_INVESTIGATOR_VIEW_MODEL;
             }
+            else if (tab == frameInspectorTab)
+            {
+                var frameInspectorViewModel = new FrameInspectorViewModel();
+                DataIngestEngineDot11Frames.Instance.SetViewModel(frameInspectorViewModel);
+                frameInspectorTab.DataContext = frameInspectorViewModel;
+            }
+
+
             else if (tab == DetectionSetupTab)
             {
                 DataContext = WLAN_NETWORK_ADAPTER_VIEW_MODEL;

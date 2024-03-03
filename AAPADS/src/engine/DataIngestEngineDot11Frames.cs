@@ -5,6 +5,8 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Net.NetworkInformation;
 
 namespace AAPADS
 {
@@ -13,10 +15,26 @@ namespace AAPADS
         // The status flag for the capture process
         private bool _stopCapturingFlag;
 
+        private FrameInspectorViewModel frameInspectorViewModel;
+
         private const string PCAP_DLL = "wpcap.dll";
 
         [DllImport(PCAP_DLL, CallingConvention = CallingConvention.Cdecl)]
         public static extern int pcap_set_rfmon(IntPtr p, int rfmon);
+
+        private static DataIngestEngineDot11Frames _instance;
+
+        public static DataIngestEngineDot11Frames Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new DataIngestEngineDot11Frames();
+                }
+                return _instance;
+            }
+        }
 
         public DataIngestEngineDot11Frames()
         {
@@ -27,8 +45,13 @@ namespace AAPADS
             // Start network capture if a monitor mode adapter has been set
             if (HasMonitorModeAdapterBeenSet != "MONITOR MODE ADAPTER NOT SET")
             {
-                StartCaptureAsync();
+                //StartCaptureAsync();
             }
+        }
+
+        public void SetViewModel(FrameInspectorViewModel viewModel)
+        {
+            this.frameInspectorViewModel = viewModel;
         }
         //ISSUES: 
         // the thread locks the program unless ctrl-c is pressed
@@ -36,6 +59,9 @@ namespace AAPADS
 
         public void StartCaptureAsync()
         {
+
+            _stopCapturingFlag = false;
+
             Task.Run(() => StartCapture());
         }
 
@@ -136,28 +162,45 @@ namespace AAPADS
             }
         }
 
-        private static void Device_OnPacketArrival(object s, PacketCapture e)
-         {
+        private void Device_OnPacketArrival(object s, PacketCapture e)
+        {
             // Get the raw packet data
             var rawPacket = e.GetPacket();
 
-            // define LinkLayerFrame as a LINK-LAYER HEADER TYPE frame. In this case with a WLAN this will be a IEEE 802.11 frame
-            var LinkLayerFrame = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
+            // Define LinkLayerFrame as a LINK-LAYER HEADER TYPE frame.
+            // In this case, with WLAN, this will be an IEEE 802.11 frame
+            var linkLayerFrame = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
-            // Print each framw payload
-            // Console.WriteLine($"{LinkLayerFrame.PayloadPacket}");
-
-            // Attempt to cast the PayloadPacket property of the LinkLayerFrame to a MacFrame type. 
-            var IEEE80211Frame = LinkLayerFrame.PayloadPacket as PacketDotNet.Ieee80211.MacFrame;
-
-            // If the 802.11 Frame is not full then print the type
-            // TODO: Print to the GUI
-            if (IEEE80211Frame != null)
+            // Attempt to cast the PayloadPacket property of the LinkLayerFrame to a MacFrame type.
+            if (linkLayerFrame.PayloadPacket is PacketDotNet.Ieee80211.MacFrame macFrame)
             {
-                Console.WriteLine($"802.11: [{IEEE80211Frame.FrameControl.SubType}]");
-            }
+                string sourceAddress = string.Empty;
+                string destinationAddress = string.Empty;
 
+                // Check if management frame
+                if (macFrame is PacketDotNet.Ieee80211.ManagementFrame managementFrame)
+                {
+                    sourceAddress = managementFrame.SourceAddress.ToString();
+                    destinationAddress = managementFrame.DestinationAddress.ToString();
+                }
+                // Check ifdata frame
+                else if (macFrame is PacketDotNet.Ieee80211.DataFrame dataFrame)
+                {
+                    sourceAddress = dataFrame.SourceAddress.ToString();
+                    destinationAddress = dataFrame.DestinationAddress.ToString();
+                }
+
+                var frameInfo = new FrameInfo
+                {
+                    FrameType = $"802.11 {macFrame.FrameControl.SubType}",
+                    Source = sourceAddress,
+                    Destination = destinationAddress
+                };
+
+                Application.Current.Dispatcher.Invoke(() => frameInspectorViewModel.Frames.Add(frameInfo));
+            }
         }
+
         private string FetchMonitorModeWNICDescription()
         {
             string defaultMonitorModeWNICName = "MONITOR MODE ADAPTER NOT SET"; // Default value if the setting does not exist
@@ -176,6 +219,10 @@ namespace AAPADS
                 // Return the fetched value or the default if not found
                 return monitorModeWNICName;
             }
+        }
+        public void StopCapture()
+        {
+            _stopCapturingFlag = true;
         }
 
         private void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
