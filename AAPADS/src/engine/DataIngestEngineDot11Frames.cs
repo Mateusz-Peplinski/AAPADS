@@ -199,6 +199,7 @@ namespace AAPADS
 
                 Application.Current.Dispatcher.Invoke(() => frameInspectorViewModel.Frames.Add(frameInfo));
             }
+            frameInspectorViewModel.OnFrameCaptured();
         }
 
         private string FetchMonitorModeWNICDescription()
