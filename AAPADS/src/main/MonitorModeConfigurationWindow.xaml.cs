@@ -171,6 +171,9 @@ namespace AAPADS
                         SaveSelectedMonitorModeAdapterDescriptionSetting(adapterDescription);
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("MONITOR MODE SET SUCCESSFULLY.");
+
+                        MessageBox.Show("Monitor Mode was set successfully", "AAPADS - Monitor Mode",MessageBoxButton.OK, MessageBoxImage.Information);
+
                         return true;
                     }
                     else
@@ -178,6 +181,9 @@ namespace AAPADS
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("FAILED TO SET MONITOR MODE. ERROR: " + output);
                         Console.WriteLine("TRY RUNNING PROGRAM WITH ADMINISTRATOR PRIVILEGES");
+
+                        MessageBox.Show("Monitor Mode was NOT set successfully\n Try running as administrator", "AAPADS - Monitor Mode", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
                         return false;
                     }
                 }
@@ -213,6 +219,9 @@ namespace AAPADS
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("MANAGED MODE SET SUCCESSFULLY.");
+
+                        MessageBox.Show("Managed Mode was set successfully", "AAPADS - Managed Mode", MessageBoxButton.OK, MessageBoxImage.Information);
+
                         return true;
                     }
                     else
@@ -220,6 +229,9 @@ namespace AAPADS
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("FAILED TO SET MANAGED MODE. ERROR: " + output);
                         Console.WriteLine("TRY RUNNING PROGRAM WITH ADMINISTRATOR PRIVILEGES");
+
+                        MessageBox.Show("Managed Mode was NOT set successfully\n Try running as administrator", "AAPADS - Managed Mode", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
                         return false;
                     }
                 }

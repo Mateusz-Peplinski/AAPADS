@@ -150,6 +150,8 @@ namespace AAPADS
             // Attempt to cast the PayloadPacket property of the LinkLayerFrame to a MacFrame type. 
             var IEEE80211Frame = LinkLayerFrame.PayloadPacket as PacketDotNet.Ieee80211.MacFrame;
 
+            // If the 802.11 Frame is not full then print the type
+            // TODO: Print to the GUI
             if (IEEE80211Frame != null)
             {
                 Console.WriteLine($"802.11: [{IEEE80211Frame.FrameControl.SubType}]");
