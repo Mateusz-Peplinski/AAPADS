@@ -2084,14 +2084,37 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <!--  Start  -->
+                                <ColumnDefinition Width="Auto" />
+
+                                <!--  Stop  -->
+                                <ColumnDefinition Width="Auto" />
+
+                                <!--  Reload  -->
+                                <ColumnDefinition Width="Auto" />
+
+                                <!--  Frame Count  -->
+                                <ColumnDefinition Width="Auto" />
+
+                                <!--  Graph  -->
+                                <ColumnDefinition Width="*" />
+
+
+                            </Grid.ColumnDefinitions>
+
                             <Border
                                 Grid.Row="0"
+                                Grid.ColumnSpan="5"
                                 Margin="5,5,5,0"
                                 Padding="2"
                                 Background="#424242"
                                 CornerRadius="5">
-                                <StackPanel Orientation="Horizontal">
+
+                                <StackPanel Grid.ColumnSpan="5" Orientation="Horizontal">
                                     <Border
+                                        Grid.Row="0"
+                                        Grid.Column="0"
                                         Padding="5"
                                         Background="#303030"
                                         CornerRadius="5">
@@ -2112,6 +2135,8 @@
                                     </Border>
 
                                     <Border
+                                        Grid.Row="0"
+                                        Grid.Column="1"
                                         Margin="5,0,0,0"
                                         Padding="5"
                                         Background="#303030"
@@ -2133,6 +2158,8 @@
                                     </Border>
 
                                     <Border
+                                        Grid.Row="0"
+                                        Grid.Column="2"
                                         Margin="5,0,0,0"
                                         Padding="5"
                                         Background="#303030"
@@ -2149,11 +2176,54 @@
                                             </Button>
                                         </StackPanel>
                                     </Border>
+
+                                    <Border
+                                        Grid.Row="0"
+                                        Grid.Column="3"
+                                        Margin="5,0,0,0"
+                                        Padding="5"
+                                        Background="#303030"
+                                        CornerRadius="5">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontWeight="Bold"
+                                                Foreground="#d2d2d2"
+                                                Text="{Binding FrameCount, StringFormat='CAPTURED FRAMES: {0}'}" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border
+                                        Grid.Row="0"
+                                        Grid.Column="4"
+                                        Width="740"
+                                        Margin="5,0,5,0"
+                                        Padding="1"
+                                        Background="#303030"
+                                        BorderBrush="#303030"
+                                        CornerRadius="5">
+                                        <liveCharts:CartesianChart
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            DataTooltip="{x:Null}"
+                                            Hoverable="False"
+                                            Series="{Binding SeriesCollection}">
+                                            <liveCharts:CartesianChart.AxisX>
+                                                <liveCharts:Axis ShowLabels="False" Visibility="Collapsed" />
+                                            </liveCharts:CartesianChart.AxisX>
+                                            <liveCharts:CartesianChart.AxisY>
+                                                <liveCharts:Axis ShowLabels="False" Visibility="Collapsed" />
+                                            </liveCharts:CartesianChart.AxisY>
+                                        </liveCharts:CartesianChart>
+                                    </Border>
+
+
                                 </StackPanel>
                             </Border>
 
                             <Border
                                 Grid.Row="1"
+                                Grid.ColumnSpan="5"
                                 Margin="5,5,5,0"
                                 Padding="2"
                                 Background="#424242"
