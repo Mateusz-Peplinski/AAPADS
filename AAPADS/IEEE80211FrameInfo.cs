@@ -8,9 +8,12 @@ namespace AAPADS
 {
     public class FrameInfo
     {
+        public string FrameIndex { get; set; }
         public string FrameType { get; set; }
         public string Source { get; set; }
         public string Destination { get; set; }
-        // Need to add more later and make sure to make it match colmn fields.
+        public string FrameSize { get; set; }
+        public string SequenceControlSequenceNumber { get; set; }
+        public string SequenceControlFragmentNumber { get; set; }
     }
 }

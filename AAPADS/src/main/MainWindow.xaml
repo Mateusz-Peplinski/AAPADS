@@ -2313,15 +2313,19 @@
                                         </Style>
                                     </DataGrid.RowStyle>
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Binding="{Binding FrameType}" Header="Frame Type">
+                                        <DataGridTextColumn Binding="{Binding FrameIndex}" Header="No" />
+                                        <DataGridTextColumn Binding="{Binding FrameType}" Header="802.11 FRAME TYPE">
                                             <DataGridTextColumn.ElementStyle>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Foreground" Value="{Binding FrameType, Converter={StaticResource FrameTypeToColorConverter}}" />
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <DataGridTextColumn Binding="{Binding Source}" Header="SOURCE MAC" />
-                                        <DataGridTextColumn Binding="{Binding Destination}" Header="DESTINATION MAC" />
+                                        <DataGridTextColumn Binding="{Binding Source}" Header="SOURCE" />
+                                        <DataGridTextColumn Binding="{Binding Destination}" Header="DESTINATION" />
+                                        <DataGridTextColumn Binding="{Binding FrameSize}" Header="FRAME SIZE" />
+                                        <DataGridTextColumn Binding="{Binding SequenceControlSequenceNumber}" Header="SCS" />
+                                        <DataGridTextColumn Binding="{Binding SequenceControlFragmentNumber}" Header="SCF" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Border>
