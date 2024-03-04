@@ -176,30 +176,58 @@ namespace AAPADS
             {
                 string sourceAddress = string.Empty;
                 string destinationAddress = string.Empty;
+                string frameSize = macFrame.FrameSize.ToString();
+                string SequenceControlSequenceNumber = string.Empty;
+                string SequenceControlFragmentNumber = string.Empty;
+
 
                 // Check if management frame
                 if (macFrame is PacketDotNet.Ieee80211.ManagementFrame managementFrame)
                 {
-                    sourceAddress = managementFrame.SourceAddress.ToString();
-                    destinationAddress = managementFrame.DestinationAddress.ToString();
+                    sourceAddress = FormatMacAddress(managementFrame.SourceAddress.ToString());
+                    destinationAddress = FormatMacAddress(managementFrame.DestinationAddress.ToString());
+                    SequenceControlSequenceNumber = managementFrame.SequenceControl.SequenceNumber.ToString();
+                    SequenceControlFragmentNumber = managementFrame.SequenceControl.FragmentNumber.ToString();  
                 }
                 // Check ifdata frame
                 else if (macFrame is PacketDotNet.Ieee80211.DataFrame dataFrame)
                 {
-                    sourceAddress = dataFrame.SourceAddress.ToString();
-                    destinationAddress = dataFrame.DestinationAddress.ToString();
+                    sourceAddress = FormatMacAddress(dataFrame.SourceAddress.ToString());
+                    destinationAddress = FormatMacAddress(dataFrame.DestinationAddress.ToString());
+                    SequenceControlSequenceNumber = dataFrame.SequenceControl.SequenceNumber.ToString();
+                    SequenceControlFragmentNumber = dataFrame.SequenceControl.FragmentNumber.ToString();
+                }
+
+                if (destinationAddress == "FF:FF:FF:FF:FF:FF")
+                {
+                    destinationAddress = "BROADCAST";
                 }
 
                 var frameInfo = new FrameInfo
                 {
+                    FrameIndex = frameInspectorViewModel.FrameCount.ToString(),
                     FrameType = $"802.11 {macFrame.FrameControl.SubType}",
                     Source = sourceAddress,
-                    Destination = destinationAddress
+                    Destination = destinationAddress,
+                    FrameSize = $"{ macFrame.FrameSize} Bytes",
+                    SequenceControlSequenceNumber = SequenceControlSequenceNumber,
+                    SequenceControlFragmentNumber = SequenceControlFragmentNumber
                 };
 
                 Application.Current.Dispatcher.Invoke(() => frameInspectorViewModel.Frames.Add(frameInfo));
             }
             frameInspectorViewModel.OnFrameCaptured();
+        }
+        private string FormatMacAddress(string macAddress)
+        {
+            // Sometimes there is no macAddress
+            if (string.IsNullOrWhiteSpace(macAddress))
+            {
+                return string.Empty;
+            }
+              
+            // Insert colon every two characters to make FF:FF:FF:FF:FF:FF and not FFFFFFFFFFF
+            return string.Join(":", Enumerable.Range(0, macAddress.Length / 2).Select(i => macAddress.Substring(i * 2, 2)));
         }
 
         private string FetchMonitorModeWNICDescription()

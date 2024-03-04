@@ -1,10 +1,8 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -15,13 +13,35 @@ namespace AAPADS
 {
     public class FrameInspectorViewModel : INotifyPropertyChanged
     {
+        // The timer object used to keep track of how many frames are collected each second
         private readonly DispatcherTimer _timer;
+
+        // The counter that is incremented everytime a frame is collected then reset every 1 second
         private int _framesThisSecond = 0;
+
+        // The propertry change event handeler to update GUI 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // The start frame capture command
+        public ICommand StartCaptureCommand { get; }
+
+        // The stop frame capture command
+        public ICommand StopCaptureCommand { get; }
+
+        // The series for frames collected per second
         public SeriesCollection SeriesCollection { get; set; }
+
+        // y = frames
         public AxesCollection AxisYCollection { get; set; }
+
+        // x = time (sec)
         public AxesCollection AxisXCollection { get; set; }
+
+        // The collected of frames used to display frame data on the data grid
         public ObservableCollection<FrameInfo> Frames { get; } = new ObservableCollection<FrameInfo>();
 
+        // The total frames captured count
+        // Incremented eachtime a frame is captured
         private int _frameCount;
         public int FrameCount
         {
@@ -33,69 +53,81 @@ namespace AAPADS
             }
         }
 
-
-        public ICommand StartCaptureCommand { get; }
-        public ICommand StopCaptureCommand { get; }
-
         public FrameInspectorViewModel()
         {
+            // Bind the Start Capture Command to the StartCapture function
             StartCaptureCommand = new RelayCommand(StartCapture);
+
+            // Bind the Stop Capture Command to the StopCapture function
             StopCaptureCommand = new RelayCommand(StopCapture);
-            SeriesCollection = new SeriesCollection{
-                new LineSeries
-                {
-                    Values = new ChartValues<int>(),
-                    PointGeometry = null,
-                    Stroke = new SolidColorBrush(Color.FromRgb(110, 204, 37)),    
-                    LineSmoothness = 0,
-                    PointGeometrySize = 0,
-                    PointForeground =  new SolidColorBrush(Color.FromRgb(110, 204, 37)),
-                    Fill = Brushes.Transparent
-                }
-            };
 
-            AxisYCollection = new AxesCollection
-            {
-                new Axis
-                {
-                    Title = "Frames per Second",
-                    MinValue = 0 
-                }
-            };
+            // Construct the time series graph
+            FrameCountGraph();
 
-            AxisXCollection = new AxesCollection
-            {
-                new Axis
-                {
-                    Title = "Time (Seconds)",
-                    MinValue = 0 
-                }
-            };
-
+            // Create the timer 
             _timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(1)
             };
             _timer.Tick += TimerOnTick;
         }
+        private void FrameCountGraph()
+        {
+            SeriesCollection = new SeriesCollection{
+                new LineSeries
+                {
+                    Values = new ChartValues<int>(),
+                    PointGeometry = null,
+                    Stroke = new SolidColorBrush(Color.FromRgb(110, 204, 37)), // Green colour
+                    LineSmoothness = 0,
+                    PointGeometrySize = 0,
+                    PointForeground =  new SolidColorBrush(Color.FromRgb(110, 204, 37)), // Green colour
+                    Fill = Brushes.Transparent
+                }
+            };
+            AxisYCollection = new AxesCollection
+            {
+                new Axis
+                {
+                    Title = "Frames per Second",
+                    MinValue = 0
+                }
+            };
+            AxisXCollection = new AxesCollection
+            {
+                new Axis
+                {
+                    Title = "Time (Seconds)",
+                    MinValue = 0
+                }
+            };
+        }
         private void TimerOnTick(object sender, EventArgs e)
         {
+            // Every 1 second update the graph
             UpdateGraph(_framesThisSecond);
-            _framesThisSecond = 0; 
+
+            // Reset the frame count every one second
+            _framesThisSecond = 0;
         }
         public void OnFrameCaptured()
         {
+            // increment the frames captured this second
             _framesThisSecond++;
-            
+
+            // Increment the total frames captured
             FrameCount++;
         }
+
         public void UpdateGraph(int newFramesCount)
         {
+            // Invoke the GUI thread and update the graph
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var series = SeriesCollection[0];
                 series.Values.Add(newFramesCount);
 
+                // keep the full graph to display the past 1 min but keeping the value at 60 (60 seconds)
                 if (series.Values.Count > 60)
                 {
                     series.Values.RemoveAt(0);
@@ -105,25 +137,25 @@ namespace AAPADS
             });
         }
 
-
-        private IList<string> GenerateLabels(int count)
-        {
-            return Enumerable.Range(1, count).Select(x => x.ToString()).ToList();
-        }
-
         private void StartCapture()
         {
+            // Start the timer
             _timer.Start();
+
+            // Call the capture thread in DataIngestEngineDot11Frames to start
             DataIngestEngineDot11Frames.Instance?.StartCaptureAsync();
         }
 
         private void StopCapture()
         {
+            // Stop the timer
             _timer.Stop();
+
+            // Call the capture thread in DataIngestEngineDot11Frames to stop
             DataIngestEngineDot11Frames.Instance?.StopCapture();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
