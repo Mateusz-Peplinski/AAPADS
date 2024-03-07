@@ -309,6 +309,7 @@
     <Content Include="res\audio\rwr\rwr.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="res\graphics\AAPADS_5.png" />
     <Resource Include="res\graphics\AAPADS_1.png" />
     <Resource Include="res\graphics\AAPADS_2.png" />
     <Resource Include="res\graphics\AAPADS_3.png" />
