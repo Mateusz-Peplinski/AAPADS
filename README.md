@@ -16,11 +16,11 @@ AAPADS also contains many WiFi and 802.11 analysis functionalities such as:
 ### Platform & Development Environment:
 
 <p align="center">
-  <img src="AAPADS/res/graphics/AAPADS_1.png" alt="Screenshot 1" width="520">
-  <img src="AAPADS/res/graphics/AAPADS_2.png" alt="Screenshot 2" width="480">
-  <img src="AAPADS/res/graphics/AAPADS_3.png" alt="Screenshot 3" width="480">
-  <img src="AAPADS/res/graphics/AAPADS_4.png" alt="Screenshot 4" width="480">
-  <img src="AAPADS/res/graphics/AAPADS_5.png" alt="Screenshot 4" width="480">
+  <img src="AAPADS/res/graphics/AAPADS_1.1.png" alt="Screenshot 1" width="520">
+  <img src="AAPADS/res/graphics/AAPADS_2.1.png" alt="Screenshot 2" width="480">
+  <img src="AAPADS/res/graphics/AAPADS_3.1.png" alt="Screenshot 3" width="480">
+  <img src="AAPADS/res/graphics/AAPADS_4.1.png" alt="Screenshot 4" width="480">
+  <img src="AAPADS/res/graphics/AAPADS_5.1.png" alt="Screenshot 4" width="480">
 </p>
 
 <p align="center">
