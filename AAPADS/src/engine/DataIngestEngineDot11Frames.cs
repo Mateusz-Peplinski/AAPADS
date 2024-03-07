@@ -10,6 +10,10 @@ using System.Net.NetworkInformation;
 
 namespace AAPADS
 {
+
+    // TODO
+    // RELAOD BUTTON
+    // SHOW FREQ THAT MONITOR MODE IS CAPTURING ON 
     public class DataIngestEngineDot11Frames
     {
         // The status flag for the capture process
@@ -53,9 +57,6 @@ namespace AAPADS
         {
             this.frameInspectorViewModel = viewModel;
         }
-        //ISSUES: 
-        // the thread locks the program unless ctrl-c is pressed
-        // does not seem to capture packets
 
         public void StartCaptureAsync()
         {
@@ -176,7 +177,6 @@ namespace AAPADS
             {
                 string sourceAddress = string.Empty;
                 string destinationAddress = string.Empty;
-                string frameSize = macFrame.FrameSize.ToString();
                 string SequenceControlSequenceNumber = string.Empty;
                 string SequenceControlFragmentNumber = string.Empty;
 

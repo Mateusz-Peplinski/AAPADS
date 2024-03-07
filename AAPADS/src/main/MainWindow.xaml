@@ -43,7 +43,6 @@
 
         </Style>
 
-
         <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#ef3945" />
 
         <Storyboard x:Key="FlashingAnimation">
@@ -2321,11 +2320,42 @@
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <DataGridTextColumn Binding="{Binding Source}" Header="SOURCE" />
-                                        <DataGridTextColumn Binding="{Binding Destination}" Header="DESTINATION" />
-                                        <DataGridTextColumn Binding="{Binding FrameSize}" Header="FRAME SIZE" />
-                                        <DataGridTextColumn Binding="{Binding SequenceControlSequenceNumber}" Header="SCS" />
-                                        <DataGridTextColumn Binding="{Binding SequenceControlFragmentNumber}" Header="SCF" />
+                                        <DataGridTextColumn Binding="{Binding Source}" Header="SOURCE">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextAlignment" Value="Justify" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Binding="{Binding Destination}" Header="DESTINATION">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Binding="{Binding FrameSize}" Header="FRAME SIZE">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Binding="{Binding SequenceControlSequenceNumber}" Header="SCS">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Binding="{Binding SequenceControlFragmentNumber}" Header="SCF">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Border>
